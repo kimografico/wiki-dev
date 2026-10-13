@@ -5,7 +5,7 @@
 // recorre el árbol mdast y usa el índice de `indice-menciones.ts`.
 //
 // Reglas (RF-07):
-//  - coincidencia exacta, sensible a mayúsculas, como palabra completa;
+//  - coincidencia exacta ignorando mayúsculas/minúsculas, como palabra completa;
 //  - gana la coincidencia más larga ("React Router" antes que "React");
 //  - solo la primera mención de cada término en cada sección `##`;
 //  - nunca dentro de código, código en línea, encabezados, HTML ni enlaces;
@@ -60,8 +60,9 @@ function construirRegex(terminos: TerminoMencion[]): RegExp | null {
   // "el primero que encaja", así que la coincidencia más larga gana.
   const alternancia = terminos.map((t) => escaparRegex(t.termino)).join("|");
   // Palabra completa sin usar \b (falla con términos como "Next.js"): los
-  // caracteres contiguos al término no pueden ser alfanuméricos.
-  return new RegExp(`(?<![A-Za-z0-9])(?:${alternancia})(?![A-Za-z0-9])`, "g");
+  // caracteres contiguos al término no pueden ser alfanuméricos. La `i` hace
+  // la coincidencia insensible a mayúsculas/minúsculas.
+  return new RegExp(`(?<![A-Za-z0-9])(?:${alternancia})(?![A-Za-z0-9])`, "gi");
 }
 
 function slugDeArchivo(archivo: ArchivoMd | undefined): string | undefined {
@@ -90,7 +91,9 @@ export function remarkMenciones(opciones: OpcionesMenciones) {
     const regex = construirRegex(terminos);
     if (!regex) return;
 
-    const porTermino = new Map(terminos.map((t) => [t.termino, t]));
+    const porTermino = new Map(
+      terminos.map((t) => [t.termino.toLowerCase(), t]),
+    );
     let vistos = new Set<string>();
 
     const enlazarTexto = (valor: string): Nodo[] => {
@@ -100,8 +103,9 @@ export function remarkMenciones(opciones: OpcionesMenciones) {
       let coincidencia: RegExpExecArray | null;
       while ((coincidencia = regex.exec(valor)) !== null) {
         const termino = coincidencia[0];
-        if (vistos.has(termino)) continue;
-        const info = porTermino.get(termino);
+        const clave = termino.toLowerCase();
+        if (vistos.has(clave)) continue;
+        const info = porTermino.get(clave);
         if (!info) continue;
         if (coincidencia.index > ultimo) {
           partes.push({
@@ -114,7 +118,7 @@ export function remarkMenciones(opciones: OpcionesMenciones) {
           url: `${base}${info.coleccion}/${info.slug}`,
           children: [{ type: "text", value: termino }],
         });
-        vistos.add(termino);
+        vistos.add(clave);
         ultimo = coincidencia.index + termino.length;
       }
       if (ultimo < valor.length) {

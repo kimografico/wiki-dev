@@ -76,7 +76,7 @@ const colorColeccion =
     </nav>
 
     <!-- Cabecera de la ficha sin recuadro exterior -->
-    <header class="pb-6 mb-8 border-b border-[var(--color-border)]">
+    <header class="pb-6 mb-8">
       <div class="flex items-center gap-2 mb-3">
         <span
           class={`font-mono text-xs uppercase tracking-wider font-bold ${colorColeccion}`}
@@ -105,8 +105,8 @@ const colorColeccion =
       )}
     </header>
 
-    <!-- Contenido Markdown de la entrada con texto más pequeño y legible -->
-    <article class="prose prose-wiki mb-12">
+    <!-- Contenido Markdown en un recuadro (superficie + borde + esquinas) -->
+    <article class="prose prose-wiki mb-12 rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface)] p-5 sm:p-8">
       <slot />
     </article>
 

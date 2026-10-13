@@ -109,7 +109,7 @@ Colección opcional al estilo refactoring.guru: problema, solución, estructura,
 ### RF-07 · Menciones enlazadas (M)
 Si el texto de una entrada menciona algo que tiene su propia entrada, esa mención es un enlace a ella. Por ejemplo, en `react-router`, la palabra «React» lleva a la entrada `react`.
 - Se aplica en build sobre el cuerpo de todas las entradas, mediante un **plugin de remark**. Requiere `@astrojs/markdown-remark` y `markdown.processor: unified()`, porque el procesador por defecto de Astro 7 (Sätteri) no ejecuta plugins de remark.
-- Se enlaza por coincidencia exacta, sensible a mayúsculas, con el `titulo` o cualquier `alias` de otra entrada, como palabra completa.
+- Se enlaza por coincidencia exacta, ignorando mayúsculas/minúsculas, con el `titulo` o cualquier `alias` de otra entrada, como palabra completa.
 - Gana la coincidencia más larga: *dado* "React Router" y las entradas `react` y `react-router`, *entonces* enlaza `react-router`.
 - Se enlaza la **primera mención de cada término en cada sección** (`##`).
 - No se enlaza dentro de bloques de código (incluidos los de Mermaid), código en línea, encabezados, nodos HTML ni enlaces existentes, ni una entrada a sí misma.
@@ -416,7 +416,7 @@ F3 puede empezar en cuanto F1 deje los esquemas estables.
 | Información que caduca (el modelo no guarda fechas) | Evitar afirmaciones de versión salvo que estén verificadas con fuente |
 | Cambios en Astro (versiones mayores) | Capa `lib/content` aislada; versiones fijadas; actualizaciones con el CI en verde. Astro 7 ya cambió el procesador de Markdown |
 | El plugin de remark deja de ejecutarse si se cambia de procesador | Procesador `unified()` fijado en la configuración; el plugin está aislado en `lib/markdown` y tiene tests |
-| Menciones enlazadas ruidosas o erróneas (palabras comunes) | Coincidencia sensible a mayúsculas, primera mención por sección, `autoenlace: false`, tests del plugin |
+| Menciones enlazadas ruidosas o erróneas (palabras comunes) | Coincidencia ignorando mayúsculas/minúsculas, primera mención por sección, `autoenlace: false`, tests del plugin |
 | Plugin de menciones lento con muchas entradas | Índice calculado una vez por build; comprobado en RNF-04 |
 | `astro-mermaid` carga JS en el navegador | Debe cargarse solo en páginas con diagramas; verificado en §8.2 |
 | Astrobook (versión anterior a la 1.0) se descontinúa | Es solo desarrollo y no entra en el build: se elimina sin afectar a la wiki |

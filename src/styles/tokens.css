@@ -23,6 +23,9 @@
   /* --- Surfaces --- */
   --color-bg: #f4f4f2;
   --color-surface: #ffffff;
+  --color-code-bg: var(
+    --color-surface
+  ); /* fondo de bloques de código (RF-13) */
   --color-border: #dddbd6; /* decorativo: separadores que no transmiten información */
   --color-off: #bfbdb8; /* decorativo */
   --color-border-strong: #7d7b76; /* bordes de controles (≥ 3:1) — añadido por la wiki */
@@ -96,6 +99,7 @@
   :root:not([data-theme="light"]) {
     --color-bg: #111110;
     --color-surface: #1c1c1a;
+    --color-code-bg: #000000; /* negro en tema oscuro (RF-13) */
     --color-border: #2d2d2a;
     --color-off: #3d3d38;
     --color-border-strong: #7a7a74;
@@ -126,6 +130,7 @@
 
   --color-bg: #111110;
   --color-surface: #1c1c1a;
+  --color-code-bg: #000000; /* negro en tema oscuro (RF-13) */
   --color-border: #2d2d2a;
   --color-off: #3d3d38;
   --color-border-strong: #7a7a74;

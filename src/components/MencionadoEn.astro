@@ -26,22 +26,16 @@ const base = import.meta.env.BASE_URL;
       </span>
     </div>
 
-    <ul class="list-none p-0 m-0 space-y-1.5">
+    <ul class="list-none p-0 m-0 space-y-0.5">
       {backlinks.map((item) => {
         const href = urlEntrada(item.coleccion, item.slug, base);
-        const tag = item.tags?.[0] || item.categoria;
         return (
           <li class="py-0.5">
             <a
               href={href}
-              class="inline-flex items-center gap-2 text-xs sm:text-sm text-[var(--color-text)] hover:text-[var(--color-accent-text)] no-underline group transition-colors"
+              class="inline-flex items-center gap-2 text-xs sm:text-sm text-[var(--color-text)] hover:text-white no-underline transition-colors"
             >
-              <span class="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded bg-[var(--color-bg)] border border-[var(--color-border)] text-[var(--color-muted-text)] shrink-0 font-medium">
-                {tag}
-              </span>
-              <span class="font-medium group-hover:underline">
-                {item.titulo}
-              </span>
+              <span class="font-medium">{item.titulo}</span>
             </a>
           </li>
         );

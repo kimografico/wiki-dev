@@ -474,7 +474,7 @@ export default defineConfig({
 //    título/alias → slug (descartando las entradas con autoenlace: false).
 // 2. Recorrer los nodos de texto saltando code, inlineCode, heading, link y html.
 // 3. En cada sección (##), sustituir la primera mención de cada término por un enlace
-//    (sensible a mayúsculas, palabra completa, gana la coincidencia más larga).
+//    (ignorando mayúsculas/minúsculas, palabra completa, gana la coincidencia más larga).
 // 4. No enlazar una entrada a sí misma; construir los enlaces con base.
 ```
 

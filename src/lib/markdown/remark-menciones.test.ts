@@ -68,10 +68,10 @@ describe("remarkMenciones", () => {
     expect(enlaces(arbol)).toEqual(["/wiki-dev/paquetes/react-router"]);
   });
 
-  it("distingue mayúsculas y respeta los límites de palabra", async () => {
+  it("ignora mayúsculas/minúsculas y respeta los límites de palabra", async () => {
     const arbol = root([parrafo(texto("react y Reactive"))]);
     await remarkMenciones(opciones())(arbol);
-    expect(enlaces(arbol)).toEqual([]);
+    expect(enlaces(arbol)).toEqual(["/wiki-dev/tecnologias/react"]);
   });
 
   it("reinicia las primeras menciones en cada sección '##'", async () => {

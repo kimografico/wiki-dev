@@ -121,7 +121,7 @@ export default function BuscadorRapido({ entradas }: Props) {
             type="search"
             value={consulta}
             onChange={(e) => setConsulta(e.target.value)}
-            placeholder="Buscar término, tecnología o paquete... (o presiona /)"
+            placeholder="Buscar término, tecnología o paquete..."
             aria-label="Buscar en la wiki"
             className="w-full bg-transparent border-0 py-2.5 text-sm text-[var(--color-text)] placeholder:text-[var(--color-muted)] outline-none focus:outline-none focus:ring-0 focus-visible:outline-none hover:outline-none ring-0"
           />
@@ -160,7 +160,7 @@ export default function BuscadorRapido({ entradas }: Props) {
                     activo && col.clave !== "todas" ? "todas" : col.clave,
                   );
                 }}
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border transition-all cursor-pointer font-medium ${
+                className={`chip-filtro inline-flex items-center gap-1.5 px-3 py-1 rounded-full border transition-all cursor-pointer font-medium ${
                   activo
                     ? "border-[var(--color-accent)] bg-[var(--color-accent)] text-[var(--color-on-accent)] shadow-xs"
                     : "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted-text)] hover:border-[var(--color-border-strong)] hover:text-[var(--color-text)]"
