@@ -7,14 +7,23 @@ const grupos = await getGlosarioPorLetra();
 ---
 
 {grupos.length === 0 ? (
-  <p class="text-muted">Todavía no hay términos en el glosario.</p>
+  <div class="p-8 text-center rounded-xl border border-dashed border-[var(--color-border)] text-sm text-[var(--color-muted-text)] my-6">
+    Todavía no hay términos en el glosario.
+  </div>
 ) : (
-  <>
-    <nav aria-label="Salto por letra" class="mb-4">
-      <ul class="flex flex-wrap gap-2 list-none p-0 m-0 text-sm">
+  <div class="space-y-10">
+    <!-- Barra de salto alfabético -->
+    <nav aria-label="Salto por letra" class="p-3 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-xs sticky top-16 z-20 backdrop-blur-md">
+      <div class="flex items-center gap-2 mb-2 px-1">
+        <span class="text-xs font-mono uppercase text-[var(--color-muted)] font-semibold">Salto por letra:</span>
+      </div>
+      <ul class="flex flex-wrap gap-1.5 list-none p-0 m-0 text-sm">
         {grupos.map((grupo) => (
           <li>
-            <a href={`#letra-${grupo.letra}`} class="badge no-underline">
+            <a
+              href={`#letra-${grupo.letra}`}
+              class="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs no-underline border border-[var(--color-border)] bg-[var(--color-bg)] hover:bg-[var(--color-accent)] hover:text-[var(--color-on-accent)] hover:border-[var(--color-accent)] text-[var(--color-text)] transition-all"
+            >
               {grupo.letra}
             </a>
           </li>
@@ -22,14 +31,25 @@ const grupos = await getGlosarioPorLetra();
       </ul>
     </nav>
 
-    {grupos.map((grupo) => (
-      <section
-        id={`letra-${grupo.letra}`}
-        aria-labelledby={`titulo-letra-${grupo.letra}`}
-      >
-        <h2 id={`titulo-letra-${grupo.letra}`}>{grupo.letra}</h2>
-        <ListaEntradas entradas={grupo.entradas} />
-      </section>
-    ))}
-  </>
+    <!-- Secciones agrupadas por letra -->
+    <div class="space-y-12">
+      {grupos.map((grupo) => (
+        <section
+          id={`letra-${grupo.letra}`}
+          aria-labelledby={`titulo-letra-${grupo.letra}`}
+          class="space-y-4 pt-4 scroll-mt-36"
+        >
+          <div class="flex items-center gap-3 pb-2 border-b border-[var(--color-border)]">
+            <h2 id={`titulo-letra-${grupo.letra}`} class="text-2xl font-extrabold text-[var(--color-accent-text)] m-0 font-mono">
+              {grupo.letra}
+            </h2>
+            <span class="text-xs font-mono px-2 py-0.5 rounded-full bg-[var(--color-bg)] text-[var(--color-muted-text)] border border-[var(--color-border)]/60">
+              {grupo.entradas.length} {grupo.entradas.length === 1 ? "término" : "términos"}
+            </span>
+          </div>
+          <ListaEntradas entradas={grupo.entradas} />
+        </section>
+      ))}
+    </div>
+  </div>
 )}

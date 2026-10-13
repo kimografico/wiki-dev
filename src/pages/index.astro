@@ -1,35 +1,55 @@
 ---
-// Portada: accesos a las colecciones. El buscador y los accesos por categoría y
-// etiqueta llegan en F2.
+// Portada: accesos a las colecciones con buscador rápido y diseño modernizado.
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { getPorColeccion } from "../lib/content/entradas.ts";
+import { getPorColeccion, getTodasLasEntradas } from "../lib/content/entradas.ts";
 import ListaEntradas from "../components/ListaEntradas.astro";
+import BuscadorRapido from "../features/busqueda/BuscadorRapido.tsx";
 
 const base = import.meta.env.BASE_URL;
 
-const colecciones = [
+const coleccionesInfo = [
   {
     nombre: "Glosario",
     url: `${base}glosario`,
     clave: "glosario" as const,
-    descripcion: "Términos y conceptos.",
+    descripcion: "Términos, patrones y conceptos clave explicados sin rodeos.",
+    icono: "Aa",
+    color: "var(--color-accent)",
+    colorText: "var(--color-accent-text)",
   },
   {
     nombre: "Tecnologías",
     url: `${base}tecnologias`,
     clave: "tecnologias" as const,
-    descripcion: "Lenguajes, frameworks y plataformas.",
+    descripcion: "Lenguajes, frameworks de aplicación, plataformas y servicios.",
+    icono: "</>",
+    color: "var(--color-dev)",
+    colorText: "var(--color-dev-text)",
   },
   {
     nombre: "Paquetes",
     url: `${base}paquetes`,
     clave: "paquetes" as const,
-    descripcion: "Dependencias y CLI de un ecosistema.",
+    descripcion: "Dependencias, linters, utilidades y CLI del ecosistema web.",
+    icono: "{ }",
+    color: "var(--color-design)",
+    colorText: "var(--color-design-text)",
   },
 ];
 
+const todas = await getTodasLasEntradas();
+const entradasParaBusqueda = todas.map((e) => ({
+  slug: e.slug,
+  coleccion: e.coleccion as "glosario" | "tecnologias" | "paquetes",
+  titulo: e.titulo,
+  resumen: e.resumen,
+  categoria: e.categoria,
+  tags: e.tags,
+  url: `${base}${e.coleccion}/${e.slug}`,
+}));
+
 const resumen = await Promise.all(
-  colecciones.map(async (coleccion) => ({
+  coleccionesInfo.map(async (coleccion) => ({
     ...coleccion,
     entradas: await getPorColeccion(coleccion.clave),
   })),
@@ -40,29 +60,98 @@ const resumen = await Promise.all(
   titulo="Inicio"
   descripcion="Wiki estática de consulta para programadores junior: glosario, tecnologías y paquetes."
 >
-  <h1>wiki-dev</h1>
-  <p class="prose">
-    Wiki de consulta para programadores junior. Elige una sección o busca por el
-    nombre de un término.
-  </p>
+  <!-- Hero Section -->
+  <section class="text-center w-full pt-4 pb-8">
+    <div class="max-w-3xl mx-auto">
+      <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-[var(--color-text)] mb-4 text-balance">
+        Aprende conceptos, domina herramientas.
+      </h1>
 
-  {resumen.map((coleccion) => (
-    <section aria-labelledby={`titulo-${coleccion.clave}`}>
-      <h2 id={`titulo-${coleccion.clave}`}>
-        <a href={coleccion.url}>{coleccion.nombre}</a>
-      </h2>
-      <p class="text-muted">{coleccion.descripcion}</p>
-      <ListaEntradas
-        entradas={coleccion.entradas.slice(0, 6)}
-        vacio="Todavía no hay entradas."
-      />
-      {coleccion.entradas.length > 6 && (
-        <p>
-          <a href={coleccion.url}>
-            Ver las {coleccion.entradas.length} entradas
-          </a>
-        </p>
-      )}
+      <p class="text-base sm:text-lg text-[var(--color-muted-text)] leading-relaxed max-w-2xl mx-auto mb-6 text-balance">
+        Wiki estática de consulta rápida: glosario técnico, fichas de tecnologías y paquetes esenciales con ejemplos mínimos y relaciones claras.
+      </p>
+    </div>
+
+    <!-- Buscador rápido interactivo -->
+    <BuscadorRapido client:idle entradas={entradasParaBusqueda} />
+  </section>
+
+  <div id="secciones-portada" class="space-y-14">
+    <!-- Collection Hub Cards -->
+    <section aria-label="Colecciones destacadas" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {resumen.map((col) => (
+        <a
+          href={col.url}
+          class="group p-5 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--color-accent)]/80 hover:shadow-sm transition-all no-underline flex flex-col justify-between"
+        >
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span
+                class="w-10 h-10 rounded-xl flex items-center justify-center font-mono font-bold text-sm border border-[var(--color-border)] bg-[var(--color-bg)] transition-transform group-hover:scale-105"
+                style={`color: ${col.colorText}`}
+              >
+                {col.icono}
+              </span>
+              <span class="text-xs font-mono font-semibold px-2.5 py-1 rounded-full bg-[var(--color-bg)] text-[var(--color-muted-text)] border border-[var(--color-border)]/60">
+                {col.entradas.length} entradas
+              </span>
+            </div>
+
+            <h2 class="text-lg font-bold text-[var(--color-text)] group-hover:text-[var(--color-accent-text)] transition-colors mb-1 m-0">
+              {col.nombre}
+            </h2>
+            <p class="text-xs sm:text-sm text-[var(--color-muted-text)] m-0 leading-relaxed">
+              {col.descripcion}
+            </p>
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-[var(--color-border)]/50 flex items-center justify-between text-xs font-semibold" style={`color: ${col.colorText}`}>
+            <span>Explorar sección</span>
+          </div>
+        </a>
+      ))}
     </section>
-  ))}
+
+    <!-- Secciones de contenido reciente/destacado -->
+    <div class="space-y-14">
+      {resumen.map((coleccion) => (
+        <section
+          aria-labelledby={`titulo-${coleccion.clave}`}
+          class="space-y-5"
+          data-coleccion-seccion={coleccion.clave}
+        >
+          <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2 pb-3 border-b border-[var(--color-border)]">
+            <div>
+              <div class="flex items-center gap-2">
+                <h2 id={`titulo-${coleccion.clave}`} class="text-xl sm:text-2xl font-bold tracking-tight text-[var(--color-text)] m-0">
+                  <a href={coleccion.url} class="no-underline text-[var(--color-text)] hover:text-[var(--color-accent-text)] transition-colors">
+                    {coleccion.nombre}
+                  </a>
+                </h2>
+                <span class="text-xs font-mono px-2 py-0.5 rounded-full bg-[var(--color-bg)] text-[var(--color-muted-text)] border border-[var(--color-border)]/60">
+                  {coleccion.entradas.length}
+                </span>
+              </div>
+              <p class="text-xs sm:text-sm text-[var(--color-muted-text)] mt-1 mb-0">{coleccion.descripcion}</p>
+            </div>
+
+            {coleccion.entradas.length > 6 && (
+              <a
+                href={coleccion.url}
+                class="text-xs sm:text-sm font-semibold inline-flex items-center gap-1 no-underline transition-colors shrink-0"
+                style={`color: ${coleccion.colorText}`}
+              >
+                <span>Ver todas las {coleccion.entradas.length} entradas</span>
+              </a>
+            )}
+          </div>
+
+          <ListaEntradas
+            entradas={coleccion.entradas.slice(0, 6)}
+            vacio="Todavía no hay entradas."
+          />
+        </section>
+      ))}
+    </div>
+  </div>
 </BaseLayout>

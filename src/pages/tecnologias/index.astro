@@ -2,21 +2,107 @@
 // Índice de tecnologías.
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import ListaEntradas from "../../components/ListaEntradas.astro";
-import { getPorColeccion } from "../../lib/content/entradas.ts";
+import { getPorColeccion, type Entrada } from "../../lib/content/entradas.ts";
 
 const tecnologias = (await getPorColeccion("tecnologias")).sort((a, b) =>
   a.titulo.localeCompare(b.titulo, "es"),
 );
+const base = import.meta.env.BASE_URL;
+
+const nombresCategorias: Record<string, string> = {
+  framework: "Frameworks",
+  despliegue: "Despliegue",
+  lenguaje: "Lenguajes",
+  estilos: "Estilos",
+  herramienta: "Herramientas y Entornos",
+};
+
+// Agrupar por categoría/tag (todos los frameworks juntos, todos los despliegue juntos...)
+const orden = ["framework", "despliegue", "lenguaje", "estilos", "herramienta"];
+
+const gruposMap = new Map<string, Entrada[]>();
+for (const tec of tecnologias) {
+  const cat = tec.categoria || "otros";
+  if (!gruposMap.has(cat)) {
+    gruposMap.set(cat, []);
+  }
+  gruposMap.get(cat)!.push(tec);
+}
+
+const grupos = Array.from(gruposMap.entries())
+  .sort(([a], [b]) => {
+    const idxA = orden.indexOf(a);
+    const idxB = orden.indexOf(b);
+    return (idxA === -1 ? 99 : idxA) - (idxB === -1 ? 99 : idxB);
+  })
+  .map(([categoria, entradas]) => ({
+    categoria,
+    titulo: nombresCategorias[categoria] || categoria.charAt(0).toUpperCase() + categoria.slice(1),
+    entradas: entradas.sort((a, b) => a.titulo.localeCompare(b.titulo, "es")),
+  }));
 ---
 
 <BaseLayout
   titulo="Tecnologías"
   descripcion="Fichas de lenguajes, frameworks, plataformas y servicios."
 >
-  <h1>Tecnologías</h1>
-  <p class="prose">
-    Lenguajes, frameworks de aplicación, plataformas y servicios: qué son, para
-    qué sirven y cuándo usarlos.
-  </p>
-  <ListaEntradas entradas={tecnologias} vacio="Todavía no hay tecnologías." />
+  <div class="space-y-8">
+    <nav aria-label="Ruta de navegación" class="text-xs sm:text-sm text-[var(--color-muted-text)]">
+      <ol class="flex items-center gap-1.5 list-none p-0 m-0">
+        <li>
+          <a href={base} class="no-underline text-[var(--color-muted-text)] hover:text-[var(--color-text)] transition-colors">
+            Inicio
+          </a>
+        </li>
+        <li aria-hidden="true" class="text-[var(--color-border-strong)]">/</li>
+        <li aria-current="page" class="font-medium text-[var(--color-text)]">
+          Tecnologías
+        </li>
+      </ol>
+    </nav>
+
+    <!-- Header sin recuadro -->
+    <header class="pb-6 border-b border-[var(--color-border)]">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-xs font-mono uppercase tracking-wider font-semibold text-[var(--color-dev-text)]">
+              Colección Tecnologías
+            </span>
+          </div>
+          <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-[var(--color-text)] m-0 mb-2">
+            Tecnologías y Frameworks
+          </h1>
+          <p class="text-base text-[var(--color-muted-text)] m-0 max-w-2xl">
+            Lenguajes, frameworks de aplicación, plataformas y servicios: qué son, para qué sirven, cuándo usarlos y comparativas.
+          </p>
+        </div>
+
+        <div class="sm:text-right shrink-0">
+          <span class="text-2xl sm:text-3xl font-extrabold font-mono text-[var(--color-text)] block">
+            {tecnologias.length}
+          </span>
+          <span class="text-xs text-[var(--color-muted)] font-mono">tecnologías</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Subsecciones agrupadas por tag/categoría separadas por un título -->
+    <div class="space-y-12">
+      {grupos.map((grupo) => (
+        <section aria-labelledby={`subseccion-${grupo.categoria}`} class="space-y-4">
+          <div class="flex items-center gap-3 pb-2 border-b border-[var(--color-border)]">
+            <h2 id={`subseccion-${grupo.categoria}`} class="text-xl sm:text-2xl font-bold tracking-tight text-[var(--color-text)] m-0">
+              {grupo.titulo}
+            </h2>
+            <span class="text-xs font-mono px-2 py-0.5 rounded-full bg-[var(--color-bg)] text-[var(--color-muted-text)] border border-[var(--color-border)]/60">
+              {grupo.entradas.length}
+            </span>
+          </div>
+
+          <ListaEntradas entradas={grupo.entradas} />
+        </section>
+      ))}
+    </div>
+  </div>
 </BaseLayout>

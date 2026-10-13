@@ -1,25 +1,53 @@
 ---
-// Página de error. El buscador llega en F2; de momento ofrece los índices.
+// Página de error 404.
 import BaseLayout from "../layouts/BaseLayout.astro";
 
 const base = import.meta.env.BASE_URL;
+
+const enlaces = [
+  { href: `${base}glosario`, texto: "Glosario", desc: "Términos y conceptos", icono: "Aa" },
+  { href: `${base}tecnologias`, texto: "Tecnologías", desc: "Lenguajes y frameworks", icono: "</>" },
+  { href: `${base}paquetes`, texto: "Paquetes", desc: "Librerías y dependencias", icono: "{ }" },
+];
 ---
 
 <BaseLayout titulo="Página no encontrada" descripcion="La página no existe.">
-  <h1>No encontramos esa página</h1>
-  <p class="prose">
-    Puede que el enlace sea antiguo o que la entrada no exista. Prueba desde los
-    índices:
-  </p>
-  <ul>
-    <li>
-      <a href={`${base}glosario`}>Glosario</a>
-    </li>
-    <li>
-      <a href={`${base}tecnologias`}>Tecnologías</a>
-    </li>
-    <li>
-      <a href={`${base}paquetes`}>Paquetes</a>
-    </li>
-  </ul>
+  <div class="max-w-xl mx-auto py-12 text-center">
+    <div class="w-16 h-16 rounded-2xl mx-auto mb-6 flex items-center justify-center font-mono font-bold text-2xl bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-accent-text)] shadow-xs">
+      404
+    </div>
+
+    <h1 class="text-3xl font-extrabold tracking-tight text-[var(--color-text)] mb-3">
+      Página no encontrada
+    </h1>
+    <p class="text-base text-[var(--color-muted-text)] mb-8">
+      Puede que el enlace sea antiguo o que la entrada haya cambiado de nombre. Prueba a explorar desde nuestras colecciones principales:
+    </p>
+
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8">
+      {enlaces.map((e) => (
+        <a
+          href={e.href}
+          class="p-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--color-accent)] hover:shadow-xs transition-all no-underline text-center group"
+        >
+          <span class="font-mono text-sm font-bold block mb-1 text-[var(--color-accent-text)]">
+            {e.icono}
+          </span>
+          <span class="font-bold text-sm text-[var(--color-text)] group-hover:text-[var(--color-accent-text)] transition-colors block">
+            {e.texto}
+          </span>
+          <span class="text-[11px] text-[var(--color-muted-text)] block mt-0.5">
+            {e.desc}
+          </span>
+        </a>
+      ))}
+    </div>
+
+    <a
+      href={base}
+      class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--color-accent)] text-[var(--color-on-accent)] font-semibold text-sm no-underline hover:opacity-95 transition-opacity"
+    >
+      <span>Volver al inicio</span>
+    </a>
+  </div>
 </BaseLayout>

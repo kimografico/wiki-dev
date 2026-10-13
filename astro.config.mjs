@@ -6,10 +6,9 @@ import astrobook from "astrobook";
 import { unified } from "@astrojs/markdown-remark";
 import { remarkMenciones } from "./src/lib/markdown/remark-menciones.ts";
 
-// Sitio de proyecto en GitHub Pages: https://kimografico.github.io/wiki-dev/
-// Todo enlace y asset debe construirse con import.meta.env.BASE_URL.
+// Base URL por defecto en raíz (port 3000), o ASTRO_BASE_URL si está definido.
 const site = "https://kimografico.github.io";
-const base = "/wiki-dev/";
+const base = process.env.ASTRO_BASE_URL || "/";
 
 // https://astro.build/config
 export default defineConfig({
@@ -21,14 +20,15 @@ export default defineConfig({
     // REACT+VITE: React ya está en todas partes; aquí solo hidrata las islas.
     react(),
     // Astrobook es el visor de componentes; solo en desarrollo, nunca en el build
-    // (RF: §11). Reutiliza los tokens del sitio.
-    process.env.NODE_ENV === "development"
-      ? astrobook({
-          subpath: "/astrobook",
-          css: ["./src/styles/global.css"],
-          title: "Componentes de wiki-dev",
-        })
-      : null,
+    ...(process.env.NODE_ENV === "development"
+      ? [
+          astrobook({
+            subpath: "/astrobook",
+            css: ["./src/styles/global.css"],
+            title: "Componentes de wiki-dev",
+          }),
+        ]
+      : []),
   ],
 
   markdown: {

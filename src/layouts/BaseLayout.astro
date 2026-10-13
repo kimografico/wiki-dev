@@ -42,9 +42,17 @@ const rutaActual = Astro.url.pathname;
       media="(prefers-color-scheme: dark)"
     />
 
+    <!-- Google Fonts: DM Sans y JetBrains Mono oficiales de tokens.css -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
     <!--
       ASTRO: `is:inline` deja el script tal cual y bloqueante en <head>, de modo
-        que el tema se aplica antes del primer pintado (si no, habría un destello).
+      que el tema se aplica antes del primer pintado (si no, habría un destello).
       REACT+VITE: sería un <script> clásico en index.html, antes del bundle.
       RF-13: usa `wiki:tema` (light | dark) o, si no hay, la preferencia del sistema.
     -->
@@ -65,50 +73,82 @@ const rutaActual = Astro.url.pathname;
       })();
     </script>
   </head>
-  <body>
+  <body class="min-h-screen flex flex-col antialiased">
     <a class="skip-link" href="#contenido">
       Saltar al contenido
     </a>
 
-    <header class="site-header">
-      <div class="contenedor flex items-center justify-between gap-4 py-3">
-        <a href={base} class="font-semibold no-underline">
-          wiki-dev
+    <!-- Top Bar Contract: Zone 1 (Wordmark) — Zone 2 (Nav links) — Zone 3 (Action) -->
+    <header class="site-header backdrop-blur-md bg-[var(--color-surface)]/90 border-b border-[var(--color-border)] sticky top-0 z-30 transition-colors">
+      <div class="contenedor flex items-center justify-between gap-8 py-3.5">
+        <!-- Zone 1: Wordmark -->
+        <a href={base} class="flex items-center gap-1.5 font-bold tracking-tight text-lg no-underline text-[var(--color-text)] hover:opacity-90 shrink-0 group">
+          <span class="w-2.5 h-2.5 rounded-full bg-[var(--color-accent)] inline-block transition-transform group-hover:scale-125"></span>
+          <span>wiki<span class="text-[var(--color-accent)]">·</span>dev</span>
+          <span class="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-[var(--color-bg)] border border-[var(--color-border)] text-[var(--color-muted-text)] ml-1">
+            v0.4
+          </span>
         </a>
-        <nav aria-label="Secciones">
-          <ul class="flex flex-wrap items-center gap-4 text-sm">
-            {enlaces.map(({ href, texto }) => (
-              <li>
-                <a
-                  href={href}
-                  class:list={[
-                    "no-underline",
-                    rutaActual.startsWith(href) && "font-semibold",
-                  ]}
-                  aria-current={
-                    rutaActual.startsWith(href) ? "page" : undefined
-                  }
-                >
-                  {texto}
-                </a>
-              </li>
-            ))}
-          </ul>
+
+        <!-- Zone 2: Navigation links -->
+        <nav aria-label="Secciones principales" class="hidden sm:flex items-center gap-1 text-sm font-medium">
+          {enlaces.map(({ href, texto }) => {
+            const activo = rutaActual.startsWith(href);
+            return (
+              <a
+                href={href}
+                class={`px-3 py-1.5 rounded-lg text-sm transition-all no-underline ${
+                  activo
+                    ? "bg-[var(--color-bg)] text-[var(--color-text)] font-semibold border border-[var(--color-border)]"
+                    : "text-[var(--color-muted-text)] hover:text-[var(--color-text)] hover:bg-[var(--color-bg)]/50"
+                }`}
+                aria-current={activo ? "page" : undefined}
+              >
+                {texto}
+              </a>
+            );
+          })}
         </nav>
-        <!-- ISLA: el interruptor de tema se hidrata en el cliente (RF-13). -->
-        <InterruptorTema client:load />
+
+        <!-- Zone 3: Primary Control (Interruptor Tema) -->
+        <div class="flex items-center gap-3 shrink-0">
+          <nav aria-label="Navegación móvil" class="flex sm:hidden items-center gap-2 text-xs">
+            {enlaces.map(({ href, texto }) => (
+              <a
+                href={href}
+                class={`px-2 py-1 rounded text-xs no-underline ${
+                  rutaActual.startsWith(href)
+                    ? "font-semibold text-[var(--color-text)] underline"
+                    : "text-[var(--color-muted-text)]"
+                }`}
+              >
+                {texto}
+              </a>
+            ))}
+          </nav>
+          <!-- ISLA: el interruptor de tema se hidrata en el cliente (RF-13). -->
+          <InterruptorTema client:load />
+        </div>
       </div>
     </header>
 
-    <main id="contenido" class="contenedor py-6">
+    <main id="contenido" class="contenedor py-8 md:py-12 flex-1">
       <slot />
     </main>
 
-    <footer class="site-footer">
-      <div class="contenedor py-6 text-sm">
-        <p>
-          wiki-dev · proyecto estático. Contenido añadido por código y agentes.
-        </p>
+    <footer class="site-footer border-t border-[var(--color-border)] bg-[var(--color-surface)]/50 mt-auto">
+      <div class="contenedor py-8 text-sm flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-2 text-[var(--color-muted-text)]">
+          <span class="w-2 h-2 rounded-full bg-[var(--color-accent)] inline-block"></span>
+          <span>wiki-dev · Base de conocimiento estática para programadores junior.</span>
+        </div>
+        <div class="flex items-center gap-4 text-xs text-[var(--color-muted-text)]">
+          <a href={`${base}glosario`} class="no-underline hover:text-[var(--color-text)]">Glosario</a>
+          <span>·</span>
+          <a href={`${base}tecnologias`} class="no-underline hover:text-[var(--color-text)]">Tecnologías</a>
+          <span>·</span>
+          <a href={`${base}paquetes`} class="no-underline hover:text-[var(--color-text)]">Paquetes</a>
+        </div>
       </div>
     </footer>
   </body>

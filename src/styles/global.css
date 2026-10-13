@@ -2,37 +2,32 @@
 @import "./tokens.css";
 
 /*
- * Tokens de tema (claro/oscuro) en `tokens.css` (identidad «Studio Edition»,
- * copiada de la skill `diseno-ui`). Los componentes usan variables CSS
- * semánticas (`--color-*`, `--space-*`…), nunca hex: el tema oscuro funciona sin
- * tocar los componentes (RF-13).
- *
- * Fuentes: los tokens declaran `--font-sans`/`--font-mono` (DM Sans, JetBrains
- * Mono) con reserva a `system-ui`. Autoalojarlas con Fontsource requiere añadir
- * dependencias (§8), así que queda pendiente de aprobación; hasta entonces se
- * usa la reserva del sistema.
- * shortcut: fuentes del sistema, revisar cuando el autor apruebe Fontsource.
- *
- * ASTRO: `global.css` se importa una vez en `BaseLayout.astro`; Vite lo procesa
- *   y Tailwind genera el CSS.
- * REACT+VITE: lo importarías en `main.tsx` (o `index.css`); el resto es igual.
+ * Tokens de tema (claro/oscuro) en `tokens.css` (identidad «Studio Edition»).
+ * Mantenemos la paleta exacta de colores mientras elevamos el look & feel a estándares
+ * de diseño moderno: tarjetas responsivas, microinteracciones y tipografía cuidada.
  */
 
-/* ---- Componentes de la wiki ---- */
-
+/* ---- Contenedor principal ---- */
 .contenedor {
   width: 100%;
-  max-width: 72rem;
+  max-width: 76rem;
   margin-inline: auto;
   padding-inline: var(--space-4);
 }
 
+@media (min-width: 640px) {
+  .contenedor {
+    padding-inline: var(--space-6);
+  }
+}
+
+/* ---- Cabecera y Pie de página ---- */
 .site-header {
   border-bottom: 1px solid var(--color-border);
   background: var(--color-surface);
   position: sticky;
   top: 0;
-  z-index: 10;
+  z-index: 20;
 }
 
 .site-footer {
@@ -41,74 +36,116 @@
   color: var(--color-muted-text);
 }
 
+/* ---- Insignias / Badges ---- */
 .badge {
   display: inline-flex;
   align-items: center;
   gap: var(--space-1);
-  padding: 0 var(--space-2);
-  border: 1px solid var(--color-border-strong);
+  padding: 0.15rem 0.5rem;
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
-  font-size: var(--text-sm);
+  font-size: 0.8rem;
+  font-family: var(--font-mono);
   color: var(--color-text);
   text-decoration: none;
-  background: var(--color-bg);
+  background: var(--color-surface);
+  transition: all var(--dur-1) var(--ease-out);
 }
+
 .badge[data-tipo="categoria"] {
   border-color: var(--color-dev);
   color: var(--color-dev-text);
+  background: var(--color-surface);
 }
 
+.badge[data-tipo="tag"] {
+  border-color: var(--color-border);
+  color: var(--color-muted-text);
+  background: var(--color-bg);
+}
+
+/* ---- Listado de entradas (cuadrícula moderna) ---- */
 .lista-entradas {
   list-style: none;
   margin: 0;
   padding: 0;
   display: grid;
-  gap: var(--space-3);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
+  gap: var(--space-4);
+}
+
+.entrada-item {
+  height: 100%;
 }
 
 .entrada-item a {
-  display: block;
-  padding: var(--space-3) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  padding: var(--space-4) var(--space-5);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   background: var(--color-surface);
   text-decoration: none;
   color: var(--color-text);
-  transition: border-color var(--dur-1) var(--ease-out);
-}
-.entrada-item a:hover {
-  border-color: var(--color-accent);
-}
-.entrada-item__resumen {
-  display: block;
-  margin-top: var(--space-1);
-  color: var(--color-muted-text);
+  transition: transform var(--dur-2) var(--ease-out), border-color var(--dur-2) var(--ease-out), box-shadow var(--dur-2) var(--ease-out);
 }
 
-/* Bloques de código y diagramas: legibles en ambos temas (RF-13). */
+.entrada-item a:hover {
+  border-color: var(--color-accent);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgb(0 0 0 / 0.06);
+}
+
+[data-theme="dark"] .entrada-item a:hover {
+  box-shadow: 0 4px 20px rgb(0 0 0 / 0.4);
+}
+
+.entrada-item__titulo {
+  display: block;
+  font-weight: 700;
+  font-size: var(--text-lg);
+  color: var(--color-text);
+  line-height: var(--leading-heading);
+}
+
+.entrada-item a:hover .entrada-item__titulo {
+  color: var(--color-accent-text);
+}
+
+.entrada-item__resumen {
+  display: block;
+  margin-top: var(--space-2);
+  color: var(--color-muted-text);
+  font-size: var(--text-sm);
+  line-height: 1.55;
+}
+
+/* ---- Bloques de código Shiki y diagramas Mermaid (RF-13) ---- */
 .astro-code,
 pre {
   background: var(--color-surface) !important;
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
   overflow-x: auto;
   font-size: var(--text-sm);
+  font-family: var(--font-mono);
+  box-shadow: inset 0 1px 3px rgb(0 0 0 / 0.03);
+  margin-block: var(--space-5);
 }
 
-/*
- * Shiki con `defaultColor: false` emite cada token con las variables
- * `--shiki-light` y `--shiki-dark`, pero sin aplicarlas: elegimos una según el
- * tema activo. Así el código se colorea solo al alternar claro/oscuro (RF-13).
- */
 .astro-code,
 .astro-code span {
   color: var(--shiki-light);
 }
+
 [data-theme="dark"] .astro-code,
 [data-theme="dark"] .astro-code span {
   color: var(--shiki-dark);
 }
+
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) .astro-code,
   :root:not([data-theme="light"]) .astro-code span {
@@ -116,8 +153,119 @@ pre {
   }
 }
 
-/* Icono de aprendida: oculto hasta que el lector marca la entrada (RF-14, F2). */
+/* ---- Prose / Formato de artículos ---- */
+.prose-wiki {
+  max-width: 100%;
+  font-size: var(--text-sm);
+  line-height: 1.6;
+}
+
+.prose-wiki h2 {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  margin-top: var(--space-6);
+  margin-bottom: var(--space-3);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text);
+}
+
+.prose-wiki h3 {
+  font-size: var(--text-base);
+  font-weight: 600;
+  margin-top: var(--space-4);
+  margin-bottom: var(--space-2);
+  color: var(--color-text);
+}
+
+.prose-wiki p {
+  font-size: var(--text-sm);
+  margin-bottom: var(--space-3);
+  line-height: 1.6;
+  color: var(--color-text);
+}
+
+.prose-wiki ul,
+.prose-wiki ol {
+  font-size: var(--text-sm);
+  margin-bottom: var(--space-4);
+  padding-left: var(--space-5);
+  line-height: 1.6;
+}
+
+.prose-wiki li {
+  margin-bottom: var(--space-1);
+}
+
+.prose-wiki code:not(pre code) {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  padding: 0.15rem 0.4rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.88em;
+  font-family: var(--font-mono);
+  color: var(--color-accent-text);
+}
+
+.prose-wiki table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-block: var(--space-6);
+  font-size: var(--text-sm);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.prose-wiki th {
+  background: var(--color-bg);
+  font-weight: 600;
+  text-align: left;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text);
+}
+
+.prose-wiki td {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.prose-wiki tr:last-child td {
+  border-bottom: none;
+}
+
+.prose-wiki tr:hover td {
+  background: var(--color-bg);
+}
+
+.prose-wiki blockquote {
+  border-left: 3px solid var(--color-accent);
+  background: var(--color-surface);
+  padding: var(--space-3) var(--space-5);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  margin-block: var(--space-5);
+  font-style: italic;
+  color: var(--color-muted-text);
+}
+
+/* Icono de aprendida: oculto hasta que el lector marca la entrada (RF-14). */
 .icono-aprendida {
   display: none;
-  color: var(--color-cta-text);
+}
+
+/* Barra de desplazamiento elegante */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-off);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-border-strong);
 }

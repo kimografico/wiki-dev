@@ -1,7 +1,6 @@
 ---
 // Bloque «Mencionado en» (backlinks), generado desde el frontmatter (RF-06).
-import { getBacklinks } from "../lib/content/entradas.ts";
-import ListaEntradas from "./ListaEntradas.astro";
+import { getBacklinks, urlEntrada } from "../lib/content/entradas.ts";
 
 interface Props {
   slug: string;
@@ -10,11 +9,38 @@ interface Props {
 
 const { slug } = Astro.props;
 const backlinks = await getBacklinks(slug);
+const base = import.meta.env.BASE_URL;
 ---
 
 {backlinks.length > 0 && (
-  <section aria-labelledby="mencionado-en">
-    <h2 id="mencionado-en">Mencionado en</h2>
-    <ListaEntradas entradas={backlinks} />
+  <section aria-labelledby="mencionado-en" class="space-y-3">
+    <div class="flex items-center gap-2 pb-2 border-b border-[var(--color-border)]">
+      <h2 id="mencionado-en" class="text-xs font-mono font-bold uppercase tracking-wider text-[var(--color-muted-text)] m-0">
+        Mencionado en
+      </h2>
+      <span class="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-[var(--color-bg)] text-[var(--color-muted-text)] border border-[var(--color-border)]">
+        {backlinks.length}
+      </span>
+    </div>
+
+    <ul class="list-none p-0 m-0 space-y-1.5">
+      {backlinks.map((item) => {
+        const href = urlEntrada(item.coleccion, item.slug, base);
+        const tag = item.tags?.[0] || item.categoria;
+        return (
+          <li class="py-0.5">
+            <a
+              href={href}
+              class="inline-flex items-center gap-2 text-xs sm:text-sm text-[var(--color-text)] hover:text-[var(--color-accent-text)] no-underline group transition-colors"
+            >
+              <span class="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded bg-[var(--color-bg)] border border-[var(--color-border)] text-[var(--color-muted-text)] shrink-0 font-medium">
+                {tag}
+              </span>
+              <span class="font-medium group-hover:underline">{item.titulo}</span>
+            </a>
+          </li>
+        );
+      })}
+    </ul>
   </section>
 )}

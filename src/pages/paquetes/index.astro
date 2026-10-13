@@ -2,21 +2,103 @@
 // Índice de paquetes.
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import ListaEntradas from "../../components/ListaEntradas.astro";
-import { getPorColeccion } from "../../lib/content/entradas.ts";
+import { getPorColeccion, type Entrada } from "../../lib/content/entradas.ts";
 
 const paquetes = (await getPorColeccion("paquetes")).sort((a, b) =>
   a.titulo.localeCompare(b.titulo, "es"),
 );
+const base = import.meta.env.BASE_URL;
+
+const nombresTags: Record<string, string> = {
+  frontend: "Frontend e Interfaz",
+  tests: "Testing y Pruebas",
+  terminal: "Terminal y Utilidades CLI",
+  rendimiento: "Rendimiento y Auditoría",
+};
+
+// Agrupar por tag principal (o categoría)
+const ordenTags = ["frontend", "tests", "terminal", "rendimiento"];
+
+const gruposMap = new Map<string, Entrada[]>();
+for (const pkg of paquetes) {
+  // Elegir tag prioritario según el orden definido, o fallback
+  const tagElegido = ordenTags.find((t) => (pkg.tags as readonly string[]).includes(t)) || "frontend";
+  if (!gruposMap.has(tagElegido)) {
+    gruposMap.set(tagElegido, []);
+  }
+  gruposMap.get(tagElegido)!.push(pkg);
+}
+
+const grupos = ordenTags
+  .filter((tag) => gruposMap.has(tag))
+  .map((tag) => ({
+    tag,
+    titulo: nombresTags[tag] || tag,
+    entradas: gruposMap.get(tag)!.sort((a, b) => a.titulo.localeCompare(b.titulo, "es")),
+  }));
 ---
 
 <BaseLayout
   titulo="Paquetes"
   descripcion="Fichas de paquetes y dependencias de un ecosistema."
 >
-  <h1>Paquetes</h1>
-  <p class="prose">
-    Dependencias y herramientas de línea de comandos: qué son, para qué sirven y
-    cuándo usarlas, con un ejemplo mínimo.
-  </p>
-  <ListaEntradas entradas={paquetes} vacio="Todavía no hay paquetes." />
+  <div class="space-y-8">
+    <nav aria-label="Ruta de navegación" class="text-xs sm:text-sm text-[var(--color-muted-text)]">
+      <ol class="flex items-center gap-1.5 list-none p-0 m-0">
+        <li>
+          <a href={base} class="no-underline text-[var(--color-muted-text)] hover:text-[var(--color-text)] transition-colors">
+            Inicio
+          </a>
+        </li>
+        <li aria-hidden="true" class="text-[var(--color-border-strong)]">/</li>
+        <li aria-current="page" class="font-medium text-[var(--color-text)]">
+          Paquetes
+        </li>
+      </ol>
+    </nav>
+
+    <!-- Header sin recuadro -->
+    <header class="pb-6 border-b border-[var(--color-border)]">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-xs font-mono uppercase tracking-wider font-semibold text-[var(--color-design-text)]">
+              Colección Paquetes
+            </span>
+          </div>
+          <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-[var(--color-text)] m-0 mb-2">
+            Paquetes y Herramientas CLI
+          </h1>
+          <p class="text-base text-[var(--color-muted-text)] m-0 max-w-2xl">
+            Dependencias y herramientas de línea de comandos: qué son, para qué sirven, cuándo usarlas y ejemplos de instalación.
+          </p>
+        </div>
+
+        <div class="sm:text-right shrink-0">
+          <span class="text-2xl sm:text-3xl font-extrabold font-mono text-[var(--color-text)] block">
+            {paquetes.length}
+          </span>
+          <span class="text-xs text-[var(--color-muted)] font-mono">paquetes</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Subsecciones agrupadas por tag/área separadas por un título -->
+    <div class="space-y-12">
+      {grupos.map((grupo) => (
+        <section aria-labelledby={`subseccion-${grupo.tag}`} class="space-y-4">
+          <div class="flex items-center gap-3 pb-2 border-b border-[var(--color-border)]">
+            <h2 id={`subseccion-${grupo.tag}`} class="text-xl sm:text-2xl font-bold tracking-tight text-[var(--color-text)] m-0">
+              {grupo.titulo}
+            </h2>
+            <span class="text-xs font-mono px-2 py-0.5 rounded-full bg-[var(--color-bg)] text-[var(--color-muted-text)] border border-[var(--color-border)]/60">
+              {grupo.entradas.length}
+            </span>
+          </div>
+
+          <ListaEntradas entradas={grupo.entradas} />
+        </section>
+      ))}
+    </div>
+  </div>
 </BaseLayout>
