@@ -1,0 +1,22 @@
+---
+// Elemento de un listado (componente compartido). Lleva `data-slug` y contiene
+// el icono de aprendida oculto, que el script inline del header muestra y, con
+// «solo pendientes» activo, oculta el elemento entero (RF-14, F2).
+import type { Entrada } from "../lib/content/entradas.ts";
+import { urlEntrada } from "../lib/content/entradas.ts";
+
+interface Props {
+  entrada: Entrada;
+}
+
+const { entrada } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const href = urlEntrada(entrada.coleccion, entrada.slug, base);
+---
+
+<li class="entrada-item" data-slug={entrada.slug}>
+  <a href={href}>
+    <span class="entrada-item__titulo">{entrada.titulo}</span>
+    <span class="entrada-item__resumen">{entrada.resumen}</span>
+  </a>
+</li>

@@ -1,0 +1,20 @@
+---
+// Bloque «Relacionados», generado desde el frontmatter (RF-06).
+import { getRelacionados } from "../lib/content/entradas.ts";
+import ListaEntradas from "./ListaEntradas.astro";
+
+interface Props {
+  slug: string;
+  coleccion: string;
+}
+
+const { slug } = Astro.props;
+const relacionados = await getRelacionados(slug);
+---
+
+{relacionados.length > 0 && (
+  <section aria-labelledby="relacionados">
+    <h2 id="relacionados">Relacionados</h2>
+    <ListaEntradas entradas={relacionados} />
+  </section>
+)}

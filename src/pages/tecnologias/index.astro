@@ -1,0 +1,22 @@
+---
+// Índice de tecnologías.
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ListaEntradas from "../../components/ListaEntradas.astro";
+import { getPorColeccion } from "../../lib/content/entradas.ts";
+
+const tecnologias = (await getPorColeccion("tecnologias")).sort((a, b) =>
+  a.titulo.localeCompare(b.titulo, "es"),
+);
+---
+
+<BaseLayout
+  titulo="Tecnologías"
+  descripcion="Fichas de lenguajes, frameworks, plataformas y servicios."
+>
+  <h1>Tecnologías</h1>
+  <p class="prose">
+    Lenguajes, frameworks de aplicación, plataformas y servicios: qué son, para
+    qué sirven y cuándo usarlos.
+  </p>
+  <ListaEntradas entradas={tecnologias} vacio="Todavía no hay tecnologías." />
+</BaseLayout>

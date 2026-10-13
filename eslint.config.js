@@ -23,5 +23,12 @@ export default [
   js.configs.recommended,
   ...tseslint.configs.recommended,
   ...astro.configs.recommended,
+  {
+    // Archivos de Node (config de Astro, scripts) usan globales de Node.
+    files: ["**/*.{js,mjs,cjs}"],
+    languageOptions: {
+      globals: { process: "readonly", console: "readonly" },
+    },
+  },
   prettier,
 ];

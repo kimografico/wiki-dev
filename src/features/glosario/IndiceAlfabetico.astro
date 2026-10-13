@@ -1,0 +1,35 @@
+---
+// Índice del glosario: orden alfabético (locale `es`) con salto por letra (RF-01).
+import { getGlosarioPorLetra } from "../../lib/content/glosario.ts";
+import ListaEntradas from "../../components/ListaEntradas.astro";
+
+const grupos = await getGlosarioPorLetra();
+---
+
+{grupos.length === 0 ? (
+  <p class="text-muted">Todavía no hay términos en el glosario.</p>
+) : (
+  <>
+    <nav aria-label="Salto por letra" class="mb-4">
+      <ul class="flex flex-wrap gap-2 list-none p-0 m-0 text-sm">
+        {grupos.map((grupo) => (
+          <li>
+            <a href={`#letra-${grupo.letra}`} class="badge no-underline">
+              {grupo.letra}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    {grupos.map((grupo) => (
+      <section
+        id={`letra-${grupo.letra}`}
+        aria-labelledby={`titulo-letra-${grupo.letra}`}
+      >
+        <h2 id={`titulo-letra-${grupo.letra}`}>{grupo.letra}</h2>
+        <ListaEntradas entradas={grupo.entradas} />
+      </section>
+    ))}
+  </>
+)}

@@ -1,0 +1,20 @@
+---
+// Bloque «Mencionado en» (backlinks), generado desde el frontmatter (RF-06).
+import { getBacklinks } from "../lib/content/entradas.ts";
+import ListaEntradas from "./ListaEntradas.astro";
+
+interface Props {
+  slug: string;
+  coleccion: string;
+}
+
+const { slug } = Astro.props;
+const backlinks = await getBacklinks(slug);
+---
+
+{backlinks.length > 0 && (
+  <section aria-labelledby="mencionado-en">
+    <h2 id="mencionado-en">Mencionado en</h2>
+    <ListaEntradas entradas={backlinks} />
+  </section>
+)}

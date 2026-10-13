@@ -1,0 +1,22 @@
+---
+// Índice de paquetes.
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ListaEntradas from "../../components/ListaEntradas.astro";
+import { getPorColeccion } from "../../lib/content/entradas.ts";
+
+const paquetes = (await getPorColeccion("paquetes")).sort((a, b) =>
+  a.titulo.localeCompare(b.titulo, "es"),
+);
+---
+
+<BaseLayout
+  titulo="Paquetes"
+  descripcion="Fichas de paquetes y dependencias de un ecosistema."
+>
+  <h1>Paquetes</h1>
+  <p class="prose">
+    Dependencias y herramientas de línea de comandos: qué son, para qué sirven y
+    cuándo usarlas, con un ejemplo mínimo.
+  </p>
+  <ListaEntradas entradas={paquetes} vacio="Todavía no hay paquetes." />
+</BaseLayout>

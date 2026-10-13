@@ -1,0 +1,22 @@
+---
+// Listado genérico de entradas (componente compartido por varias features).
+import type { Entrada } from "../lib/content/entradas.ts";
+import EntradaItem from "./EntradaItem.astro";
+
+interface Props {
+  entradas: Entrada[];
+  vacio?: string;
+}
+
+const { entradas, vacio = "No hay entradas todavía." } = Astro.props;
+---
+
+{entradas.length === 0 ? (
+  <p class="text-muted">{vacio}</p>
+) : (
+  <ul class="lista-entradas">
+    {entradas.map((entrada) => (
+      <EntradaItem entrada={entrada} />
+    ))}
+  </ul>
+)}

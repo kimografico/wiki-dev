@@ -1,0 +1,13 @@
+---
+// Insignia de categoría o etiqueta. El texto es visible: el color no es el único
+// portador de significado (RNF-03).
+interface Props {
+  tipo?: "categoria" | "tag";
+}
+
+const { tipo = "tag" } = Astro.props;
+---
+
+<span class="badge" data-tipo={tipo}>
+  <slot />
+</span>

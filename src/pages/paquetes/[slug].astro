@@ -1,0 +1,28 @@
+---
+import FichaLayout from "../../layouts/FichaLayout.astro";
+import { getPorColeccion } from "../../lib/content/entradas.ts";
+import { getPaginaEntrada } from "../../lib/content/entradas.ts";
+
+export async function getStaticPaths() {
+  const paquetes = await getPorColeccion("paquetes");
+  return paquetes.map((paquete) => ({ params: { slug: paquete.slug } }));
+}
+
+const pagina = await getPaginaEntrada(Astro.params.slug ?? "");
+if (!pagina) throw new Error(`Paquete no encontrado: ${Astro.params.slug}`);
+const { Content, entrada } = pagina;
+const base = import.meta.env.BASE_URL;
+---
+
+<FichaLayout
+  titulo={entrada.titulo}
+  resumen={entrada.resumen}
+  categoria={entrada.categoria}
+  tags={entrada.tags}
+  slug={entrada.slug}
+  coleccion={entrada.coleccion}
+  urlColeccion={`${base}paquetes`}
+  nombreColeccion="Paquetes"
+>
+  <Content />
+</FichaLayout>

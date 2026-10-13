@@ -1,20 +1,50 @@
 // @ts-check
 import { defineConfig } from "astro/config";
 import tailwindcss from "@tailwindcss/vite";
+import react from "@astrojs/react";
+import astrobook from "astrobook";
+import { unified } from "@astrojs/markdown-remark";
+import { remarkMenciones } from "./src/lib/markdown/remark-menciones.ts";
+
+// Sitio de proyecto en GitHub Pages: https://kimografico.github.io/wiki-dev/
+// Todo enlace y asset debe construirse con import.meta.env.BASE_URL.
+const site = "https://kimografico.github.io";
+const base = "/wiki-dev/";
 
 // https://astro.build/config
 export default defineConfig({
-  // Sitio de proyecto en GitHub Pages: https://kimografico.github.io/wiki-dev/
-  // Todo enlace y asset debe construirse con import.meta.env.BASE_URL.
-  site: "https://kimografico.github.io",
-  base: "/wiki-dev/",
+  site,
+  base,
 
-  // La integración @astrojs/react (islas interactivas: buscador y preferencias) se
-  // activa en F1, cuando exista el primer componente. Está instalada desde F0
-  // (§8.1); registrarla sin islas solo emite un chunk de cliente sin usar.
+  integrations: [
+    // ASTRO: la integración de React permite las islas interactivas (RF-13, RF-14).
+    // REACT+VITE: React ya está en todas partes; aquí solo hidrata las islas.
+    react(),
+    // Astrobook es el visor de componentes; solo en desarrollo, nunca en el build
+    // (RF: §11). Reutiliza los tokens del sitio.
+    process.env.NODE_ENV === "development"
+      ? astrobook({
+          subpath: "/astrobook",
+          css: ["./src/styles/global.css"],
+          title: "Componentes de wiki-dev",
+        })
+      : null,
+  ],
 
-  // Tailwind v4 entra por el plugin de Vite; los tokens de tema (data-theme) se
-  // definen en src/styles/global.css en F1 (RF-13).
+  markdown: {
+    // ASTRO 7: el procesador por defecto (Sätteri) NO ejecuta plugins de remark.
+    //   Fijar `unified()` hace que sí se ejecuten y mantiene el plugin portable.
+    // REACT+VITE: usarías unified/remark directamente en tu pipeline.
+    processor: unified({
+      // unified recibe aquí el par [plugin, opciones] (forma de unified `.use`).
+      remarkPlugins: [[remarkMenciones, { base }]],
+    }),
+    shikiConfig: {
+      themes: { light: "github-light", dark: "github-dark" },
+      defaultColor: false,
+    },
+  },
+
   vite: {
     plugins: [tailwindcss()],
   },

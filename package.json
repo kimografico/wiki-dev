@@ -17,6 +17,7 @@
     "format:check": "prettier --check .",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
+    "validate": "node scripts/validate-content.ts",
     "prepare": "husky"
   },
   "lint-staged": {

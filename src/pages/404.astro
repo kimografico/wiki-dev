@@ -1,0 +1,25 @@
+---
+// Página de error. El buscador llega en F2; de momento ofrece los índices.
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const base = import.meta.env.BASE_URL;
+---
+
+<BaseLayout titulo="Página no encontrada" descripcion="La página no existe.">
+  <h1>No encontramos esa página</h1>
+  <p class="prose">
+    Puede que el enlace sea antiguo o que la entrada no exista. Prueba desde los
+    índices:
+  </p>
+  <ul>
+    <li>
+      <a href={`${base}glosario`}>Glosario</a>
+    </li>
+    <li>
+      <a href={`${base}tecnologias`}>Tecnologías</a>
+    </li>
+    <li>
+      <a href={`${base}paquetes`}>Paquetes</a>
+    </li>
+  </ul>
+</BaseLayout>

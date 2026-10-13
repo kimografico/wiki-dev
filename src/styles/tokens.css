@@ -1,0 +1,241 @@
+/*
+ * tokens.css — Studio Edition (misma identidad y nombres de variables que el portfolio).
+ * Cool stone grays · Bold vermillion · Deep ink
+ *
+ * Los valores y nombres base son los del portfolio. Se añaden:
+ *  - variantes `-text` (color seguro para TEXTO, WCAG AA 4.5:1) donde el color base no llega,
+ *  - tokens que la wiki necesita (foco, borde de controles, espaciado, forma, movimiento).
+ *
+ * REGLA: los colores base (--color-accent, --color-dev, --color-design, --color-cta, --color-muted)
+ * son para rellenos, iconos, bordes y texto grande. Para texto normal usa SIEMPRE su variante `-text`.
+ *
+ * Contrastes (WCAG) — texto sobre --color-bg / --color-surface:
+ *  Claro:  text 17.2/18.9 · muted-text 4.9/5.4 · accent-text 5.1/5.6 · dev-text 4.7/5.2 · design-text 5.0/5.5 · cta-text 5.0/5.5
+ *          (sin variante: muted 4.3/4.7 · accent 4.4/4.9 · design 2.9/3.2 · cta 3.4/3.8)
+ *  Oscuro: todos ≥ 4.7 con los valores base; las variantes -text son alias.
+ *  Botón principal: --color-on-accent sobre --color-accent 4.9 (claro) / 5.3 (oscuro).
+ * Verifica cualquier cambio con: node scripts/contrast.mjs <texto> <fondo>
+ */
+
+:root {
+  color-scheme: light dark;
+
+  /* --- Surfaces --- */
+  --color-bg: #f4f4f2;
+  --color-surface: #ffffff;
+  --color-border: #dddbd6; /* decorativo: separadores que no transmiten información */
+  --color-off: #bfbdb8; /* decorativo */
+  --color-border-strong: #7d7b76; /* bordes de controles (≥ 3:1) — añadido por la wiki */
+
+  /* --- Typography --- */
+  --color-text: #111110;
+  --color-muted: #75736e;
+
+  /* --- Accents --- */
+  --color-accent: #d92b04;
+  --color-dev: #2563eb;
+  --color-design: #d97706;
+  --color-cta: #059669;
+  --color-on-accent: #ffffff; /* texto sobre fondo --color-accent */
+  --color-focus: var(--color-accent);
+
+  /* --- Variantes seguras para TEXTO (AA) --- */
+  --color-muted-text: #6c6a65;
+  --color-accent-text: #c92704;
+  --color-dev-text: var(--color-dev);
+  --color-design-text: #a85007;
+  --color-cta-text: #047857;
+
+  /* --- Misc --- */
+  --color-highlight: transparent;
+  --scrollbar-bg: #edebe6;
+  --shadow-pop: 0 6px 24px rgb(0 0 0 / 0.12); /* solo elementos flotantes */
+
+  /* --- Fonts --- */
+  --font-sans: "DM Sans", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  /* --- Escala tipográfica --- */
+  --text-sm: 0.9rem;
+  --text-base: 1.0625rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.5rem;
+  --text-2xl: clamp(1.75rem, 1.4rem + 1.5vw, 2.25rem);
+  --text-3xl: clamp(2.1rem, 1.6rem + 2.4vw, 3rem);
+  --leading-body: 1.65;
+  --leading-heading: 1.2;
+  --measure: 68ch;
+
+  /* --- Espaciado (base 4 px) --- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4.5rem;
+
+  /* --- Forma --- */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 14px;
+
+  /* --- Movimiento --- */
+  --dur-1: 120ms; /* microinteracciones: hover, foco, pulsado */
+  --dur-2: 200ms; /* cambios de estado: abrir/cerrar, copiar, cambio de tema */
+  --dur-3: 320ms; /* un momento orquestado: entrada de página */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* ──────────────── Dark mode ──────────────── */
+
+/* Preferencia del sistema, salvo que el usuario haya forzado el tema claro */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-bg: #111110;
+    --color-surface: #1c1c1a;
+    --color-border: #2d2d2a;
+    --color-off: #3d3d38;
+    --color-border-strong: #7a7a74;
+
+    --color-text: #ececea;
+    --color-muted: #878680;
+
+    --color-accent: #ff3d14;
+    --color-dev: #60a5fa;
+    --color-design: #fbbf24;
+    --color-cta: #34d399;
+    --color-on-accent: #111110; /* el blanco no llega a 4.5:1 sobre el bermellón brillante */
+
+    --color-muted-text: var(--color-muted);
+    --color-accent-text: var(--color-accent);
+    --color-dev-text: var(--color-dev);
+    --color-design-text: var(--color-design);
+    --color-cta-text: var(--color-cta);
+
+    --scrollbar-bg: #0a0a09;
+    --shadow-pop: 0 6px 24px rgb(0 0 0 / 0.5);
+  }
+}
+
+/* Elección explícita del usuario (mismo selector que el portfolio) */
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --color-bg: #111110;
+  --color-surface: #1c1c1a;
+  --color-border: #2d2d2a;
+  --color-off: #3d3d38;
+  --color-border-strong: #7a7a74;
+
+  --color-text: #ececea;
+  --color-muted: #878680;
+
+  --color-accent: #ff3d14;
+  --color-dev: #60a5fa;
+  --color-design: #fbbf24;
+  --color-cta: #34d399;
+  --color-on-accent: #111110;
+
+  --color-muted-text: var(--color-muted);
+  --color-accent-text: var(--color-accent);
+  --color-dev-text: var(--color-dev);
+  --color-design-text: var(--color-design);
+  --color-cta-text: var(--color-cta);
+
+  --scrollbar-bg: #0a0a09;
+  --shadow-pop: 0 6px 24px rgb(0 0 0 / 0.5);
+}
+[data-theme="light"] {
+  color-scheme: light;
+}
+
+/* ──────────────── Base de lectura ──────────────── */
+
+html {
+  scroll-padding-top: var(--space-8);
+} /* anclas y foco no quedan bajo la cabecera fija (WCAG 2.4.11) */
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font: var(--text-base) / var(--leading-body) var(--font-sans);
+  text-rendering: optimizeLegibility;
+}
+.prose {
+  max-width: var(--measure);
+}
+h1,
+h2,
+h3,
+h4 {
+  line-height: var(--leading-heading);
+  text-wrap: balance;
+}
+a {
+  color: var(--color-accent-text);
+  text-underline-offset: 0.2em;
+} /* enlaces en texto siempre subrayados */
+code,
+kbd,
+pre {
+  font-family: var(--font-mono);
+  font-variant-ligatures: none;
+}
+.text-muted {
+  color: var(--color-muted-text);
+}
+
+/* ---- Foco visible, nunca eliminado ---- */
+:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* ---- Utilidades de accesibilidad ---- */
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+.skip-link {
+  position: absolute;
+  left: var(--space-3);
+  top: -4rem;
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-md);
+  transition: top var(--dur-1) var(--ease-out);
+}
+.skip-link:focus {
+  top: var(--space-3);
+}
+
+/* Objetivos clicables ≥ 24×24 px (WCAG 2.5.8); 44 px recomendado en táctil */
+button,
+[role="button"],
+summary {
+  min-height: 2.75rem;
+  min-width: 2.75rem;
+}
+
+/* ---- Movimiento reducido: red de seguridad global ---- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

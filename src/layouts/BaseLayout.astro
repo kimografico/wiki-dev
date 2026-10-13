@@ -1,0 +1,115 @@
+---
+// Plantilla base (Patrón 5): estructura común, cabecera, pie y metadatos.
+import "../styles/global.css";
+import InterruptorTema from "../features/preferencias/InterruptorTema.tsx";
+
+interface Props {
+  titulo: string;
+  descripcion?: string;
+}
+
+const { titulo, descripcion = "Wiki de consulta para programadores junior." } =
+  Astro.props;
+
+const base = import.meta.env.BASE_URL;
+const enlaces = [
+  { href: `${base}glosario`, texto: "Glosario" },
+  { href: `${base}tecnologias`, texto: "Tecnologías" },
+  { href: `${base}paquetes`, texto: "Paquetes" },
+];
+const rutaActual = Astro.url.pathname;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{titulo} · wiki-dev</title>
+    <meta name="description" content={descripcion} />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="icon" type="image/svg+xml" href={`${base}favicon.svg`} />
+    <link rel="icon" href={`${base}favicon.ico`} />
+    <meta name="color-scheme" content="light dark" />
+    <meta
+      name="theme-color"
+      content="#f4f4f2"
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content="#111110"
+      media="(prefers-color-scheme: dark)"
+    />
+
+    <!--
+      ASTRO: `is:inline` deja el script tal cual y bloqueante en <head>, de modo
+        que el tema se aplica antes del primer pintado (si no, habría un destello).
+      REACT+VITE: sería un <script> clásico en index.html, antes del bundle.
+      RF-13: usa `wiki:tema` (light | dark) o, si no hay, la preferencia del sistema.
+    -->
+    <script is:inline>
+      (() => {
+        try {
+          const guardado = localStorage.getItem("wiki:tema");
+          const tema =
+            guardado === "light" || guardado === "dark"
+              ? guardado
+              : matchMedia("(prefers-color-scheme: dark)").matches
+                ? "dark"
+                : "light";
+          document.documentElement.dataset.theme = tema;
+        } catch {
+          /* localStorage no disponible: manda el CSS del sistema */
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#contenido">
+      Saltar al contenido
+    </a>
+
+    <header class="site-header">
+      <div class="contenedor flex items-center justify-between gap-4 py-3">
+        <a href={base} class="font-semibold no-underline">
+          wiki-dev
+        </a>
+        <nav aria-label="Secciones">
+          <ul class="flex flex-wrap items-center gap-4 text-sm">
+            {enlaces.map(({ href, texto }) => (
+              <li>
+                <a
+                  href={href}
+                  class:list={[
+                    "no-underline",
+                    rutaActual.startsWith(href) && "font-semibold",
+                  ]}
+                  aria-current={
+                    rutaActual.startsWith(href) ? "page" : undefined
+                  }
+                >
+                  {texto}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+        <!-- ISLA: el interruptor de tema se hidrata en el cliente (RF-13). -->
+        <InterruptorTema client:load />
+      </div>
+    </header>
+
+    <main id="contenido" class="contenedor py-6">
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="contenedor py-6 text-sm">
+        <p>
+          wiki-dev · proyecto estático. Contenido añadido por código y agentes.
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>
