@@ -357,11 +357,11 @@ src/
   components/                # compartidos: EntradaItem, IconoAprendida, Badge...; stories junto a cada componente
   layouts/ · pages/
   assets/icons/aprendida.svg
-  lib/content/
+  lib/content/               # incluye sus tests colocados *.test.ts
   lib/preferencias/          # aprendidas, filtro y tema: TS puro, sin Astro
   lib/markdown/              # plugin de menciones enlazadas
 scripts/
-  validate-content.ts
+  validate-content.ts        # su test: validate-content.test.ts
 specs/                       # Estos SDD y design-pattern.md
   plantillas/                # una por tipo de entrada, usadas por anadir-entrada
 README.md
@@ -372,6 +372,8 @@ README.md
 .opencode/
   agent/ · skills/
 ```
+
+**Tests:** van **colocados** junto al módulo que prueban, con extensión `.test.ts` (`src/**/*.test.ts`, `scripts/**/*.test.ts`); no hay una carpeta `tests/` aparte. La cobertura mínima del 90 % (RNF-10) se mide sobre `src/lib/**` y `scripts/**`. Los escribe `wiki-dev` a petición del autor (skill `escribir-tests`, §11).
 
 ## 14. README del proyecto
 

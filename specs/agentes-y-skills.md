@@ -172,6 +172,7 @@ No ejecutes tests ni hagas commits.
 | `equivalencia-react` | dev | Escribir comentarios `ASTRO / REACT+VITE` |
 | `evolucionar-esquema` | dev | Cambiar un esquema o enum y migrar las entradas |
 | `actualizar-glosario-readme` | dev | Añadir términos nuevos al glosario del README |
+| `escribir-tests` | dev (autor) | Escribir o ajustar los tests colocados `*.test.ts` y cerrar la cobertura |
 | `ponytail` | dev | Modo perezoso: la implementación más pequeña que cumple la SDD |
 | `ponytail-review` | dev (autor) | Revisar un diff por sobre-ingeniería y calidad |
 | `ponytail-audit` | dev (autor) | Auditoría de sobre-ingeniería de todo el repo |
@@ -195,6 +196,7 @@ Estructura de archivos:
     equivalencia-react/SKILL.md
     evolucionar-esquema/SKILL.md
     actualizar-glosario-readme/SKILL.md
+    escribir-tests/SKILL.md
     ponytail/SKILL.md
     ponytail-review/SKILL.md
     ponytail-audit/SKILL.md
@@ -286,7 +288,13 @@ specs/plantillas/               # editable por wiki-dev; leída por anadir-entra
 - **Objetivo:** mantener el glosario del proyecto en el README.
 - **Pasos:** detectar términos nuevos en el cambio de código → añadir definición breve y "para qué se usa aquí" → mantener orden alfabético y formato.
 
-### 5.10 Ponytail (`ponytail`, `ponytail-review`, `ponytail-audit`, `ponytail-debt`, `ponytail-gain`, `ponytail-help`)
+### 5.10 `escribir-tests`
+- **Objetivo:** cerrar la cobertura de la lógica TypeScript al final de una fase o cambio, **solo a petición del autor** (§11 de `spec.md`).
+- **Ubicación:** tests **colocados** junto al módulo, `*.test.ts` bajo `src/**` y `scripts/**` (lo que impone `vitest.config.ts`); no hay carpeta `tests/` aparte.
+- **Patrones de prueba:** `vi.hoisted` + `vi.mock("astro:content", …)` para la capa de contenido; directorio temporal (`mkdtemp`) para `indice-menciones.ts` y `validate-content.ts`; `indice` construido a mano + árbol mdast para `remark-menciones.ts`; `vi.stubGlobal` para `localStorage`/`matchMedia`/`document` en `tema.ts`.
+- **Salida:** tests verdes y `npm run test:coverage` con cobertura >= 90 % (líneas, funciones, ramas y sentencias) sobre `src/lib/**` y `scripts/**`.
+
+### 5.11 Ponytail (`ponytail`, `ponytail-review`, `ponytail-audit`, `ponytail-debt`, `ponytail-gain`, `ponytail-help`)
 
 Modo "senior perezoso" para el **código** del proyecto. Origen: `DietrichGebert/ponytail` (MIT). En este proyecto se integra **nativo de opencode** (skills en `.opencode/skills/`, invocadas como comandos `/ponytail*` desde `.opencode/commands/`; los detalles de integración, en `ponytail-help`) y se le aplica una guarda para que **nunca obvie la SDD**:
 
