@@ -397,10 +397,12 @@ F3 puede empezar en cuanto F1 deje los esquemas estables.
 ## 16. Decisiones abiertas
 
 1. **Licencia** del código y del contenido, necesaria para «Acerca de».
-2. **Nombre del repositorio**, que determina la URL de GitHub Pages y el valor de `base`.
-3. **Catálogo inicial de etiquetas** (§7.5): ¿falta alguna o sobra alguna?
+2. **Catálogo inicial de etiquetas** (§7.5): ¿falta alguna o sobra alguna?
 
-**Resuelta:** `ponytail` (DietrichGebert/ponytail, MIT) adoptado como modo perezoso para el código de `wiki-dev`, integrado nativo de opencode (skills en `.opencode/skills/`, sin plugin) y con la guarda «la SDD manda» para que no cuestione requisitos especificados. Ver `agentes-y-skills.md` §5.10.
+**Resueltas:**
+
+- **Nombre del repositorio:** `kimografico/wiki-dev` → sitio en <https://kimografico.github.io/wiki-dev/>. En `astro.config.mjs`: `site: "https://kimografico.github.io"` y `base: "/wiki-dev/"`.
+- `ponytail` (DietrichGebert/ponytail, MIT) adoptado como modo perezoso para el código de `wiki-dev`, integrado nativo de opencode (skills en `.opencode/skills/`, sin plugin) y con la guarda «la SDD manda» para que no cuestione requisitos especificados. Ver `agentes-y-skills.md` §5.10.
 
 ## 17. Riesgos
 

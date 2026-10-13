@@ -1,0 +1,5 @@
+npx lint-staged
+
+# Validación rápida de contenido (RF-10). El script `validate` llega en F1;
+# `--if-present` lo ejecuta en cuanto exista sin romper commits anteriores.
+npm run --if-present validate

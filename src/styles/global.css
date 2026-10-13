@@ -1,0 +1,6 @@
+@import "tailwindcss";
+
+/*
+ * Los tokens de tema (claro/oscuro) y la variante por `data-theme` se definen
+ * en F1 (RF-13). Hasta entonces, Tailwind funciona con sus valores por defecto.
+ */

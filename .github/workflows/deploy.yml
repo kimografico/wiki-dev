@@ -1,0 +1,46 @@
+name: Deploy to GitHub Pages
+
+on:
+  # Se despliega al hacer push a la rama principal.
+  push:
+    branches: [main]
+  # Permite lanzarlo a mano desde la pestaña Actions.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Un despliegue a la vez; no cancela el que esté en curso.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      # withastro/action detecta npm por package-lock.json, instala, construye y
+      # sube el artefacto de Pages. Usa Node 24 por defecto.
+      # F2: indexar con Pagefind añadiendo:
+      #   with:
+      #     build-cmd: npm run build && npx pagefind --site dist
+      - name: Instalar, construir y subir
+        uses: withastro/action@v6
+
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Desplegar en GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5

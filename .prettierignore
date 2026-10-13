@@ -1,0 +1,15 @@
+# Salidas y dependencias
+dist/
+.astro/
+node_modules/
+coverage/
+package-lock.json
+
+# Documentos y contenido con formato propio (no los reformatea Prettier)
+specs/
+.opencode/
+content/
+
+# Archivos de sistema (los edita el autor)
+.github/
+.husky/
