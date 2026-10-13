@@ -1,0 +1,160 @@
+---
+/**
+ * FlipText.astro — port a Astro del <FlipText> de Vengeance UI.
+ * Sin JS en cliente: el texto se divide en el servidor y la animación es CSS puro.
+ *
+ * Uso:
+ *   <FlipText class="text-4xl font-bold">Your amazing text here</FlipText>
+ *   <FlipText duration={1.6} loop={false} together>Todo a la vez</FlipText>
+ *   <FlipText turn={0.15}>Giro corto, pausa larga</FlipText>
+ */
+interface Props {
+  class?: string;
+  /** Duración de un ciclo completo (giro + pausa) en segundos */
+  duration?: number;
+  /** Retraso inicial en segundos */
+  delay?: number;
+  /** Bucle infinito */
+  loop?: boolean;
+  /** Separador entre palabras (por defecto, un espacio) */
+  separator?: string;
+  /** Todos los caracteres a la vez, sin escalonado */
+  together?: boolean;
+  /** Fracción del ciclo (0–1) que dura el giro; el resto es pausa. Bájalo para alargar la pausa (p. ej. 0.15) */
+  turn?: number;
+}
+
+const {
+  class: className,
+  duration = 10,
+  delay = 0,
+  loop = true,
+  separator = " ",
+  together = false,
+  turn = 0.1,
+} = Astro.props;
+
+const text = (await Astro.slots.render("default")).trim();
+const words = text.split(separator);
+const totalChars = text.length;
+
+// Misma lógica de stagger que el original: curva senoidal sobre el índice global
+let offset = 0;
+const wordData = words.map((word) => {
+  const chars = [...word].map((char, i) => {
+    const globalIndex = offset + i;
+    const d = together
+      ? delay
+      : Math.sin((globalIndex / totalChars) * (Math.PI / 2)) *
+          (duration * 0.25) +
+        delay;
+    return { char, delay: d };
+  });
+  offset += word.length + separator.length;
+  return chars;
+});
+---
+
+<span
+  class:list={["flip-text-wrapper", className]}
+  aria-label={text}
+  style={`--flip-duration:${duration}s;--flip-iteration:${loop ? "infinite" : "1"};--flip-turn:${turn}`}
+>
+  {wordData.map((chars, wi) => (
+    <span class="word" aria-hidden="true">
+      {chars.map(({ char, delay }) => (
+        <span
+          class="flip-char"
+          data-char={char}
+          style={`--flip-delay:${delay}s`}
+        >
+          <span class="face">{char}</span>
+        </span>
+      ))}
+      {wi < wordData.length - 1 && <span class="separator">{separator}</span>}
+    </span>
+  ))}
+</span>
+
+<style is:global>
+  /* Progreso lineal del ciclo: va de 0 a 1/turn. Está registrada para poder
+     animarla; de ella se deriva --flip-p (suavizado y con tope en 1), de modo
+     que el giro sólo ocupa la fracción --flip-turn del ciclo y el resto es
+     pausa. Así se alarga la pausa sin tocar los keyframes. */
+  @property --flip-progress {
+    syntax: "<number>";
+    inherits: true;
+    initial-value: 0;
+  }
+
+  .flip-text-wrapper {
+    display: inline-block;
+    line-height: 1; /* importante: la cara oculta mide exactamente 1em */
+    perspective: 1000px;
+    /* Valor final del progreso para que el giro acabe en --flip-turn del ciclo */
+    --flip-end: calc(1 / var(--flip-turn));
+  }
+
+  .flip-text-wrapper .word {
+    display: inline-block;
+    white-space: nowrap;
+    transform-style: preserve-3d;
+  }
+
+  .flip-text-wrapper .separator {
+    display: inline-block;
+    white-space: pre;
+  }
+
+  .flip-text-wrapper .flip-char {
+    /* n = progreso normalizado del giro (0 → 1, con tope en 1) */
+    --flip-n: min(1, var(--flip-progress));
+    /* suavizado tipo ease-in-out: (3 − 2n)·n² */
+    --flip-p: calc((3 - 2 * var(--flip-n)) * var(--flip-n) * var(--flip-n));
+    display: inline-block;
+    position: relative;
+    white-space: pre;
+    transform-style: preserve-3d;
+    transform-origin: 50% 50% -0.5em; /* eje en el centro de un cubo de 1em */
+    transform: rotateX(calc(var(--flip-p) * 90deg));
+    animation: flip-roll var(--flip-duration) linear var(--flip-delay)
+      var(--flip-iteration) both;
+  }
+
+  /* Cara frontal: se desvanece antes de quedar de canto (p ≈ 0.83 → opacidad 0) */
+  .flip-text-wrapper .face {
+    display: inline-block;
+    backface-visibility: hidden;
+    opacity: calc(1 - var(--flip-p) * 1.2);
+  }
+
+  /* Cara inferior del cubo: invisible hasta que ya está bastante girada */
+  .flip-text-wrapper .flip-char::after {
+    content: attr(data-char);
+    position: absolute;
+    left: 0;
+    top: 100%;
+    transform-origin: top;
+    transform: rotateX(-90deg);
+    backface-visibility: hidden;
+    opacity: calc(var(--flip-p) * 1.2 - 0.2);
+  }
+
+  /* El progreso sube en línea hasta 1/turn (el giro); el resto del ciclo queda
+     por encima de 1 y --flip-p lo recorta con min(1, …). Al reiniciar, la cara
+     inferior es idéntica a la frontal, así que el salto no se nota. */
+  @keyframes flip-roll {
+    from {
+      --flip-progress: 0;
+    }
+    to {
+      --flip-progress: var(--flip-end);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .flip-text-wrapper .flip-char {
+      animation: none;
+    }
+  }
+</style>
