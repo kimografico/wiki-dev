@@ -42,20 +42,33 @@ const colorColeccion =
 <BaseLayout titulo={titulo} descripcion={resumen}>
   <div class="max-w-4xl mx-auto">
     <!-- Migas de pan (Breadcrumbs) -->
-    <nav aria-label="Ruta de navegación" class="text-xs sm:text-sm text-[var(--color-muted-text)] mb-6">
+    <nav
+      aria-label="Ruta de navegación"
+      class="text-xs sm:text-sm text-[var(--color-muted-text)] mb-6"
+    >
       <ol class="flex flex-wrap items-center gap-1.5 list-none p-0 m-0">
         <li>
-          <a href={base} class="no-underline text-[var(--color-muted-text)] hover:text-[var(--color-text)] transition-colors">
+          <a
+            href={base}
+            class="no-underline text-[var(--color-muted-text)] hover:text-[var(--color-text)] transition-colors"
+          >
             Inicio
           </a>
         </li>
-        <li aria-hidden="true" class="text-[var(--color-border-strong)]">/</li>
+        <li aria-hidden="true" class="text-[var(--color-border-strong)]">
+          /
+        </li>
         <li>
-          <a href={urlColeccion} class="no-underline text-[var(--color-muted-text)] hover:text-[var(--color-text)] transition-colors">
+          <a
+            href={urlColeccion}
+            class="no-underline text-[var(--color-muted-text)] hover:text-[var(--color-text)] transition-colors"
+          >
             {nombreColeccion}
           </a>
         </li>
-        <li aria-hidden="true" class="text-[var(--color-border-strong)]">/</li>
+        <li aria-hidden="true" class="text-[var(--color-border-strong)]">
+          /
+        </li>
         <li aria-current="page" class="font-medium text-[var(--color-text)]">
           {titulo}
         </li>
@@ -65,7 +78,9 @@ const colorColeccion =
     <!-- Cabecera de la ficha sin recuadro exterior -->
     <header class="pb-6 mb-8 border-b border-[var(--color-border)]">
       <div class="flex items-center gap-2 mb-3">
-        <span class={`font-mono text-xs uppercase tracking-wider font-bold ${colorColeccion}`}>
+        <span
+          class={`font-mono text-xs uppercase tracking-wider font-bold ${colorColeccion}`}
+        >
           {nombreColeccion}
         </span>
         <span class="text-[var(--color-border-strong)]">·</span>

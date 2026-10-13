@@ -15,7 +15,10 @@ const base = import.meta.env.BASE_URL;
 {backlinks.length > 0 && (
   <section aria-labelledby="mencionado-en" class="space-y-3">
     <div class="flex items-center gap-2 pb-2 border-b border-[var(--color-border)]">
-      <h2 id="mencionado-en" class="text-xs font-mono font-bold uppercase tracking-wider text-[var(--color-muted-text)] m-0">
+      <h2
+        id="mencionado-en"
+        class="text-xs font-mono font-bold uppercase tracking-wider text-[var(--color-muted-text)] m-0"
+      >
         Mencionado en
       </h2>
       <span class="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-[var(--color-bg)] text-[var(--color-muted-text)] border border-[var(--color-border)]">
@@ -36,7 +39,9 @@ const base = import.meta.env.BASE_URL;
               <span class="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded bg-[var(--color-bg)] border border-[var(--color-border)] text-[var(--color-muted-text)] shrink-0 font-medium">
                 {tag}
               </span>
-              <span class="font-medium group-hover:underline">{item.titulo}</span>
+              <span class="font-medium group-hover:underline">
+                {item.titulo}
+              </span>
             </a>
           </li>
         );

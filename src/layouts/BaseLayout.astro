@@ -82,16 +82,24 @@ const rutaActual = Astro.url.pathname;
     <header class="site-header backdrop-blur-md bg-[var(--color-surface)]/90 border-b border-[var(--color-border)] sticky top-0 z-30 transition-colors">
       <div class="contenedor flex items-center justify-between gap-8 py-3.5">
         <!-- Zone 1: Wordmark -->
-        <a href={base} class="flex items-center gap-1.5 font-bold tracking-tight text-lg no-underline text-[var(--color-text)] hover:opacity-90 shrink-0 group">
+        <a
+          href={base}
+          class="flex items-center gap-1.5 font-bold tracking-tight text-lg no-underline text-[var(--color-text)] hover:opacity-90 shrink-0 group"
+        >
           <span class="w-2.5 h-2.5 rounded-full bg-[var(--color-accent)] inline-block transition-transform group-hover:scale-125"></span>
-          <span>wiki<span class="text-[var(--color-accent)]">·</span>dev</span>
+          <span>
+            wiki<span class="text-[var(--color-accent)]">·</span>dev
+          </span>
           <span class="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-[var(--color-bg)] border border-[var(--color-border)] text-[var(--color-muted-text)] ml-1">
             v0.4
           </span>
         </a>
 
         <!-- Zone 2: Navigation links -->
-        <nav aria-label="Secciones principales" class="hidden sm:flex items-center gap-1 text-sm font-medium">
+        <nav
+          aria-label="Secciones principales"
+          class="hidden sm:flex items-center gap-1 text-sm font-medium"
+        >
           {enlaces.map(({ href, texto }) => {
             const activo = rutaActual.startsWith(href);
             return (
@@ -112,7 +120,10 @@ const rutaActual = Astro.url.pathname;
 
         <!-- Zone 3: Primary Control (Interruptor Tema) -->
         <div class="flex items-center gap-3 shrink-0">
-          <nav aria-label="Navegación móvil" class="flex sm:hidden items-center gap-2 text-xs">
+          <nav
+            aria-label="Navegación móvil"
+            class="flex sm:hidden items-center gap-2 text-xs"
+          >
             {enlaces.map(({ href, texto }) => (
               <a
                 href={href}
@@ -140,14 +151,31 @@ const rutaActual = Astro.url.pathname;
       <div class="contenedor py-8 text-sm flex flex-col md:flex-row items-center justify-between gap-4">
         <div class="flex items-center gap-2 text-[var(--color-muted-text)]">
           <span class="w-2 h-2 rounded-full bg-[var(--color-accent)] inline-block"></span>
-          <span>wiki-dev · Base de conocimiento estática para programadores junior.</span>
+          <span>
+            wiki-dev · Base de conocimiento estática para programadores junior.
+          </span>
         </div>
         <div class="flex items-center gap-4 text-xs text-[var(--color-muted-text)]">
-          <a href={`${base}glosario`} class="no-underline hover:text-[var(--color-text)]">Glosario</a>
+          <a
+            href={`${base}glosario`}
+            class="no-underline hover:text-[var(--color-text)]"
+          >
+            Glosario
+          </a>
           <span>·</span>
-          <a href={`${base}tecnologias`} class="no-underline hover:text-[var(--color-text)]">Tecnologías</a>
+          <a
+            href={`${base}tecnologias`}
+            class="no-underline hover:text-[var(--color-text)]"
+          >
+            Tecnologías
+          </a>
           <span>·</span>
-          <a href={`${base}paquetes`} class="no-underline hover:text-[var(--color-text)]">Paquetes</a>
+          <a
+            href={`${base}paquetes`}
+            class="no-underline hover:text-[var(--color-text)]"
+          >
+            Paquetes
+          </a>
         </div>
       </div>
     </footer>

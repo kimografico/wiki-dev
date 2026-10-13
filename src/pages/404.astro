@@ -5,9 +5,24 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 const base = import.meta.env.BASE_URL;
 
 const enlaces = [
-  { href: `${base}glosario`, texto: "Glosario", desc: "Términos y conceptos", icono: "Aa" },
-  { href: `${base}tecnologias`, texto: "Tecnologías", desc: "Lenguajes y frameworks", icono: "</>" },
-  { href: `${base}paquetes`, texto: "Paquetes", desc: "Librerías y dependencias", icono: "{ }" },
+  {
+    href: `${base}glosario`,
+    texto: "Glosario",
+    desc: "Términos y conceptos",
+    icono: "Aa",
+  },
+  {
+    href: `${base}tecnologias`,
+    texto: "Tecnologías",
+    desc: "Lenguajes y frameworks",
+    icono: "</>",
+  },
+  {
+    href: `${base}paquetes`,
+    texto: "Paquetes",
+    desc: "Librerías y dependencias",
+    icono: "{ }",
+  },
 ];
 ---
 
@@ -21,7 +36,8 @@ const enlaces = [
       Página no encontrada
     </h1>
     <p class="text-base text-[var(--color-muted-text)] mb-8">
-      Puede que el enlace sea antiguo o que la entrada haya cambiado de nombre. Prueba a explorar desde nuestras colecciones principales:
+      Puede que el enlace sea antiguo o que la entrada haya cambiado de nombre.
+      Prueba a explorar desde nuestras colecciones principales:
     </p>
 
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8">

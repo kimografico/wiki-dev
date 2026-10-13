@@ -6,9 +6,11 @@ import astrobook from "astrobook";
 import { unified } from "@astrojs/markdown-remark";
 import { remarkMenciones } from "./src/lib/markdown/remark-menciones.ts";
 
-// Base URL por defecto en raíz (port 3000), o ASTRO_BASE_URL si está definido.
+// Sitio de proyecto en GitHub Pages: https://kimografico.github.io/wiki-dev/
+// Todo enlace y asset debe construirse con import.meta.env.BASE_URL.
+// ASTRO_BASE_URL permite sobreescribir la base para previsualizaciones locales.
 const site = "https://kimografico.github.io";
-const base = process.env.ASTRO_BASE_URL || "/";
+const base = process.env.ASTRO_BASE_URL || "/wiki-dev/";
 
 // https://astro.build/config
 export default defineConfig({

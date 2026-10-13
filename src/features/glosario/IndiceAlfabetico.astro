@@ -13,9 +13,14 @@ const grupos = await getGlosarioPorLetra();
 ) : (
   <div class="space-y-10">
     <!-- Barra de salto alfabético -->
-    <nav aria-label="Salto por letra" class="p-3 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-xs sticky top-16 z-20 backdrop-blur-md">
+    <nav
+      aria-label="Salto por letra"
+      class="p-3 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-xs sticky top-16 z-20 backdrop-blur-md"
+    >
       <div class="flex items-center gap-2 mb-2 px-1">
-        <span class="text-xs font-mono uppercase text-[var(--color-muted)] font-semibold">Salto por letra:</span>
+        <span class="text-xs font-mono uppercase text-[var(--color-muted)] font-semibold">
+          Salto por letra:
+        </span>
       </div>
       <ul class="flex flex-wrap gap-1.5 list-none p-0 m-0 text-sm">
         {grupos.map((grupo) => (
@@ -40,11 +45,15 @@ const grupos = await getGlosarioPorLetra();
           class="space-y-4 pt-4 scroll-mt-36"
         >
           <div class="flex items-center gap-3 pb-2 border-b border-[var(--color-border)]">
-            <h2 id={`titulo-letra-${grupo.letra}`} class="text-2xl font-extrabold text-[var(--color-accent-text)] m-0 font-mono">
+            <h2
+              id={`titulo-letra-${grupo.letra}`}
+              class="text-2xl font-extrabold text-[var(--color-accent-text)] m-0 font-mono"
+            >
               {grupo.letra}
             </h2>
             <span class="text-xs font-mono px-2 py-0.5 rounded-full bg-[var(--color-bg)] text-[var(--color-muted-text)] border border-[var(--color-border)]/60">
-              {grupo.entradas.length} {grupo.entradas.length === 1 ? "término" : "términos"}
+              {grupo.entradas.length}{" "}
+              {grupo.entradas.length === 1 ? "término" : "términos"}
             </span>
           </div>
           <ListaEntradas entradas={grupo.entradas} />

@@ -12,14 +12,22 @@ const base = import.meta.env.BASE_URL;
   descripcion="Términos y conceptos explicados para programadores junior."
 >
   <div class="space-y-8">
-    <nav aria-label="Ruta de navegación" class="text-xs sm:text-sm text-[var(--color-muted-text)]">
+    <nav
+      aria-label="Ruta de navegación"
+      class="text-xs sm:text-sm text-[var(--color-muted-text)]"
+    >
       <ol class="flex items-center gap-1.5 list-none p-0 m-0">
         <li>
-          <a href={base} class="no-underline text-[var(--color-muted-text)] hover:text-[var(--color-text)] transition-colors">
+          <a
+            href={base}
+            class="no-underline text-[var(--color-muted-text)] hover:text-[var(--color-text)] transition-colors"
+          >
             Inicio
           </a>
         </li>
-        <li aria-hidden="true" class="text-[var(--color-border-strong)]">/</li>
+        <li aria-hidden="true" class="text-[var(--color-border-strong)]">
+          /
+        </li>
         <li aria-current="page" class="font-medium text-[var(--color-text)]">
           Glosario
         </li>
@@ -39,7 +47,8 @@ const base = import.meta.env.BASE_URL;
             Glosario de Desarrollo Web
           </h1>
           <p class="text-base text-[var(--color-muted-text)] m-0 max-w-2xl">
-            Definiciones precisas con explicación, ejemplos ejecutables, trampas comunes y relaciones conceptuales.
+            Definiciones precisas con explicación, ejemplos ejecutables, trampas
+            comunes y relaciones conceptuales.
           </p>
         </div>
 
@@ -47,7 +56,9 @@ const base = import.meta.env.BASE_URL;
           <span class="text-2xl sm:text-3xl font-extrabold font-mono text-[var(--color-text)] block">
             {terminos.length}
           </span>
-          <span class="text-xs text-[var(--color-muted)] font-mono">términos definidos</span>
+          <span class="text-xs text-[var(--color-muted)] font-mono">
+            términos definidos
+          </span>
         </div>
       </div>
     </header>

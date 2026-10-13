@@ -18,7 +18,8 @@ export default function BuscadorRapido({ entradas }: Props) {
   const [consulta, setConsulta] = useState("");
   const [filtroColeccion, setFiltroColeccion] = useState<string>("todas");
   const inputRef = useRef<HTMLInputElement>(null);
-  const panelAbierto = consulta.trim().length > 0 || filtroColeccion !== "todas";
+  const panelAbierto =
+    consulta.trim().length > 0 || filtroColeccion !== "todas";
 
   // Atajo de teclado: presionar "/" enfoca el buscador
   useEffect(() => {
@@ -145,7 +146,9 @@ export default function BuscadorRapido({ entradas }: Props) {
 
         {/* Filtros de colección */}
         <div className="flex flex-wrap items-center gap-2 mt-3 text-xs">
-          <span className="text-[var(--color-muted)] font-medium">Filtrar por:</span>
+          <span className="text-[var(--color-muted)] font-medium">
+            Filtrar por:
+          </span>
           {colecciones.map((col) => {
             const activo = filtroColeccion === col.clave;
             return (
@@ -153,7 +156,9 @@ export default function BuscadorRapido({ entradas }: Props) {
                 key={col.clave}
                 type="button"
                 onClick={() => {
-                  setFiltroColeccion(activo && col.clave !== "todas" ? "todas" : col.clave);
+                  setFiltroColeccion(
+                    activo && col.clave !== "todas" ? "todas" : col.clave,
+                  );
                 }}
                 className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border transition-all cursor-pointer font-medium ${
                   activo
@@ -224,7 +229,8 @@ export default function BuscadorRapido({ entradas }: Props) {
                       </span>
                       <span
                         className={`text-[10px] uppercase font-mono font-bold tracking-wider px-1.5 py-0.5 rounded bg-[var(--color-surface)] border border-[var(--color-border)] shrink-0 ${
-                          coleccionColor[item.coleccion] || "text-[var(--color-muted)]"
+                          coleccionColor[item.coleccion] ||
+                          "text-[var(--color-muted)]"
                         }`}
                       >
                         {item.coleccion}

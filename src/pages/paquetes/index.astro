@@ -22,7 +22,9 @@ const ordenTags = ["frontend", "tests", "terminal", "rendimiento"];
 const gruposMap = new Map<string, Entrada[]>();
 for (const pkg of paquetes) {
   // Elegir tag prioritario según el orden definido, o fallback
-  const tagElegido = ordenTags.find((t) => (pkg.tags as readonly string[]).includes(t)) || "frontend";
+  const tagElegido =
+    ordenTags.find((t) => (pkg.tags as readonly string[]).includes(t)) ||
+    "frontend";
   if (!gruposMap.has(tagElegido)) {
     gruposMap.set(tagElegido, []);
   }
@@ -34,7 +36,9 @@ const grupos = ordenTags
   .map((tag) => ({
     tag,
     titulo: nombresTags[tag] || tag,
-    entradas: gruposMap.get(tag)!.sort((a, b) => a.titulo.localeCompare(b.titulo, "es")),
+    entradas: gruposMap
+      .get(tag)!
+      .sort((a, b) => a.titulo.localeCompare(b.titulo, "es")),
   }));
 ---
 
@@ -43,14 +47,22 @@ const grupos = ordenTags
   descripcion="Fichas de paquetes y dependencias de un ecosistema."
 >
   <div class="space-y-8">
-    <nav aria-label="Ruta de navegación" class="text-xs sm:text-sm text-[var(--color-muted-text)]">
+    <nav
+      aria-label="Ruta de navegación"
+      class="text-xs sm:text-sm text-[var(--color-muted-text)]"
+    >
       <ol class="flex items-center gap-1.5 list-none p-0 m-0">
         <li>
-          <a href={base} class="no-underline text-[var(--color-muted-text)] hover:text-[var(--color-text)] transition-colors">
+          <a
+            href={base}
+            class="no-underline text-[var(--color-muted-text)] hover:text-[var(--color-text)] transition-colors"
+          >
             Inicio
           </a>
         </li>
-        <li aria-hidden="true" class="text-[var(--color-border-strong)]">/</li>
+        <li aria-hidden="true" class="text-[var(--color-border-strong)]">
+          /
+        </li>
         <li aria-current="page" class="font-medium text-[var(--color-text)]">
           Paquetes
         </li>
@@ -70,7 +82,8 @@ const grupos = ordenTags
             Paquetes y Herramientas CLI
           </h1>
           <p class="text-base text-[var(--color-muted-text)] m-0 max-w-2xl">
-            Dependencias y herramientas de línea de comandos: qué son, para qué sirven, cuándo usarlas y ejemplos de instalación.
+            Dependencias y herramientas de línea de comandos: qué son, para qué
+            sirven, cuándo usarlas y ejemplos de instalación.
           </p>
         </div>
 
@@ -78,7 +91,9 @@ const grupos = ordenTags
           <span class="text-2xl sm:text-3xl font-extrabold font-mono text-[var(--color-text)] block">
             {paquetes.length}
           </span>
-          <span class="text-xs text-[var(--color-muted)] font-mono">paquetes</span>
+          <span class="text-xs text-[var(--color-muted)] font-mono">
+            paquetes
+          </span>
         </div>
       </div>
     </header>
@@ -88,7 +103,10 @@ const grupos = ordenTags
       {grupos.map((grupo) => (
         <section aria-labelledby={`subseccion-${grupo.tag}`} class="space-y-4">
           <div class="flex items-center gap-3 pb-2 border-b border-[var(--color-border)]">
-            <h2 id={`subseccion-${grupo.tag}`} class="text-xl sm:text-2xl font-bold tracking-tight text-[var(--color-text)] m-0">
+            <h2
+              id={`subseccion-${grupo.tag}`}
+              class="text-xl sm:text-2xl font-bold tracking-tight text-[var(--color-text)] m-0"
+            >
               {grupo.titulo}
             </h2>
             <span class="text-xs font-mono px-2 py-0.5 rounded-full bg-[var(--color-bg)] text-[var(--color-muted-text)] border border-[var(--color-border)]/60">

@@ -8,7 +8,10 @@ interface Props {
 const { tipo = "tag" } = Astro.props;
 ---
 
-<span class="badge inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium border transition-colors" data-tipo={tipo}>
+<span
+  class="badge inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium border transition-colors"
+  data-tipo={tipo}
+>
   {tipo === "tag" && <span class="text-[var(--color-muted)] font-mono">#</span>}
   <slot />
 </span>

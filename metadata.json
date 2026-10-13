@@ -1,6 +1,0 @@
-{
-  "name": "Wiki Dev",
-  "description": "Wiki de consulta para programadores junior: glosario, tecnologías y paquetes.",
-  "permissions": [],
-  "capabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}

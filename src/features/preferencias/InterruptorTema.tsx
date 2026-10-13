@@ -57,7 +57,9 @@ export default function InterruptorTema() {
           />
         </svg>
       )}
-      <span className="text-xs font-medium">{esOscuro ? "Oscuro" : "Claro"}</span>
+      <span className="text-xs font-medium">
+        {esOscuro ? "Oscuro" : "Claro"}
+      </span>
       <span className="visually-hidden">Pulsa para cambiar el tema</span>
     </button>
   );

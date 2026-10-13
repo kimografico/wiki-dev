@@ -37,7 +37,9 @@ const grupos = Array.from(gruposMap.entries())
   })
   .map(([categoria, entradas]) => ({
     categoria,
-    titulo: nombresCategorias[categoria] || categoria.charAt(0).toUpperCase() + categoria.slice(1),
+    titulo:
+      nombresCategorias[categoria] ||
+      categoria.charAt(0).toUpperCase() + categoria.slice(1),
     entradas: entradas.sort((a, b) => a.titulo.localeCompare(b.titulo, "es")),
   }));
 ---
@@ -47,14 +49,22 @@ const grupos = Array.from(gruposMap.entries())
   descripcion="Fichas de lenguajes, frameworks, plataformas y servicios."
 >
   <div class="space-y-8">
-    <nav aria-label="Ruta de navegación" class="text-xs sm:text-sm text-[var(--color-muted-text)]">
+    <nav
+      aria-label="Ruta de navegación"
+      class="text-xs sm:text-sm text-[var(--color-muted-text)]"
+    >
       <ol class="flex items-center gap-1.5 list-none p-0 m-0">
         <li>
-          <a href={base} class="no-underline text-[var(--color-muted-text)] hover:text-[var(--color-text)] transition-colors">
+          <a
+            href={base}
+            class="no-underline text-[var(--color-muted-text)] hover:text-[var(--color-text)] transition-colors"
+          >
             Inicio
           </a>
         </li>
-        <li aria-hidden="true" class="text-[var(--color-border-strong)]">/</li>
+        <li aria-hidden="true" class="text-[var(--color-border-strong)]">
+          /
+        </li>
         <li aria-current="page" class="font-medium text-[var(--color-text)]">
           Tecnologías
         </li>
@@ -74,7 +84,8 @@ const grupos = Array.from(gruposMap.entries())
             Tecnologías y Frameworks
           </h1>
           <p class="text-base text-[var(--color-muted-text)] m-0 max-w-2xl">
-            Lenguajes, frameworks de aplicación, plataformas y servicios: qué son, para qué sirven, cuándo usarlos y comparativas.
+            Lenguajes, frameworks de aplicación, plataformas y servicios: qué
+            son, para qué sirven, cuándo usarlos y comparativas.
           </p>
         </div>
 
@@ -82,7 +93,9 @@ const grupos = Array.from(gruposMap.entries())
           <span class="text-2xl sm:text-3xl font-extrabold font-mono text-[var(--color-text)] block">
             {tecnologias.length}
           </span>
-          <span class="text-xs text-[var(--color-muted)] font-mono">tecnologías</span>
+          <span class="text-xs text-[var(--color-muted)] font-mono">
+            tecnologías
+          </span>
         </div>
       </div>
     </header>
@@ -90,9 +103,15 @@ const grupos = Array.from(gruposMap.entries())
     <!-- Subsecciones agrupadas por tag/categoría separadas por un título -->
     <div class="space-y-12">
       {grupos.map((grupo) => (
-        <section aria-labelledby={`subseccion-${grupo.categoria}`} class="space-y-4">
+        <section
+          aria-labelledby={`subseccion-${grupo.categoria}`}
+          class="space-y-4"
+        >
           <div class="flex items-center gap-3 pb-2 border-b border-[var(--color-border)]">
-            <h2 id={`subseccion-${grupo.categoria}`} class="text-xl sm:text-2xl font-bold tracking-tight text-[var(--color-text)] m-0">
+            <h2
+              id={`subseccion-${grupo.categoria}`}
+              class="text-xl sm:text-2xl font-bold tracking-tight text-[var(--color-text)] m-0"
+            >
               {grupo.titulo}
             </h2>
             <span class="text-xs font-mono px-2 py-0.5 rounded-full bg-[var(--color-bg)] text-[var(--color-muted-text)] border border-[var(--color-border)]/60">

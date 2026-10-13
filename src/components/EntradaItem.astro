@@ -27,37 +27,46 @@ const colorColeccion =
     href={href}
     class:list={[
       "flex flex-col justify-between border border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--color-accent)]/80 hover:shadow-xs transition-all no-underline h-full",
-      compacto
-        ? "p-3 rounded-lg"
-        : "p-4 md:p-5 rounded-xl hover:shadow-sm",
+      compacto ? "p-3 rounded-lg" : "p-4 md:p-5 rounded-xl hover:shadow-sm",
     ]}
   >
     <div>
-      <div class:list={[
-        "flex items-center justify-between gap-1 mb-1.5",
-        compacto ? "text-[10px]" : "text-xs mb-2",
-      ]}>
-        <span class={`font-mono uppercase tracking-wider font-semibold ${colorColeccion}`}>
+      <div
+        class:list={[
+          "flex items-center justify-between gap-1 mb-1.5",
+          compacto ? "text-[10px]" : "text-xs mb-2",
+        ]}
+      >
+        <span
+          class={`font-mono uppercase tracking-wider font-semibold ${colorColeccion}`}
+        >
           {entrada.categoria || entrada.coleccion}
         </span>
-        <span class="icono-aprendida text-[10px] px-1 py-0.2 rounded bg-[var(--color-cta)] text-white" aria-hidden="true">
+        <span
+          class="icono-aprendida text-[10px] px-1 py-0.2 rounded bg-[var(--color-cta)] text-white"
+          aria-hidden="true"
+        >
           ✓
         </span>
       </div>
 
-      <h3 class:list={[
-        "entrada-item__titulo font-bold text-[var(--color-text)] group-hover:text-[var(--color-accent-text)] transition-colors m-0",
-        compacto ? "text-xs sm:text-sm line-clamp-1" : "text-base md:text-lg",
-      ]}>
+      <h3
+        class:list={[
+          "entrada-item__titulo font-bold text-[var(--color-text)] group-hover:text-[var(--color-accent-text)] transition-colors m-0",
+          compacto ? "text-xs sm:text-sm line-clamp-1" : "text-base md:text-lg",
+        ]}
+      >
         {entrada.titulo}
       </h3>
 
-      <p class:list={[
-        "entrada-item__resumen text-[var(--color-muted-text)] m-0 leading-relaxed",
-        compacto
-          ? "text-[11px] mt-1 line-clamp-2 leading-snug"
-          : "text-xs md:text-sm mt-2 line-clamp-2",
-      ]}>
+      <p
+        class:list={[
+          "entrada-item__resumen text-[var(--color-muted-text)] m-0 leading-relaxed",
+          compacto
+            ? "text-[11px] mt-1 line-clamp-2 leading-snug"
+            : "text-xs md:text-sm mt-2 line-clamp-2",
+        ]}
+      >
         {entrada.resumen}
       </p>
     </div>
@@ -66,7 +75,9 @@ const colorColeccion =
       <div class="flex flex-wrap items-center gap-1.5 mt-3 pt-3 border-t border-[var(--color-border)]/60 text-[11px] text-[var(--color-muted-text)]">
         {entrada.tags.slice(0, 3).map((tag, idx) => (
           <span>
-            {idx > 0 && <span class="mr-1 text-[var(--color-border-strong)]">·</span>}
+            {idx > 0 && (
+              <span class="mr-1 text-[var(--color-border-strong)]">·</span>
+            )}
             #{tag}
           </span>
         ))}
