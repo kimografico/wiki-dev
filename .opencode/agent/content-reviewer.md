@@ -7,6 +7,9 @@ permission:
     "*": deny
     "npm run validate": allow
   task: deny
+  skill:
+    "ponytail": deny
+    "ponytail-*": deny
   webfetch: deny
   websearch: deny
 ---

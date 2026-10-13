@@ -5,6 +5,9 @@ permission:
   edit: deny
   bash: deny
   task: deny
+  skill:
+    "ponytail": deny
+    "ponytail-*": deny
   webfetch: allow
   websearch: allow
 ---

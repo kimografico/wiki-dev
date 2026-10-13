@@ -377,7 +377,7 @@ README.md
 
 Debe incluir: qué es (y que es estática y se alimenta por código y agentes), cómo ejecutarlo, estructura, flujo "de la duda a la entrada", scripts disponibles, enlaces a `specs/`, y un **glosario del proyecto** con el mismo formato que las entradas de la wiki (definición breve + para qué se usa aquí).
 
-**Términos semilla:** Astro, React, Vite, TypeScript, Tailwind, Zod, Markdown, frontmatter, content collection, slug, SSG, hidratación, isla, directiva `client:*`, Pagefind, unified, remark, Mermaid, Astrobook, Lighthouse, lint, ESLint, Prettier, Vitest, cobertura, Husky, hook de git, CI, GitHub Pages, localStorage, SDD, agente, skill, opencode, repository (patrón), facade.
+**Términos semilla:** Astro, React, Vite, TypeScript, Tailwind, Zod, Markdown, frontmatter, content collection, slug, SSG, hidratación, isla, directiva `client:*`, Pagefind, unified, remark, Mermaid, Astrobook, Lighthouse, lint, ESLint, Prettier, Vitest, cobertura, Husky, hook de git, CI, GitHub Pages, localStorage, SDD, agente, skill, opencode, ponytail (además: YAGNI, `shortcut:`), repository (patrón), facade.
 
 Regla: cuando un cambio introduzca una herramienta o concepto nuevo en el proyecto, se añade al glosario del README (skill `actualizar-glosario-readme`, que usa `wiki-dev`).
 
@@ -399,6 +399,8 @@ F3 puede empezar en cuanto F1 deje los esquemas estables.
 1. **Licencia** del código y del contenido, necesaria para «Acerca de».
 2. **Nombre del repositorio**, que determina la URL de GitHub Pages y el valor de `base`.
 3. **Catálogo inicial de etiquetas** (§7.5): ¿falta alguna o sobra alguna?
+
+**Resuelta:** `ponytail` (DietrichGebert/ponytail, MIT) adoptado como modo perezoso para el código de `wiki-dev`, integrado nativo de opencode (skills en `.opencode/skills/`, sin plugin) y con la guarda «la SDD manda» para que no cuestione requisitos especificados. Ver `agentes-y-skills.md` §5.10.
 
 ## 17. Riesgos
 

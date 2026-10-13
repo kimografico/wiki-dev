@@ -16,6 +16,9 @@ permission:
     "*": deny
     "content-researcher": allow
     "content-reviewer": allow
+  skill:
+    "ponytail": deny
+    "ponytail-*": deny
   webfetch: deny
   websearch: deny
 ---

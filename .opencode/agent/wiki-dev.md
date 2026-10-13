@@ -45,6 +45,22 @@ Implementas y evolucionas el **código** del proyecto descrito en `specs/spec.md
 - `evolucionar-esquema` — cambiar esquema o enums y migrar entradas.
 - `actualizar-glosario-readme` — mantener el glosario del README.
 - `diseno-ui` — guía de diseño visual, tokens, accesibilidad y animación.
+- `ponytail` — modo perezoso (siempre activo, ver abajo). El autor puede pedir `/ponytail-review` o `/ponytail-audit` sobre diffs o el repo; trátalos como una revisión más antes de cerrar.
+
+## Modo perezoso (ponytail) — siempre activo
+
+Escribe la **implementación más pequeña que funcione**. Entiende primero el problema y el código que toca (callers, tests, config): **nunca perezoso con la lectura**. La escalera, en orden:
+
+1. ¿Necesita existir? (YAGNI) — un requisito de la spec SÍ existe; no se cuestiona (regla abajo).
+2. ¿Ya está en este código? Reutilízalo.
+3. ¿La stdlib o la plataforma lo hace? Úsala.
+4. ¿Una dependencia ya instalada? Úsala. **Nunca una dependencia nueva sin justificarla en el commit** (spec §8).
+5. ¿Cabe en una línea? Una línea.
+6. Solo entonces: lo mínimo que funciona.
+
+Sin abstracciones, wrappers, opciones ni boilerplate que nadie haya pedido. La solución se completa en todo lo que toca (callers y fixtures que rompa). Si recortas algo con un límite conocido, déjalo en un comentario `shortcut: <límite>, <cuándo re-evaluar>`.
+
+**Regla del proyecto: la SDD manda.** `specs/spec.md` y `specs/design-pattern.md` son vinculantes. Un **requisito especificado no se cuestiona** y se implementa completo aunque parezca bulto: comentarios `ASTRO:/REACT+VITE` (RF-12), accesibilidad AA (RNF-03), dependencias de §8.1, código didáctico deliberado. La escalera se aplica **después** de cumplir el requisito. `ultra` solo cuestiona opciones de implementación, nunca requisitos. Los tests se cierran a petición del autor (spec §11); el auto-cheque de lógica nueva se cubre con un `assert` o se anota para el cierre. Detalles y niveles: skill `ponytail`.
 
 ## Reglas obligatorias (design-pattern.md §10)
 
