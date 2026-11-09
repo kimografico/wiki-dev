@@ -1,0 +1,34 @@
+---
+// Ficha de comparativa (RF-04). Las secciones obligatorias (Contexto,
+// Criterios, Cuándo elegir cada una, Ejemplos) las exige el validador.
+import FichaLayout from "../../layouts/FichaLayout.astro";
+import {
+  getPorColeccion,
+  getPaginaEntrada,
+} from "../../lib/content/entradas.ts";
+
+export async function getStaticPaths() {
+  const comparativas = await getPorColeccion("comparativas");
+  return comparativas.map((comparativa) => ({
+    params: { slug: comparativa.slug },
+  }));
+}
+
+const pagina = await getPaginaEntrada(Astro.params.slug ?? "");
+if (!pagina) throw new Error(`Comparativa no encontrada: ${Astro.params.slug}`);
+const { Content, entrada } = pagina;
+const base = import.meta.env.BASE_URL;
+---
+
+<FichaLayout
+  titulo={entrada.titulo}
+  resumen={entrada.resumen}
+  categoria={entrada.categoria}
+  tags={entrada.tags}
+  slug={entrada.slug}
+  coleccion={entrada.coleccion}
+  urlColeccion={`${base}comparativas`}
+  nombreColeccion="Comparativas"
+>
+  <Content />
+</FichaLayout>

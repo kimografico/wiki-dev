@@ -2,10 +2,13 @@
 // Plantilla de ficha (Patrón 5): cabecera + contenido + bloques generados.
 // Los bloques «Relacionados» y «Mencionado en» se generan aquí desde el
 // frontmatter y los backlinks; no se escriben en el cuerpo (RF-06).
+// La cabecera también enlaza la comparativa de la entidad (RF-04) y hace
+// navegables la categoría y las etiquetas (RF-06).
 import BaseLayout from "./BaseLayout.astro";
 import Badge from "../components/Badge.astro";
 import Relacionados from "../components/Relacionados.astro";
 import MencionadoEn from "../components/MencionadoEn.astro";
+import { getComparativasDe, urlEntrada } from "../lib/content/entradas.ts";
 
 interface Props {
   titulo: string;
@@ -30,6 +33,9 @@ const {
 } = Astro.props;
 
 const base = import.meta.env.BASE_URL;
+
+// Comparativas donde esta entrada es entidad comparada (RF-04).
+const comparativas = await getComparativasDe(slug);
 
 const colorColeccion =
   coleccion === "glosario"
@@ -81,10 +87,20 @@ const colorColeccion =
         <span
           class={`font-mono text-xs uppercase tracking-wider font-bold ${colorColeccion}`}
         >
-          {nombreColeccion}
+          <a
+            href={urlColeccion}
+            class="no-underline hover:underline underline-offset-2"
+          >
+            {nombreColeccion}
+          </a>
         </span>
         <span class="text-[var(--color-border-strong)]">·</span>
-        <Badge tipo="categoria">{categoria}</Badge>
+        <a
+          href={`${base}categorias/${categoria}`}
+          class="no-underline hover:underline underline-offset-2"
+        >
+          <Badge tipo="categoria">{categoria}</Badge>
+        </a>
       </div>
 
       <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-[var(--color-text)] m-0 mb-3">
@@ -97,9 +113,36 @@ const colorColeccion =
 
       {tags && tags.length > 0 && (
         <div class="flex flex-wrap items-center gap-2 pt-3 border-t border-[var(--color-border)]/60">
-          <span class="text-xs text-[var(--color-muted)] mr-1">Etiquetas:</span>
+          <span class="text-xs text-[var(--color-muted)]">Etiquetas:</span>
           {tags.map((tag) => (
-            <Badge tipo="tag">{tag}</Badge>
+            <a
+              href={`${base}etiquetas/${tag}`}
+              class="no-underline hover:underline underline-offset-2"
+            >
+              <Badge tipo="tag">{tag}</Badge>
+            </a>
+          ))}
+        </div>
+      )}
+
+      <!-- Comparativa en la que participa esta entidad (RF-04) -->
+      {comparativas.length > 0 && (
+        <div
+          class:list={[
+            "flex flex-wrap items-center gap-2 text-xs",
+            tags && tags.length > 0
+              ? "mt-3 pt-3 border-t border-[var(--color-border)]/60"
+              : "pt-3 border-t border-[var(--color-border)]/60",
+          ]}
+        >
+          <span class="text-[var(--color-muted)]">Comparativa:</span>
+          {comparativas.map((comparativa) => (
+            <a
+              href={urlEntrada(comparativa.coleccion, comparativa.slug, base)}
+              class="font-medium text-[var(--color-text)] no-underline hover:text-[var(--color-accent-text)] hover:underline underline-offset-2 transition-colors"
+            >
+              {comparativa.titulo}
+            </a>
           ))}
         </div>
       )}

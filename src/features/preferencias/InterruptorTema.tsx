@@ -21,13 +21,13 @@ export default function InterruptorTema() {
       type="button"
       aria-pressed={esOscuro}
       onClick={() => setTema(alternarTema(tema))}
-      className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium border border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--color-accent)] text-[var(--color-text)] transition-all cursor-pointer shadow-xs focus-visible:outline-2 focus-visible:outline-[var(--color-focus)]"
+      className="inline-flex items-center justify-center gap-2 w-9 h-9 p-0 rounded-full text-xs font-medium border border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--color-accent)] text-[var(--color-text)] transition-all cursor-pointer shadow-xs focus-visible:outline-2 focus-visible:outline-[var(--color-focus)] sm:w-auto sm:h-auto sm:px-3 sm:py-1.5"
       title={esOscuro ? "Cambiar a tema claro" : "Cambiar a tema oscuro"}
     >
       {esOscuro ? (
         // Icono Sol (para pasar a claro)
         <svg
-          className="w-3.5 h-3.5 text-[var(--color-design)]"
+          className="w-5 h-5 text-[var(--color-design)] sm:w-3.5 sm:h-3.5"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -43,7 +43,7 @@ export default function InterruptorTema() {
       ) : (
         // Icono Luna (para pasar a oscuro)
         <svg
-          className="w-3.5 h-3.5 text-[var(--color-dev)]"
+          className="w-5 h-5 text-[var(--color-dev)] sm:w-3.5 sm:h-3.5"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -57,9 +57,10 @@ export default function InterruptorTema() {
           />
         </svg>
       )}
-      <span className="text-xs font-medium">
+      <span className="hidden sm:inline text-xs font-medium">
         {esOscuro ? "Oscuro" : "Claro"}
       </span>
+      {/* En móvil el botón es solo icono: el nombre accesible lo da este texto. */}
       <span className="visually-hidden">Pulsa para cambiar el tema</span>
     </button>
   );

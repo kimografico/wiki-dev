@@ -19,8 +19,8 @@ export const COLECCIONES = [
 
 export type Coleccion = (typeof COLECCIONES)[number];
 
-/** Categorías temáticas (enum controlado, §7.2). */
-export const categorias = z.enum([
+/** Valores de categorías (enum controlado, §7.2). Fuente única de verdad. */
+export const CATEGORIAS = [
   "lenguaje",
   "framework",
   "estilos",
@@ -30,10 +30,10 @@ export const categorias = z.enum([
   "herramienta",
   "despliegue",
   "concepto",
-]);
+] as const;
 
-/** Etiquetas transversales (enum controlado, §7.5). */
-export const etiquetas = z.enum([
+/** Valores de etiquetas (enum controlado, §7.5). Fuente única de verdad. */
+export const ETIQUETAS = [
   "frontend",
   "backend",
   "tests",
@@ -41,7 +41,10 @@ export const etiquetas = z.enum([
   "accesibilidad",
   "rendimiento",
   "seguridad",
-]);
+] as const;
+
+export const categorias = z.enum(CATEGORIAS);
+export const etiquetas = z.enum(ETIQUETAS);
 
 /** Campos comunes a todas las colecciones (§7.1). */
 export const base = z.object({

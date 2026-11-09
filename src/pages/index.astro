@@ -5,6 +5,8 @@ import {
   getPorColeccion,
   getTodasLasEntradas,
 } from "../lib/content/entradas.ts";
+import { CATEGORIAS, ETIQUETAS } from "../lib/content/esquemas.ts";
+import { nombreCategoria, nombreEtiqueta } from "../lib/content/nombres.ts";
 import ListaEntradas from "../components/ListaEntradas.astro";
 import FlipText from "../components/FlipText.astro";
 import BuscadorRapido from "../features/busqueda/BuscadorRapido.tsx";
@@ -58,6 +60,25 @@ const resumen = await Promise.all(
     ...coleccion,
     entradas: await getPorColeccion(coleccion.clave),
   })),
+);
+
+// Recuento por categoría y por etiqueta para los accesos de portada (§9).
+const conteoCategorias = new Map<string, number>();
+const conteoEtiquetas = new Map<string, number>();
+for (const entrada of todas) {
+  conteoCategorias.set(
+    entrada.categoria,
+    (conteoCategorias.get(entrada.categoria) ?? 0) + 1,
+  );
+  for (const tag of entrada.tags) {
+    conteoEtiquetas.set(tag, (conteoEtiquetas.get(tag) ?? 0) + 1);
+  }
+}
+const categoriasListadas = CATEGORIAS.filter(
+  (valor) => (conteoCategorias.get(valor) ?? 0) > 0,
+);
+const etiquetasListadas = ETIQUETAS.filter(
+  (valor) => (conteoEtiquetas.get(valor) ?? 0) > 0,
 );
 ---
 
@@ -122,6 +143,64 @@ const resumen = await Promise.all(
           </div>
         </a>
       ))}
+    </section>
+
+    <!-- Accesos por categoría y por etiqueta (§9): cruzan todas las colecciones -->
+    <section
+      aria-label="Explorar por categoría y por etiqueta"
+      class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10"
+    >
+      <div class="space-y-3">
+        <div class="flex items-baseline justify-between gap-3 pb-2 border-b border-[var(--color-border)]">
+          <h2 class="text-lg sm:text-xl font-bold tracking-tight text-[var(--color-text)] m-0">
+            Por categoría
+          </h2>
+          <span class="text-xs text-[var(--color-muted)]">
+            temas transversales
+          </span>
+        </div>
+        <ul class="flex flex-wrap gap-2 list-none p-0 m-0">
+          {categoriasListadas.map((valor) => (
+            <li>
+              <a
+                href={`${base}categorias/${valor}`}
+                class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border bg-[var(--color-surface)] text-[var(--color-muted-text)] border-[var(--color-border)] text-sm no-underline transition-colors hover:text-[var(--color-text)] hover:border-[var(--color-accent)]/60"
+              >
+                <span>{nombreCategoria(valor)}</span>
+                <span class="text-[11px] font-mono text-[var(--color-muted)]">
+                  {conteoCategorias.get(valor)}
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div class="space-y-3">
+        <div class="flex items-baseline justify-between gap-3 pb-2 border-b border-[var(--color-border)]">
+          <h2 class="text-lg sm:text-xl font-bold tracking-tight text-[var(--color-text)] m-0">
+            Por etiqueta
+          </h2>
+          <span class="text-xs text-[var(--color-muted)]">
+            áreas de trabajo
+          </span>
+        </div>
+        <ul class="flex flex-wrap gap-2 list-none p-0 m-0">
+          {etiquetasListadas.map((valor) => (
+            <li>
+              <a
+                href={`${base}etiquetas/${valor}`}
+                class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border bg-[var(--color-surface)] text-[var(--color-muted-text)] border-[var(--color-border)] text-sm no-underline transition-colors hover:text-[var(--color-text)] hover:border-[var(--color-accent)]/60"
+              >
+                <span class="font-mono">#{nombreEtiqueta(valor)}</span>
+                <span class="text-[11px] font-mono text-[var(--color-muted)]">
+                  {conteoEtiquetas.get(valor)}
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
     </section>
 
     <!-- Secciones de contenido reciente/destacado -->

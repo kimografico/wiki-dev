@@ -92,6 +92,30 @@ export async function getRelacionados(slug: string): Promise<Entrada[]> {
     .filter((e): e is Entrada => e !== undefined);
 }
 
+/** Entradas de una categoría concreta (RF-06). */
+export async function getPorCategoria(categoria: string): Promise<Entrada[]> {
+  const todas = await getTodasLasEntradas();
+  return todas.filter((entrada) => entrada.categoria === categoria);
+}
+
+/** Entradas que llevan una etiqueta concreta (RF-06). */
+export async function getPorEtiqueta(etiqueta: string): Promise<Entrada[]> {
+  const todas = await getTodasLasEntradas();
+  return todas.filter((entrada) => entrada.tags.includes(etiqueta));
+}
+
+/**
+ * Comparativas donde este slug es una de las entidades comparadas (RF-04):
+ * alimenta el enlace a la comparativa desde la ficha de la entidad.
+ */
+export async function getComparativasDe(slug: string): Promise<Entrada[]> {
+  const todas = await getTodasLasEntradas();
+  return todas.filter(
+    (entrada) =>
+      entrada.coleccion === "comparativas" && entrada.entidades.includes(slug),
+  );
+}
+
 /** Entradas que declaran este slug en `relacionados` (backlinks, RF-06). */
 export async function getBacklinks(slug: string): Promise<Entrada[]> {
   const todas = await getTodasLasEntradas();
