@@ -56,7 +56,7 @@ interface RespuestaGemini {
 }
 
 /** Llama a la API de Gemini y devuelve el texto (sin pensamientos). */
-async function llamarGemini(
+export async function llamarGemini(
   apiKey: string,
   system: string,
   usuario: string,
@@ -87,7 +87,7 @@ async function llamarGemini(
 }
 
 /** Parsea la respuesta del modelo, aceptando también bloques ```json. */
-function parsearSalida(texto: string): EntradaGenerada {
+export function parsearSalida(texto: string): EntradaGenerada {
   const limpio = texto
     .trim()
     .replace(/^```(?:json)?\s*/i, "")
@@ -110,7 +110,7 @@ function parsearSalida(texto: string): EntradaGenerada {
 }
 
 /** Slugs (nombre de archivo sin .md) de una colección, recursivo. */
-async function slugsDe(dir: string): Promise<string[]> {
+export async function slugsDe(dir: string): Promise<string[]> {
   let items: Dirent[];
   try {
     items = await readdir(dir, { withFileTypes: true });
@@ -130,11 +130,11 @@ async function slugsDe(dir: string): Promise<string[]> {
 }
 
 /** Ensambla el system prompt con plantillas, enums y slugs del repo. */
-async function construirSystem(): Promise<string> {
+export async function construirSystem(raiz = "."): Promise<string> {
   const plantillas: string[] = [];
   for (const coleccion of COLECCIONES) {
     const texto = await readFile(
-      join("specs", "plantillas", PLANTILLAS[coleccion]),
+      join(raiz, "specs", "plantillas", PLANTILLAS[coleccion]),
       "utf8",
     );
     const secciones = SECCIONES_OBLIGATORIAS[coleccion]
@@ -147,7 +147,7 @@ async function construirSystem(): Promise<string> {
 
   const existentes: string[] = [];
   for (const coleccion of COLECCIONES) {
-    for (const slug of await slugsDe(join("content", coleccion))) {
+    for (const slug of await slugsDe(join(raiz, "content", coleccion))) {
       existentes.push(`${coleccion}/${slug}`);
     }
   }
@@ -187,8 +187,8 @@ Devuelve SOLO un JSON válido con exactamente esta forma, sin markdown ni coment
 - slug en kebab-case minúsculas y sin acentos (ej: "static-site-generation").`;
 }
 
-/** Comprueba coleccion, slug y que el archivo no exista ya. */
-function comprobar(entrada: EntradaGenerada): string | null {
+/** Comprueba coleccion y slug (la existencia del archivo, main). */
+export function comprobar(entrada: EntradaGenerada): string | null {
   if (!(COLECCIONES as readonly string[]).includes(entrada.coleccion)) {
     return `Colección "${entrada.coleccion}" no existe; usa una de: ${COLECCIONES.join(", ")}`;
   }
@@ -201,13 +201,15 @@ function comprobar(entrada: EntradaGenerada): string | null {
   return null;
 }
 
-async function main(): Promise<void> {
+/** Genera, valida y escribe la entrada bajo `raiz` (repo; por defecto "."). */
+export async function main(raiz = "."): Promise<void> {
   const apiKey = process.env.GEMINI_API_KEY;
   const prompt = process.argv[2] ?? process.env.PROMPT;
   if (!apiKey) throw new Error("Falta la env GEMINI_API_KEY");
   if (!prompt) throw new Error("Falta el prompt (argv[2] o env PROMPT)");
 
-  const system = await construirSystem();
+  const contentDir = join(raiz, "content");
+  const system = await construirSystem(raiz);
   let feedback = "";
 
   for (let intento = 1; intento <= MAX_INTENTOS; intento++) {
@@ -216,7 +218,16 @@ async function main(): Promise<void> {
         ? `Concepto solicitado: ${prompt}`
         : `Concepto solicitado: ${prompt}\n\nTu intento anterior no pasó la validación. Corrígelo:\n${feedback}`;
 
-    const salida = parsearSalida(await llamarGemini(apiKey, system, usuario));
+    // Tanto errores de API como respuestas ilegibles se reintentan con
+    // feedback; si se agotan los intentos, main lanza y el job no hace push.
+    let salida: EntradaGenerada;
+    try {
+      salida = parsearSalida(await llamarGemini(apiKey, system, usuario));
+    } catch (error) {
+      feedback = `No se pudo generar: ${error instanceof Error ? error.message : String(error)}`;
+      console.error(feedback);
+      continue;
+    }
     console.log(`Intento ${intento}: ${salida.coleccion}/${salida.slug}`);
 
     const problema = comprobar(salida);
@@ -225,7 +236,7 @@ async function main(): Promise<void> {
       continue;
     }
 
-    const ruta = join("content", salida.coleccion, `${salida.slug}.md`);
+    const ruta = join(contentDir, salida.coleccion, `${salida.slug}.md`);
     // Nunca sobrescribir una entrada existente: el validador no la marcaría
     // como duplicada (mismo nombre de archivo) y se perdería contenido.
     try {
@@ -235,10 +246,10 @@ async function main(): Promise<void> {
     } catch {
       // No existe: es el caso esperado.
     }
-    await mkdir(join("content", salida.coleccion), { recursive: true });
+    await mkdir(join(contentDir, salida.coleccion), { recursive: true });
     await writeFile(ruta, salida.contenido, "utf8");
 
-    const { errores } = await validarContenido();
+    const { errores } = await validarContenido(contentDir);
     const mios = errores.filter((e) => e.includes(ruta));
     if (mios.length === 0) {
       if (process.env.GITHUB_OUTPUT) {
@@ -261,4 +272,13 @@ async function main(): Promise<void> {
   );
 }
 
-await main();
+// Ejecución directa (patrón de validate-content.ts): al importar el módulo
+// desde los tests no se lanza ningún trabajo.
+const esEjecucionDirecta =
+  process.argv[1] !== undefined &&
+  import.meta.url ===
+    new URL(`file://${process.argv[1].replace(/\\/g, "/")}`).href;
+
+if (esEjecucionDirecta) {
+  await main();
+}
