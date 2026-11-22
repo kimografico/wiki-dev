@@ -18,6 +18,7 @@ export default [
       ".husky/",
       "specs/",
       "content/",
+      "worker/",
     ],
   },
   js.configs.recommended,

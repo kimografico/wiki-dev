@@ -70,9 +70,11 @@ código: siempre en secrets.
 | `LLM_API_KEY` | GitHub Secrets | Llamar a la API de Gemini desde el workflow | Google AI Studio → Create API key |
 
 El Worker se autentica además con un quinto secreto, `TELEGRAM_SECRET`, una
-cadena aleatoria generada en su despliegue que Telegram envía en la cabecera
-`X-Telegram-Bot-Api-Secret-Token` para demostrar que las notificaciones
-llegan realmente de Telegram.
+cadena aleatoria generada en su despliegue que se registra como
+`secret_token` en el webhook de Telegram; Telegram la devuelve en la cabecera
+`X-Telegram-Bot-Api-Secret-Token` de cada notificación para demostrar que
+llega realmente de él. El registro se hace con `setWebhook` apuntando a la
+ruta `/webhook` del Worker.
 
 ### Por qué un PAT y no el token por defecto
 
@@ -105,12 +107,14 @@ Configuración adoptada; se documenta tal y como queda establecida:
   `kimografico/wiki-dev`, permisos `Contents` y `Actions` en lectura y
   escritura, caducidad de 90 días. Un único token cumple las dos funciones
   del flujo: el push del workflow y el `workflow_dispatch` del Worker.
-- **Proveedor de LLM** — Google Gemini (`gemini-2.5-flash`) por su tier
+- **Proveedor de LLM** — Google Gemini (`gemini-3.8-flash`) por su tier
   gratuito; la key pertenece a un proyecto de Google Cloud gratuito y vive
   solo en GitHub Secrets.
 - **Secrets integrados** — `ADD_CONCEPT_TOKEN`, `LLM_API_KEY` y
   `TELEGRAM_BOT_TOKEN` dados de alta en *Settings → Secrets and variables →
-  Actions*. Los secretos del Worker se cargan con `cf secret put`.
+  Actions*. Los secretos del Worker se cargan con
+  `cf deploy --secrets-file`, apuntando a un archivo temporal fuera del
+  repositorio.
 - **Modo de pruebas** — el workflow puede lanzarse a mano desde la pestaña
   Actions con los inputs `prompt` y `chat_id`; sin `chat_id` la notificación
   a Telegram se omite.

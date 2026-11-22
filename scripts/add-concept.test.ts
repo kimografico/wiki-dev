@@ -212,7 +212,7 @@ describe("llamarGemini", () => {
     const fn = stubFetch([respuesta("ok")]);
     await llamarGemini("mi-clave", "sistema", "usuario");
     const llamada = fn.mock.calls[0]!;
-    expect(String(llamada[0])).toContain("gemini-2.5-flash");
+    expect(String(llamada[0])).toContain("gemini-3.8-flash");
     const init = llamada[1]!;
     expect((init.headers as Record<string, string>)["x-goog-api-key"]).toBe(
       "mi-clave",

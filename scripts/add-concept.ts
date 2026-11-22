@@ -40,7 +40,7 @@ const PLANTILLAS: Record<Coleccion, string> = {
   comparativas: "comparativa.md",
 };
 
-const MODELO = "gemini-2.5-flash";
+const MODELO = "gemini-3.8-flash";
 const MAX_INTENTOS = 2;
 
 interface EntradaGenerada {

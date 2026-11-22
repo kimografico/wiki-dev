@@ -10,6 +10,9 @@ specs/
 .opencode/
 content/
 
+# Proyecto Cloudflare aparte (formato y lint propios con vp/cf)
+worker/
+
 # Archivos de sistema (los edita el autor)
 .github/
 .husky/

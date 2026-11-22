@@ -35,6 +35,6 @@ se escribe en **español**.
    (`anadir-entrada`, `enlazar-entradas`, `validar-contenido`): el esquema
    manda, no inventar frontmatter fuera de `esquemas.ts`.
 6. Los secretos nunca se escriben en el repo: van en GitHub Secrets o en
-   `cf secret put`.
+   un archivo temporal fuera del repo cargado con `cf deploy --secrets-file`.
 7. Si un script necesita el schema, las plantillas o los enums, se leen
    del checkout; no se duplican en el código.
