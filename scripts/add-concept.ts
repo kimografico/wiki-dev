@@ -6,9 +6,11 @@
 //     hardcodeado, así no se desincroniza de src/lib/content/esquemas.ts.
 //  2. Pide JSON {coleccion, slug, contenido} y escribe
 //     content/<coleccion>/<slug>.md.
-//  3. Valida con validarContenido(); si hay errores, reintenta una vez
-//     alimentando al modelo con ellos. Si vuelve a fallar, aborta con error
-//     y el job no hace push (main queda intacto).
+//  3. Valida con validarContenido(); si hay errores o la API falla, reintenta
+//     esperando 30 s y alternando dos modelos (3.8 → 3.6 → 3.8 → 3.6),
+//     alimentando al modelo con lo que falló. Si se agotan los intentos,
+//     deja la frase del último error en ERROR_FILE (para la notificación de
+//     Telegram), aborta con error y el job no hace push (main queda intacto).
 //
 // Requiere GEMINI_API_KEY y el prompt en argv[2] o en la env PROMPT.
 // Escribe `ruta=`, `coleccion=` y `slug=` en GITHUB_OUTPUT si existe.
@@ -40,8 +42,11 @@ const PLANTILLAS: Record<Coleccion, string> = {
   comparativas: "comparativa.md",
 };
 
-const MODELO = "gemini-3.8-flash";
-const MAX_INTENTOS = 2;
+/** Modelos alternados en cada intento */
+const MODELOS = ["gemini-3.8-flash", "gemini-3.6-flash"];
+const MAX_INTENTOS = MODELOS.length * 2;
+/** Espera entre intentos; los tests la bajan con la env ESPERA_REINTENTO_MS. */
+const ESPERA_REINTENTO_MS = 30 * 1000;
 
 interface EntradaGenerada {
   coleccion: string;
@@ -55,13 +60,38 @@ interface RespuestaGemini {
   }>;
 }
 
+/** Espera `ms` milisegundos (entre intentos, para no saturar la API). */
+function dormir(ms: number): Promise<void> {
+  return new Promise((resolver) => setTimeout(resolver, ms));
+}
+
+/** Frase con el code, message y status del error de la API (o el cuerpo). */
+async function describirError(res: Response): Promise<string> {
+  const cuerpo = await res.text();
+  try {
+    const dato = JSON.parse(cuerpo) as {
+      error?: { code?: number; message?: string; status?: string };
+    };
+    const detalle = dato.error;
+    if (detalle?.message) {
+      const codigo = detalle.code ?? res.status;
+      const estado = detalle.status ? ` (${detalle.status})` : "";
+      return `Gemini respondió ${codigo}${estado}: ${detalle.message}`;
+    }
+  } catch {
+    // Cuerpo que no es JSON: se describe con el estado y el texto crudo.
+  }
+  return `Gemini respondió ${res.status}: ${cuerpo}`;
+}
+
 /** Llama a la API de Gemini y devuelve el texto (sin pensamientos). */
 export async function llamarGemini(
   apiKey: string,
   system: string,
   usuario: string,
+  modelo = MODELOS[0],
 ): Promise<string> {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODELO}:generateContent`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelo}:generateContent`;
   const res = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
@@ -77,7 +107,7 @@ export async function llamarGemini(
     }),
   });
   if (!res.ok) {
-    throw new Error(`Gemini respondió ${res.status}: ${await res.text()}`);
+    throw new Error(await describirError(res));
   }
   const data = (await res.json()) as RespuestaGemini;
   const partes = data.candidates?.[0]?.content?.parts ?? [];
@@ -211,8 +241,14 @@ export async function main(raiz = "."): Promise<void> {
   const contentDir = join(raiz, "content");
   const system = await construirSystem(raiz);
   let feedback = "";
+  const esperaMs = Number(
+    process.env.ESPERA_REINTENTO_MS ?? ESPERA_REINTENTO_MS,
+  );
 
   for (let intento = 1; intento <= MAX_INTENTOS; intento++) {
+    // Espera entre intentos: los 503 de "alta demanda" suelen ser transitorios.
+    if (intento > 1) await dormir(esperaMs);
+    const modelo = MODELOS[(intento - 1) % MODELOS.length];
     const usuario =
       intento === 1
         ? `Concepto solicitado: ${prompt}`
@@ -222,10 +258,12 @@ export async function main(raiz = "."): Promise<void> {
     // feedback; si se agotan los intentos, main lanza y el job no hace push.
     let salida: EntradaGenerada;
     try {
-      salida = parsearSalida(await llamarGemini(apiKey, system, usuario));
+      salida = parsearSalida(
+        await llamarGemini(apiKey, system, usuario, modelo),
+      );
     } catch (error) {
       feedback = `No se pudo generar: ${error instanceof Error ? error.message : String(error)}`;
-      console.error(feedback);
+      console.error(`Intento ${intento} (${modelo}): ${feedback}`);
       continue;
     }
     console.log(`Intento ${intento}: ${salida.coleccion}/${salida.slug}`);
@@ -272,6 +310,20 @@ export async function main(raiz = "."): Promise<void> {
   );
 }
 
+/**
+ * Deja la frase del último error en ERROR_FILE para que el workflow la
+ * incluya en la notificación de Telegram (una sola línea, sin saltos).
+ */
+export async function guardarError(error: unknown): Promise<void> {
+  const ruta = process.env.ERROR_FILE;
+  if (!ruta) return;
+  const frase = (error instanceof Error ? error.message : String(error))
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 600);
+  await writeFile(ruta, frase, "utf8");
+}
+
 // Ejecución directa (patrón de validate-content.ts): al importar el módulo
 // desde los tests no se lanza ningún trabajo.
 const esEjecucionDirecta =
@@ -280,5 +332,10 @@ const esEjecucionDirecta =
     new URL(`file://${process.argv[1].replace(/\\/g, "/")}`).href;
 
 if (esEjecucionDirecta) {
-  await main();
+  try {
+    await main();
+  } catch (error) {
+    await guardarError(error);
+    throw error;
+  }
 }

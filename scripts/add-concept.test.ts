@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   comprobar,
   construirSystem,
+  guardarError,
   llamarGemini,
   main,
   parsearSalida,
@@ -111,12 +112,19 @@ function stubFetch(respuestas: Response[]) {
   return fn;
 }
 
+/** Modelo usado en una llamada a la API (segmento de la URL). */
+function modeloDe(entrada: unknown): string {
+  return /models\/([^:]+):/.exec(String(entrada))?.[1] ?? "";
+}
+
 const raices: string[] = [];
 
 beforeEach(() => {
   vi.stubEnv("GEMINI_API_KEY", "clave-de-prueba");
   vi.stubEnv("PROMPT", "prueba de prompt");
   vi.stubEnv("GITHUB_OUTPUT", "");
+  // Sin espera entre intentos: los tests no deben tardar 30 s cada uno.
+  vi.stubEnv("ESPERA_REINTENTO_MS", "0");
   vi.spyOn(console, "log").mockImplementation(() => {});
   vi.spyOn(console, "error").mockImplementation(() => {});
   // main prioriza argv[2] sobre PROMPT: fuera los argumentos del runner.
@@ -232,6 +240,46 @@ describe("llamarGemini", () => {
     await expect(llamarGemini("k", "s", "u")).rejects.toThrow(
       "Gemini respondió 429",
     );
+  });
+
+  it("resume el error del JSON con code, message y status", async () => {
+    stubFetch([
+      {
+        ok: false,
+        status: 503,
+        text: async () =>
+          JSON.stringify({
+            error: {
+              code: 503,
+              message: "This model is currently experiencing high demand.",
+              status: "UNAVAILABLE",
+            },
+          }),
+      } as Response,
+    ]);
+    await expect(llamarGemini("k", "s", "u")).rejects.toThrow(
+      "Gemini respondió 503 (UNAVAILABLE): This model is currently experiencing high demand.",
+    );
+  });
+
+  it("describe el error aunque el JSON no lleve code ni status", async () => {
+    stubFetch([
+      {
+        ok: false,
+        status: 400,
+        text: async () =>
+          JSON.stringify({ error: { message: "Solicitud inválida" } }),
+      } as Response,
+    ]);
+    await expect(llamarGemini("k", "s", "u")).rejects.toThrow(
+      "Gemini respondió 400: Solicitud inválida",
+    );
+  });
+
+  it("usa el modelo que se le indique", async () => {
+    const fn = stubFetch([respuesta("ok")]);
+    await llamarGemini("k", "s", "u", "gemini-3.6-flash");
+    expect(modeloDe(fn.mock.calls[0]![0])).toBe("gemini-3.6-flash");
   });
 
   it("lanza si no hay texto utilizable", async () => {
@@ -408,28 +456,53 @@ describe("main", () => {
     ).toBe(CONTENIDO_VALIDO);
   });
 
-  it("agota los intentos, lanza y no deja contenido inválido", async () => {
+  it("agota los 4 intentos alternando modelos, lanza y no deja contenido", async () => {
     const raiz = await crearRepo();
     raices.push(raiz);
-    stubFetch([
-      respuestaJson({
-        coleccion: "glosario",
-        slug: "closure",
-        contenido: CONTENIDO_SIN_SECCIONES,
-      }),
-      respuestaJson({
-        coleccion: "glosario",
-        slug: "closure",
-        contenido: CONTENIDO_SIN_SECCIONES,
-      }),
-    ]);
+    const invalido = respuestaJson({
+      coleccion: "glosario",
+      slug: "closure",
+      contenido: CONTENIDO_SIN_SECCIONES,
+    });
+    const fetchM = stubFetch([invalido, invalido, invalido, invalido]);
 
     await expect(main(raiz)).rejects.toThrow(
       "No se pudo generar una entrada válida",
     );
+
+    expect(fetchM).toHaveBeenCalledTimes(4);
+    expect(fetchM.mock.calls.map((c) => modeloDe(c[0]))).toEqual([
+      "gemini-3.8-flash",
+      "gemini-3.6-flash",
+      "gemini-3.8-flash",
+      "gemini-3.6-flash",
+    ]);
     await expect(
       readFile(join(raiz, "content", "glosario", "closure.md"), "utf8"),
     ).rejects.toThrow();
+  });
+
+  it("espera el tiempo configurado entre intentos", async () => {
+    vi.stubEnv("ESPERA_REINTENTO_MS", "50");
+    const raiz = await crearRepo();
+    raices.push(raiz);
+    stubFetch([
+      {
+        ok: false,
+        status: 503,
+        text: async () => "demasiada demanda",
+      } as Response,
+      respuestaJson({
+        coleccion: "glosario",
+        slug: "closure",
+        contenido: CONTENIDO_VALIDO,
+      }),
+    ]);
+
+    const inicio = Date.now();
+    await main(raiz);
+
+    expect(Date.now() - inicio).toBeGreaterThanOrEqual(40);
   });
 
   it("falla sin GEMINI_API_KEY", async () => {
@@ -444,5 +517,28 @@ describe("main", () => {
     raices.push(raiz);
     vi.stubEnv("PROMPT", "");
     await expect(main(raiz)).rejects.toThrow("Falta el prompt");
+  });
+});
+
+describe("guardarError", () => {
+  it("escribe el error como una sola línea en ERROR_FILE", async () => {
+    const raiz = await mkdtemp(join(tmpdir(), "wiki-error-"));
+    raices.push(raiz);
+    const ruta = join(raiz, "error.txt");
+    vi.stubEnv("ERROR_FILE", ruta);
+
+    await guardarError(
+      new Error(
+        "No se pudo generar: Gemini respondió 503 (UNAVAILABLE): alta\ndemanda temporal",
+      ),
+    );
+
+    expect(await readFile(ruta, "utf8")).toBe(
+      "No se pudo generar: Gemini respondió 503 (UNAVAILABLE): alta demanda temporal",
+    );
+  });
+
+  it("no hace nada si ERROR_FILE no está configurada", async () => {
+    await expect(guardarError(new Error("nada"))).resolves.toBeUndefined();
   });
 });

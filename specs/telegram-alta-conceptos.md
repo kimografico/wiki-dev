@@ -110,6 +110,11 @@ Configuración adoptada; se documenta tal y como queda establecida:
 - **Proveedor de LLM** — Google Gemini (`gemini-3.8-flash`) por su tier
   gratuito; la key pertenece a un proyecto de Google Cloud gratuito y vive
   solo en GitHub Secrets.
+- **Reintentos** — hasta cuatro intentos alternando `gemini-3.8-flash` y
+  `gemini-3.6-flash`, con 30 segundos de espera entre ellos para absorber los
+  errores 503 de alta demanda; cada intento se alimenta del error anterior.
+  Si se agotan, el job aborta sin tocar `main` y la frase del último error
+  (código, mensaje y estado) se incluye en la notificación de fallo.
 - **Secrets integrados** — `ADD_CONCEPT_TOKEN`, `LLM_API_KEY` y
   `TELEGRAM_BOT_TOKEN` dados de alta en *Settings → Secrets and variables →
   Actions*. Los secretos del Worker se cargan con
@@ -132,7 +137,7 @@ flowchart TD
     D["<b>Gemini</b> devuelve JSON:<br/>coleccion, slug, contenido"]
     E["Se escribe el archivo .md en content/"]
     F{"validate + check + lint<br/>+ format + build"}
-    G["El modelo reintenta<br/>alimentado con los errores"]
+    G["Reintento tras 30 s de espera<br/>con el modelo alterno"]
     H["El job aborta:<br/>main queda intacto"]:::error
     I["Commit wiki-bot<br/>+ push con el PAT"]
     J["<b>GitHub</b> Actions ejecuta<br/>ci.yml y deploy.yml"]
