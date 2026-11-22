@@ -23,6 +23,14 @@
   /* --- Surfaces --- */
   --color-bg: #f4f4f2;
   --color-surface: #ffffff;
+  /* Fondo de las tarjetas aprendidas (RF-14): tinte azul (--color-dev) para
+     diferenciarlas de un vistazo. (Era transparente, pero el contraste con
+     --color-bg no se percibía: surface y bg casi coinciden.) */
+  --surface-soft: color-mix(
+    in srgb,
+    var(--color-dev) 15%,
+    var(--color-surface)
+  );
   --color-code-bg: var(
     --color-surface
   ); /* fondo de bloques de código (RF-13) */

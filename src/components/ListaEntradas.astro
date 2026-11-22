@@ -21,16 +21,34 @@ const {
     {vacio}
   </div>
 ) : (
-  <ul
-    class:list={[
-      "lista-entradas list-none p-0 m-0",
-      compacto
-        ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3"
-        : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4",
-    ]}
-  >
-    {entradas.map((entrada) => (
-      <EntradaItem entrada={entrada} compacto={compacto} />
-    ))}
-  </ul>
+  <div class="lista-bloque">
+    <ul
+      class:list={[
+        "lista-entradas list-none p-0 m-0",
+        compacto
+          ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3"
+          : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4",
+      ]}
+    >
+      {entradas.map((entrada) => (
+        <EntradaItem entrada={entrada} compacto={compacto} />
+      ))}
+    </ul>
+
+    <!--
+      Aviso de listado vacío con «solo pendientes» (RF-14). Oculto por defecto
+      (`.vacio-filtro` en global.css); el <style> que inyecta el script de
+      <head> lo muestra cuando la lista no queda con ningún elemento visible.
+    -->
+    <div class="vacio-filtro p-6 rounded-xl border border-dashed border-[var(--color-border)] text-center text-sm text-[var(--color-muted-text)]">
+      <p class="m-0 mb-3">No queda nada pendiente en esta lista.</p>
+      <button
+        type="button"
+        data-ver-todo
+        class="px-3 py-1.5 rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] text-xs font-semibold text-[var(--color-text)] cursor-pointer transition-colors hover:border-[var(--color-accent)]"
+      >
+        Mostrar todo
+      </button>
+    </div>
+  </div>
 )}

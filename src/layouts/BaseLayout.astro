@@ -2,6 +2,7 @@
 // Plantilla base (Patrón 5): estructura común, cabecera, pie y metadatos.
 import "../styles/global.css";
 import InterruptorTema from "../features/preferencias/InterruptorTema.tsx";
+import InterruptorSoloPendientes from "../features/preferencias/InterruptorSoloPendientes.tsx";
 
 interface Props {
   titulo: string;
@@ -53,23 +54,72 @@ const rutaActual = Astro.url.pathname;
 
     <!--
       ASTRO: `is:inline` deja el script tal cual y bloqueante en <head>, de modo
-      que el tema se aplica antes del primer pintado (si no, habría un destello).
-      REACT+VITE: sería un <script> clásico en index.html, antes del bundle.
-      RF-13: usa `wiki:tema` (light | dark) o, si no hay, la preferencia del sistema.
+      que tema y preferencias se aplican antes del primer pintado (si no, habría
+      un destello). No puede importar módulos: la lógica vive en
+      `src/lib/preferencias/` y aquí hay una copia mínima (RF-14: el test de
+      coherencia comprueba que ambas versiones coinciden). Presupuesto < 2 KB;
+      el resto (botón «Mostrar todo», bfcache) vive en las islas del filtro.
+      REACT+VITE: sería un script clásico en index.html, antes del bundle.
+      RF-13: `wiki:tema` (light | dark) o la preferencia del sistema.
+      RF-14: `wiki:aprendidas` (slugs) y `wiki:solo-pendientes` (true | false).
     -->
     <script is:inline>
       (() => {
+        const doc = document.documentElement;
+
         try {
-          const guardado = localStorage.getItem("wiki:tema");
+          const g = localStorage.getItem("wiki:tema");
           const tema =
-            guardado === "light" || guardado === "dark"
-              ? guardado
+            g === "light" || g === "dark"
+              ? g
               : matchMedia("(prefers-color-scheme: dark)").matches
                 ? "dark"
                 : "light";
-          document.documentElement.dataset.theme = tema;
+          doc.dataset.theme = tema;
         } catch {
-          /* localStorage no disponible: manda el CSS del sistema */
+          /* sin storage */
+        }
+
+        try {
+          const crudo = JSON.parse(
+            localStorage.getItem("wiki:aprendidas") ?? "[]",
+          );
+          const aprendidas = Array.isArray(crudo)
+            ? crudo.filter(
+                (s) => typeof s === "string" && /^[a-z0-9-]+$/.test(s),
+              )
+            : [];
+          const solo = localStorage.getItem("wiki:solo-pendientes") === "true";
+          let css = "";
+          if (solo) {
+            if (aprendidas.length) {
+              css = aprendidas
+                .map((s) => `[data-slug="${s}"]{display:none}`)
+                .join("");
+              const sin = aprendidas
+                .map((s) => `:not([data-slug="${s}"])`)
+                .join("");
+              css += `html[data-filtro="solo-pendientes"] .lista-bloque:not(:has(ul>li${sin})) .vacio-filtro{display:block}`;
+            }
+          } else {
+            css = aprendidas
+              .map(
+                (s) =>
+                  `[data-slug="${s}"] .icono-aprendida{display:inline-flex}` +
+                  `.entrada-item[data-slug="${s}"]>a{background:var(--surface-soft)}`,
+              )
+              .join("");
+          }
+          doc.dataset.filtro = solo ? "solo-pendientes" : "todo";
+          let style = document.getElementById("wiki-estilos-pref");
+          if (!style) {
+            style = document.createElement("style");
+            style.id = "wiki-estilos-pref";
+            document.head.appendChild(style);
+          }
+          style.textContent = css;
+        } catch {
+          /* inválidas: todo visible */
         }
       })();
     </script>
@@ -116,15 +166,20 @@ const rutaActual = Astro.url.pathname;
           })}
         </nav>
 
-        <!-- Zone 3: Controles (tema + menú hamburguesa en móvil) -->
+        <!-- Zone 3: Controles (filtro, tema y menú hamburguesa en móvil) -->
         <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+          <!-- ISLA: filtro «todo / solo pendientes» (RF-14), antes del tema. -->
+          <InterruptorSoloPendientes client:load />
+
           <!-- ISLA: el interruptor de tema se hidrata en el cliente (RF-13). -->
           <InterruptorTema client:load />
 
           <!--
-            Menú móvil: `<details>` nativo, sin JS ni isla. Se cierra solo al
-            navegar (carga de página).
-            ASTRO: no hay directivas; es HTML estándar dentro del layout.
+            Menú móvil: `<details>` nativo para abrir/cerrar, sin script propio.
+            Se cierra solo al navegar (carga de página). Solo contiene la
+            navegación: el resto de controles (filtro y tema) ya están en la
+            cabecera, también en móvil.
+            ASTRO: no hay directivas en el `<details>`; es HTML estándar.
             REACT+VITE: sería un componente con estado `open` y un `useRef`
             para cerrar al pulsar fuera.
           -->
@@ -144,28 +199,30 @@ const rutaActual = Astro.url.pathname;
               <span class="visually-hidden">Abrir menú de navegación</span>
             </summary>
 
-            <nav
-              aria-label="Secciones principales"
-              class="absolute right-0 top-full mt-2 w-56 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-lg p-2 flex flex-col gap-0.5 z-40"
-            >
-              {enlaces.map(({ href, texto }) => {
-                const activo = rutaActual.startsWith(href);
-                return (
-                  <a
-                    href={href}
-                    aria-current={activo ? "page" : undefined}
-                    class:list={[
-                      "px-3 py-2 rounded-lg text-sm font-medium no-underline transition-colors",
-                      activo
-                        ? "bg-[var(--color-bg)] text-[var(--color-text)] border border-[var(--color-border)]"
-                        : "text-[var(--color-muted-text)] hover:text-[var(--color-text)] hover:bg-[var(--color-bg)]/50 border border-transparent",
-                    ]}
-                  >
-                    {texto}
-                  </a>
-                );
-              })}
-            </nav>
+            <div class="absolute right-0 top-full mt-2 w-56 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-lg p-2 z-40">
+              <nav
+                aria-label="Secciones principales"
+                class="flex flex-col gap-0.5"
+              >
+                {enlaces.map(({ href, texto }) => {
+                  const activo = rutaActual.startsWith(href);
+                  return (
+                    <a
+                      href={href}
+                      aria-current={activo ? "page" : undefined}
+                      class:list={[
+                        "px-3 py-2 rounded-lg text-sm font-medium no-underline transition-colors",
+                        activo
+                          ? "bg-[var(--color-bg)] text-[var(--color-text)] border border-[var(--color-border)]"
+                          : "text-[var(--color-muted-text)] hover:text-[var(--color-text)] hover:bg-[var(--color-bg)]/50 border border-transparent",
+                      ]}
+                    >
+                      {texto}
+                    </a>
+                  );
+                })}
+              </nav>
+            </div>
           </details>
         </div>
       </div>

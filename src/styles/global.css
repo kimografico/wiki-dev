@@ -262,6 +262,19 @@ pre {
   display: none;
 }
 
+/* Aviso de listado vacío con «solo pendientes»: lo muestra el <style> que
+   inyecta el script de <head> (RF-14). */
+.vacio-filtro {
+  display: none;
+}
+
+/* SVG incrustado (IconoAprendida): ocupa el tamaño de su contenedor. */
+.icono-svg svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 /* Barra de desplazamiento elegante */
 ::-webkit-scrollbar {
   width: 8px;

@@ -4,6 +4,7 @@
 // «solo pendientes» activo, oculta el elemento entero (RF-14, F2).
 import type { Entrada } from "../lib/content/entradas.ts";
 import { urlEntrada } from "../lib/content/entradas.ts";
+import IconoAprendida from "./IconoAprendida.astro";
 
 interface Props {
   entrada: Entrada;
@@ -42,11 +43,16 @@ const colorColeccion =
         >
           {entrada.categoria || entrada.coleccion}
         </span>
-        <span
-          class="icono-aprendida text-[10px] px-1 py-0.2 rounded bg-[var(--color-cta)] text-white"
-          aria-hidden="true"
-        >
-          ✓
+        <!--
+          Icono de aprendida (RF-14): oculto por defecto (`.icono-aprendida`).
+          El <style> inyectado por el script de <head> lo muestra en azul
+          (--color-dev) en las entradas aprendidas y, con «solo pendientes»,
+          oculta este <li>. Sin aria-hidden en el contenedor: el texto
+          «Aprendida» se anuncia solo al mostrarse.
+        -->
+        <span class="icono-aprendida text-[var(--color-dev-text)] shrink-0">
+          <IconoAprendida class="w-4 h-4" />
+          <span class="visually-hidden">Aprendida</span>
         </span>
       </div>
 

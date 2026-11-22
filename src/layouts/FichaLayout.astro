@@ -8,6 +8,7 @@ import BaseLayout from "./BaseLayout.astro";
 import Badge from "../components/Badge.astro";
 import Relacionados from "../components/Relacionados.astro";
 import MencionadoEn from "../components/MencionadoEn.astro";
+import BotonAprendida from "../features/preferencias/BotonAprendida.tsx";
 import { getComparativasDe, urlEntrada } from "../lib/content/entradas.ts";
 
 interface Props {
@@ -83,24 +84,29 @@ const colorColeccion =
 
     <!-- Cabecera de la ficha sin recuadro exterior -->
     <header class="pb-6 mb-8">
-      <div class="flex items-center gap-2 mb-3">
-        <span
-          class={`font-mono text-xs uppercase tracking-wider font-bold ${colorColeccion}`}
-        >
+      <div class="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-3">
+        <div class="flex items-center gap-2">
+          <span
+            class={`font-mono text-xs uppercase tracking-wider font-bold ${colorColeccion}`}
+          >
+            <a
+              href={urlColeccion}
+              class="no-underline hover:underline underline-offset-2"
+            >
+              {nombreColeccion}
+            </a>
+          </span>
+          <span class="text-[var(--color-border-strong)]">·</span>
           <a
-            href={urlColeccion}
+            href={`${base}categorias/${categoria}`}
             class="no-underline hover:underline underline-offset-2"
           >
-            {nombreColeccion}
+            <Badge tipo="categoria">{categoria}</Badge>
           </a>
-        </span>
-        <span class="text-[var(--color-border-strong)]">·</span>
-        <a
-          href={`${base}categorias/${categoria}`}
-          class="no-underline hover:underline underline-offset-2"
-        >
-          <Badge tipo="categoria">{categoria}</Badge>
-        </a>
+        </div>
+
+        <!-- ISLA: marcar como aprendida (RF-14). -->
+        <BotonAprendida slug={slug} client:load />
       </div>
 
       <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-[var(--color-text)] m-0 mb-3">

@@ -1,0 +1,20 @@
+---
+// Icono de aprendida incrustado en línea (RF-14): «brain» de Lucide (ISC),
+// con `currentColor`, así sigue el color del texto y el tema activo sin
+// imágenes externas. Autoría y licencia anotadas en el propio SVG; el autor
+// lo sustituirá por el suyo manteniendo currentColor.
+import svg from "../assets/icons/brain.svg?raw";
+
+interface Props {
+  /** Clases de Tailwind para dimensionar el contenedor (p. ej. «w-3 h-3»). */
+  class?: string;
+}
+
+const { class: clase = "" } = Astro.props;
+---
+
+<span
+  class:list={["icono-svg inline-flex", clase]}
+  set:html={svg}
+  aria-hidden="true"
+/>
