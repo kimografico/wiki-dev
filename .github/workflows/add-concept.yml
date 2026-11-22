@@ -77,10 +77,10 @@ jobs:
       # GITHUB_TOKEN por defecto no lo haría: no habría despliegue).
       - name: Commit y push a main
         run: |
-          git config user.name "wiki-bot"
-          git config user.email "wiki-bot@users.noreply.github.com"
+          git config user.name "wiki-dev-kimo-ia-bot"
+          git config user.email "wiki-dev-kimo-ia-bot@users.noreply.github.com"
           git add "${{ steps.generar.outputs.ruta }}"
-          git commit -m "Contenido: ${{ steps.generar.outputs.slug }} (alta vía Telegram)"
+          git commit -m "Nuevo contenido: ${{ steps.generar.outputs.slug }} (Telegram)"
           git pull --rebase origin main
           git push origin HEAD:main
 
@@ -90,16 +90,17 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           CHAT_ID: ${{ inputs.chat_id }}
           SLUG: ${{ steps.generar.outputs.slug }}
-          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          SITE_URL: "https://kimografico.github.io/wiki-dev/"
         run: |
           if [ -z "$TELEGRAM_BOT_TOKEN" ] || [ -z "$CHAT_ID" ]; then
             echo "Sin TELEGRAM_BOT_TOKEN o chat_id; se omite la notificación."
             exit 0
           fi
-          MSG="✅ Entrada publicada: $SLUG"$'\n'"$RUN_URL"
+          MSG="✅ Entrada publicada: $SLUG"$'\n'"$SITE_URL"
           curl -sS -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage" \
             -H "Content-Type: application/json" \
-            -d "$(jq -n --arg chat "$CHAT_ID" --arg text "$MSG" '{chat_id:$chat, text:$text}')"
+            -d "$(jq -n --arg chat "$CHAT_ID" --arg text "$MSG" \
+              '{chat_id: $chat, text: $text, link_preview_options: {is_disabled: true}}')"
 
       - name: Notificar a Telegram (fallo)
         if: failure()
@@ -120,4 +121,5 @@ jobs:
           MSG="$MSG"$'\n'"$RUN_URL"
           curl -sS -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage" \
             -H "Content-Type: application/json" \
-            -d "$(jq -n --arg chat "$CHAT_ID" --arg text "$MSG" '{chat_id:$chat, text:$text}')"
+            -d "$(jq -n --arg chat "$CHAT_ID" --arg text "$MSG" \
+            '{chat_id:$chat, text:$text, link_preview_options: {is_disabled: true}}')"
