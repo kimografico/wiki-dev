@@ -1,127 +1,171 @@
-# Alta de conceptos vía Telegram → Cloudflare Worker → GitHub Actions
+# Alta de conceptos vía Telegram
 
-Propuesta de flujo ChatOps para dar de alta conceptos en la wiki desde el móvil, sin abrir el ordenador, manteniendo `main` siempre verde y el sitio siempre desplegado.
+Documentación del flujo ChatOps que permite dar de alta conceptos en la wiki
+desde Telegram, sin abrir el ordenador, manteniendo `main` siempre verde y el
+sitio siempre desplegado.
 
-## Flujo
+## Descripción general
 
+La wiki es un sitio estático (Astro + GitHub Pages) sin backend propio. El
+flujo añade un eslabón intermedio —un bot de Telegram y un webhook— para que
+una petición en el chat se traduzca en un *commit* validado en el repositorio:
+
+```mermaid
+flowchart LR
+    U["👤 <b>Usuario</b>"]:::visible
+    T["<b>Telegram</b><br/>@KimoWiki_Bot"]:::visible
+    W["<b>Cloudflare</b> Worker<br/>webhook + autorización"]
+    G["<b>GitHub</b> Actions<br/>add-concept.yml"]
+    L["<b>Gemini</b> API"]
+    V["Validación previa<br/>validate + check + lint + format + build"]
+    R["Repositorio <b>GitHub</b><br/>rama main"]
+    P["<b>GitHub</b> Pages"]:::visible
+    N["Notificación con el resultado<br/>en <b>Telegram</b>"]:::visible
+    X["❌ El job aborta<br/>y main queda intacto"]:::error
+
+    U -- "mensaje /add" --> T
+    T -- "webhook" --> W
+    W -- "workflow_dispatch" --> G
+    G -- "genera la entrada" --> L
+    L --> G
+    G -- "validación" --> V
+    V -- "validación fallida" --> X
+    V -- "resultado" --> N
+    G -- "commit + push con PAT" --> R
+    R -- "ci.yml + deploy.yml" --> P
+    N -.-> U
+
+    classDef visible fill:#198754,stroke:#0f5132,color:#ffffff
+    classDef error fill:#842029,stroke:#dc3545,color:#ffffff
+
+    linkStyle 0,7,9,10 stroke:#198754,stroke-width:2px
+    linkStyle 6 stroke:#dc3545,stroke-width:2px
 ```
-Telegram ──webhook──▶ Cloudflare Worker ──workflow_dispatch──▶ GitHub Actions
-   │                      │                                        │
-   │                  valida ID +                                LLM genera
-   │                  secret_token                                .md → valida
-   │                      │                                        │
-   ◀──"recibido"──────────┘                                   commit + push a main
-                                                                  │
-                                                    CI + Deploy (ya existentes)
+
+En verde, la entrada manual y lo que el usuario ve (mensaje, publicación,
+notificación); en rojo, el camino de error. En resumen: **Telegram →
+Cloudflare Worker → GitHub Actions → commit en `main` → CI y deploy
+automáticos**.
+
+## Componentes
+
+| Componente | Papel |
+|---|---|
+| Bot `@KimoWiki_Bot` | Recepción de las peticiones del usuario en Telegram |
+| Cloudflare Worker (`worker/`) | Webhook: valida el mensaje y lanza el workflow |
+| Workflow `add-concept.yml` | Genera, valida y publica la entrada |
+| Script `scripts/add-concept.ts` | Orquesta la generación con Gemini y la validación |
+| `ci.yml` / `deploy.yml` | Validación y publicación del repositorio, sin cambios |
+
+## Credenciales y configuración
+
+Todo el flujo se sostiene sobre cuatro credenciales. Ninguna vive en el
+código: siempre en secrets.
+
+| Credencial | Dónde vive | Para qué | Obtención |
+|---|---|---|---|
+| `TELEGRAM_BOT_TOKEN` | GitHub Secrets + Worker | Firmar las respuestas del bot a Telegram | @BotFather → `/newbot` |
+| `TELEGRAM_USER_ID` | Worker | Autorizar solo al usuario propietario (`from.id`) | `getUpdates` tras enviar `/start` al bot |
+| `ADD_CONCEPT_TOKEN` | GitHub Secrets | PAT que permite el push a `main` **y** lanzar el workflow desde el Worker | GitHub → Fine-grained PAT |
+| `LLM_API_KEY` | GitHub Secrets | Llamar a la API de Gemini desde el workflow | Google AI Studio → Create API key |
+
+El Worker se autentica además con un quinto secreto, `TELEGRAM_SECRET`, una
+cadena aleatoria generada en su despliegue que Telegram envía en la cabecera
+`X-Telegram-Bot-Api-Secret-Token` para demostrar que las notificaciones
+llegan realmente de Telegram.
+
+### Por qué un PAT y no el token por defecto
+
+GitHub entrega un `GITHUB_TOKEN` automático a cada workflow, pero los *push*
+hechos con ese token **no disparan otros workflows**. Sin PAT, el commit del
+concepto subiría a `main` pero `ci.yml` y `deploy.yml` no se ejecutarían: la
+wiki no se validaría ni se publicaría. El PAT (permisos `Contents: read
+and write` y `Actions: read and write`, limitado al repositorio) evita eso y
+a la vez sirve al Worker para lanzar el `workflow_dispatch`.
+
+### Por qué Gemini
+
+API con tier gratuito suficiente para uso ocasional. La key se asocia a un
+proyecto de Google Cloud (obligatorio, pero gratuito y sin tarjeta) y se usa
+únicamente desde GitHub Secrets: nunca llega al Worker ni al repositorio.
+
+## Decisiones de configuración
+
+Configuración adoptada; se documenta tal y como queda establecida:
+
+- **Identidad del bot** — `kimo_wiki_add` (`@KimoWiki_Bot`), creado con
+  @BotFather, con descripción propia y comandos `/add` y `/start`. El
+  `TELEGRAM_BOT_TOKEN` obtenido ahí es el valor integrado en GitHub Secrets
+  y el que usa el Worker.
+- **Modelo de autorización** — un único usuario autorizado:
+  `TELEGRAM_USER_ID = 123347601`, el `from.id` del chat privado tras enviar
+  `/start`. (Atajo fácil de dar: la primera parte del token del bot,
+  `9250531026`, es el ID del propio bot, no el del usuario.)
+- **Acceso a GitHub** — PAT *fine-grained* con alcance exclusivo a
+  `kimografico/wiki-dev`, permisos `Contents` y `Actions` en lectura y
+  escritura, caducidad de 90 días. Un único token cumple las dos funciones
+  del flujo: el push del workflow y el `workflow_dispatch` del Worker.
+- **Proveedor de LLM** — Google Gemini (`gemini-2.5-flash`) por su tier
+  gratuito; la key pertenece a un proyecto de Google Cloud gratuito y vive
+  solo en GitHub Secrets.
+- **Secrets integrados** — `ADD_CONCEPT_TOKEN`, `LLM_API_KEY` y
+  `TELEGRAM_BOT_TOKEN` dados de alta en *Settings → Secrets and variables →
+  Actions*. Los secretos del Worker se cargan con `cf secret put`.
+- **Modo de pruebas** — el workflow puede lanzarse a mano desde la pestaña
+  Actions con los inputs `prompt` y `chat_id`; sin `chat_id` la notificación
+  a Telegram se omite.
+- **Estrategia de publicación** — commits directos a `main` con validación
+  previa obligatoria (el job no hace push si algo falla), en lugar de rama
+  y PR: con un solo mantenedor el coste del PR no compensa.
+
+## Flujo de ejecución
+
+```mermaid
+flowchart TD
+    A["<b>Telegram</b>: mensaje en el bot<br/>o ejecución manual en <b>GitHub</b> Actions"]:::visible
+    B["Checkout con el PAT e instalación"]
+    C["add-concept.ts inyecta plantillas, enums<br/>y slugs existentes del checkout"]
+    D["<b>Gemini</b> devuelve JSON:<br/>coleccion, slug, contenido"]
+    E["Se escribe el archivo .md en content/"]
+    F{"validate + check + lint<br/>+ format + build"}
+    G["El modelo reintenta<br/>alimentado con los errores"]
+    H["El job aborta:<br/>main queda intacto"]:::error
+    I["Commit wiki-bot<br/>+ push con el PAT"]
+    J["<b>GitHub</b> Actions ejecuta<br/>ci.yml y deploy.yml"]
+    K["Publicación en <b>GitHub</b> Pages"]:::visible
+    L["Notificación con el resultado<br/>en <b>Telegram</b>"]:::visible
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+    F -- "falla" --> G
+    G -- "volver a intentar" --> D
+    G -- "se agotan los intentos" --> H
+    F -- "pasa" --> I
+    I --> J
+    J --> K
+    I -- "si hay chat_id" --> L
+
+    classDef visible fill:#198754,stroke:#0f5132,color:#ffffff
+    classDef error fill:#842029,stroke:#dc3545,color:#ffffff
+
+    linkStyle 0,10,11 stroke:#198754,stroke-width:2px
+    linkStyle 5,7 stroke:#dc3545,stroke-width:2px
 ```
 
-1. Mensaje en Telegram con el concepto a añadir.
-2. Worker valida (`secret_token` de Telegram + `from.id` autorizado) y lanza `workflow_dispatch` en GitHub.
-3. Workflow de Actions: checkout → LLM genera el archivo según plantilla y schema del repo → `npm run validate/check/format:check/build` → **solo si pasa todo**, commit con PAT y push a `main`.
-4. El push dispara automáticamente `ci.yml` y `deploy.yml` (ya existentes).
+Reglas que sostiene el flujo: el schema y las plantillas se leen del
+checkout (nunca van hardcodeados en el prompt), una entrada existente jamás
+se sobrescribe y sin `chat_id` la notificación se omite.
 
-## Reglas clave
+## Notas operativas
 
-- **El push se hace con un PAT**, nunca con `GITHUB_TOKEN` por defecto: los pushes con el token por defecto **no disparan** otros workflows (no habría CI ni deploy).
-- **La validación vive en el repo** (`scripts/validate-content.ts`, `src/lib/content/esquemas.ts`); el prompt se inyecta desde el checkout (plantilla + enums + slugs existentes), no está hardcodeado.
-- **Validación antes del push**: si el LLM genera contenido inválido, se reintenta una vez con los errores; si vuelve a fallar, se aborta sin tocar `main`.
-- Commit directo a `main` (un solo desarrollador), con validación previa.
-
----
-
-## Pasos que hace falta dar desde el usuario
-
-### 1. Telegram — bot (2 valores)
-
-| # | Paso | Valor resultante |
-|---|------|------------------|
-| 1 | Hablar con **@BotFather** → `/newbot` → seguir el asistente (texts abajo) | `TELEGRAM_BOT_TOKEN` (`123456789:ABC...`) |
-| 2 | Enviar `/start` al bot y abrir `https://api.telegram.org/bot<TU_TOKEN>/getUpdates` → copiar el `"from":{"id":...}` | `TELEGRAM_USER_ID` |
-
-### 2. GitHub — PAT (1 token)
-
-3. Crear **fine-grained PAT** en `github.com/settings/personal-access-tokens/new`:
-   - **Repository access**: solo `kimografico/wiki-dev`.
-   - **Permissions**: `Contents: Read and write` + `Actions: Read and write`.
-   - Expiración: 90 días recomendado (fechalar la renovación).
-
-### 3. LLM — API key (1 key)
-
-4. Elegir proveedor y obtener `LLM_API_KEY`:
-   - **Opción gratis**: Groq o Google Gemini.
-   - **Opción de pago ya existente**: OpenAI / Anthropic.
-   - La key vive **solo en GitHub Secrets**, nunca en el Worker.
-
-### 4. Entrega de secretos (elegir una)
-
-- **A)** El usuario los crea en GitHub → Settings → Secrets and variables → Actions.
-- **B)** El usuario los pega en el chat y el agente los configura vía API/CLI.
-- Los secretos del Worker se ponen con `cf secret put` (agente o usuario).
-
-### 5. Decisiones pendientes
-
-- [ ] Proveedor/LLM (Groq / Gemini / OpenAI / Anthropic).
-- [ ] Forma de entregar los secretos (A o B).
-- [ ] Confirmar commit directo a `main` con validación previa.
-
----
-
-## Inventario de secretos
-
-### GitHub Secrets (Settings → Secrets and variables → Actions)
-
-| Secret | Valor | Quién lo usa |
-|--------|-------|--------------|
-| `ADD_CONCEPT_TOKEN` | PAT fine-grained (Contents rw + Actions rw) | Workflow de alta: push a `main` y auto-dispatch |
-| `LLM_API_KEY` | Key del proveedor elegido | Workflow de alta: generación de contenido |
-| `TELEGRAM_BOT_TOKEN` | Token de BotFather | *(Opcional)* Workflow: mensaje de resultado a Telegram |
-
-### Cloudflare Worker secrets (`cf secret put`)
-
-| Secret | Valor |
-|--------|-------|
-| `TELEGRAM_BOT_TOKEN` | Token de BotFather |
-| `TELEGRAM_ALLOWED_USER_ID` | ID numérico del usuario autorizado |
-| `TELEGRAM_SECRET` | Cadena aleatoria (la genera el agente) — `secret_token` del webhook |
-| `GITHUB_TOKEN` | Mismo PAT (o PAT aparte con `Actions: write`) |
-| `GITHUB_REPO` | `kimografico/wiki-dev` |
-
----
-
-## Proceso completo de implementación
-
-### Fase 1 — Repo (no necesita secretos)
-
-1. Crear `.github/workflows/add-concept.yml`:
-   - Trigger: `workflow_dispatch` con input `prompt`.
-   - `concurrency` group para evitar carreras de push.
-   - Paso de generación: inyecta `specs/plantillas/*.md` + `CATEGORIAS`/`ETIQUETAS` + slugs existentes → LLM → escribe `content/<coleccion>/<slug>.md`.
-   - Validación pre-push: `npm run validate && npm run check && npm run format:check && npm run build`.
-   - Commit con autor distinto (`wiki-bot`) y push con `ADD_CONCEPT_TOKEN`.
-2. Prueba manual del workflow desde la UI de Actions con un prompt de prueba (requiere `LLM_API_KEY` y `ADD_CONCEPT_TOKEN` ya configurados).
-
-### Fase 2 — Worker en Cloudflare
-
-3. Escribir `worker/` en el repo:
-   - Recibe webhook de Telegram, valida `X-Telegram-Bot-Api-Secret-Token` + `from.id`.
-   - Lanza `POST /repos/kimografico/wiki-dev/actions/workflows/add-concept.yml/dispatches`.
-   - Responde 200 rápido; envía "recibido" al usuario.
-4. Desplegar con `cf deploy` y cargar secretos.
-5. Registrar webhook de Telegram: `setWebhook` con la URL del Worker y `secret_token`.
-
-### Fase 3 — Extremo a extremo
-
-6. Mensaje real en Telegram → workflow se ejecuta → commit en `main` → CI + deploy automáticos → entrada visible en la wiki.
-7. Probar también el caso de error (prompt inválido) para verificar que **no** se toca `main`.
-
----
-
-## Configuración del bot (@BotFather)
-
-- **Name**: `kimo_wiki_add`
-- **About**: `Alta de conceptos en la wiki dev`
-- **Commands**:
-  ```
-  add - Añade un concepto: /add closure con ejemplos en JS y Python
-  start - Muestra el estado y el uso del bot
-  ```
+- **Caducidades**: el PAT caduca a los 90 días (renovarlo y sobrescribir
+  `ADD_CONCEPT_TOKEN`); el token OAuth de la CLI de Cloudflare caducó el
+  16/11/2026 y se renueva con `cf auth login`.
+- **Rotación**: si un secreto se filtra, se regenera el valor y se
+  sobrescribe el secret en GitHub o en el Worker; los secrets no se pueden
+  leer desde la UI, solo ver si existen.
+- **Cuota**: el tier gratuito de Gemini y el uso puntual del bot no
+  representan coste; el workflow solo se lanza por petición.
