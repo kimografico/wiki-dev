@@ -1,0 +1,116 @@
+name: Añadir concepto
+
+# Lo lanza el Worker de Telegram (workflow_dispatch) o a mano desde la UI.
+# Genera la entrada con Gemini, la valida y SOLO hace push si todo pasa;
+# si la validación falla, el job falla y main queda intacto.
+on:
+  workflow_dispatch:
+    inputs:
+      prompt:
+        description: "Concepto a añadir y detalles (ej: closure con ejemplos en JS y Python)"
+        required: true
+        type: string
+      chat_id:
+        description: "Chat de Telegram para notificar el resultado (opcional)"
+        required: false
+        type: string
+
+# El GITHUB_TOKEN por defecto haría push que NO dispara CI/deploy: el push
+# real usa el PAT (ADD_CONCEPT_TOKEN) que se inyecta en el checkout.
+permissions:
+  contents: read
+
+# Un alta a la vez; no cancela la que esté en curso.
+concurrency:
+  group: add-concept
+  cancel-in-progress: false
+
+jobs:
+  add-concept:
+    name: Generar y publicar
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          token: ${{ secrets.ADD_CONCEPT_TOKEN }}
+
+      - name: Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      # Genera con Gemini y valida con el validador del repo (RF-10).
+      # Reintenta una vez con los errores; si vuelve a fallar, sale con error.
+      - name: Generar y validar contenido
+        id: generar
+        env:
+          GEMINI_API_KEY: ${{ secrets.LLM_API_KEY }}
+          PROMPT: ${{ inputs.prompt }}
+        run: node scripts/add-concept.ts
+
+      - name: Formato
+        run: npx prettier --write "${{ steps.generar.outputs.ruta }}"
+
+      - name: Tipos y esquemas
+        run: npm run check
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Formato (comprobación)
+        run: npm run format:check
+
+      - name: Validación de contenido
+        run: npm run validate
+
+      - name: Build
+        run: npm run build
+
+      # El push con el PAT sí dispara ci.yml y deploy.yml (con el
+      # GITHUB_TOKEN por defecto no lo haría: no habría despliegue).
+      - name: Commit y push a main
+        run: |
+          git config user.name "wiki-bot"
+          git config user.email "wiki-bot@users.noreply.github.com"
+          git add "${{ steps.generar.outputs.ruta }}"
+          git commit -m "Contenido: ${{ steps.generar.outputs.slug }} (alta vía Telegram)"
+          git pull --rebase origin main
+          git push origin HEAD:main
+
+      - name: Notificar a Telegram (éxito)
+        if: success()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          CHAT_ID: ${{ inputs.chat_id }}
+          SLUG: ${{ steps.generar.outputs.slug }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          if [ -z "$TELEGRAM_BOT_TOKEN" ] || [ -z "$CHAT_ID" ]; then
+            echo "Sin TELEGRAM_BOT_TOKEN o chat_id; se omite la notificación."
+            exit 0
+          fi
+          MSG="✅ Entrada publicada: $SLUG"$'\n'"$RUN_URL"
+          curl -sS -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage" \
+            -H "Content-Type: application/json" \
+            -d "$(jq -n --arg chat "$CHAT_ID" --arg text "$MSG" '{chat_id:$chat, text:$text}')"
+
+      - name: Notificar a Telegram (fallo)
+        if: failure()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          CHAT_ID: ${{ inputs.chat_id }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          if [ -z "$TELEGRAM_BOT_TOKEN" ] || [ -z "$CHAT_ID" ]; then
+            echo "Sin TELEGRAM_BOT_TOKEN o chat_id; se omite la notificación."
+            exit 0
+          fi
+          MSG="❌ Falló el alta del concepto. Mira el log:"$'\n'"$RUN_URL"
+          curl -sS -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage" \
+            -H "Content-Type: application/json" \
+            -d "$(jq -n --arg chat "$CHAT_ID" --arg text "$MSG" '{chat_id:$chat, text:$text}')"
