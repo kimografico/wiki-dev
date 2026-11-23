@@ -90,13 +90,19 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           CHAT_ID: ${{ inputs.chat_id }}
           SLUG: ${{ steps.generar.outputs.slug }}
+          COLECCION: ${{ steps.generar.outputs.coleccion }}
+          CATEGORIA: ${{ steps.generar.outputs.categoria }}
           SITE_URL: "https://kimografico.github.io/wiki-dev/"
         run: |
           if [ -z "$TELEGRAM_BOT_TOKEN" ] || [ -z "$CHAT_ID" ]; then
             echo "Sin TELEGRAM_BOT_TOKEN o chat_id; se omite la notificación."
             exit 0
           fi
-          MSG="✅ Entrada publicada: $SLUG"$'\n'"$SITE_URL"
+          MSG="✅ Entrada publicada: ${COLECCION}/${SLUG}"
+          if [ -n "$CATEGORIA" ]; then
+            MSG="$MSG · categoría: $CATEGORIA"
+          fi
+          MSG="$MSG"$'\n'"${SITE_URL}${COLECCION}/${SLUG}/"
           curl -sS -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage" \
             -H "Content-Type: application/json" \
             -d "$(jq -n --arg chat "$CHAT_ID" --arg text "$MSG" \

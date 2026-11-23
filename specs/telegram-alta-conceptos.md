@@ -54,7 +54,7 @@ automáticos**.
 | Bot `@KimoWiki_Bot` | Recepción de las peticiones del usuario en Telegram |
 | Cloudflare Worker (`worker/`) | Webhook: valida el mensaje y lanza el workflow |
 | Workflow `add-concept.yml` | Genera, valida y publica la entrada |
-| Script `scripts/add-concept.ts` | Orquesta la generación con Gemini y la validación |
+| Script `scripts/add-concept.ts` | Orquesta la generación con Gemini (elegir colección, categoría y tags) y la validación |
 | `ci.yml` / `deploy.yml` | Validación y publicación del repositorio, sin cambios |
 
 ## Credenciales y configuración
@@ -166,7 +166,13 @@ flowchart TD
 
 Reglas que sostiene el flujo: el schema y las plantillas se leen del
 checkout (nunca van hardcodeados en el prompt), una entrada existente jamás
-se sobrescribe y sin `chat_id` la notificación se omite.
+se sobrescribe y sin `chat_id` la notificación se omite. La colección
+(`glosario`, `tecnologias`, `paquetes` o `comparativas`), la `categoria` y
+los `tags` no los elige el usuario: los decide el modelo entre los valores
+de los enums de `src/lib/content/esquemas.ts`, con criterios en el prompt
+(qué es concepto, qué es tecnología, qué es paquete, qué es comparativa) y
+validados después por el validador; la notificación de éxito los muestra
+junto al enlace directo a la entrada publicada.
 
 ## Notas operativas
 

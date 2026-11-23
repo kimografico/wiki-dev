@@ -4,7 +4,8 @@
 //  1. Inyecta al modelo las plantillas (specs/plantillas), los enums y los
 //     slugs existentes, leídos del repo — el prompt no lleva el schema
 //     hardcodeado, así no se desincroniza de src/lib/content/esquemas.ts.
-//  2. Pide JSON {coleccion, slug, contenido} y escribe
+//  2. Pide JSON {coleccion, slug, contenido} — la colección, la categoría y
+//     los tags los decide el modelo entre los enums inyectados — y escribe
 //     content/<coleccion>/<slug>.md.
 //  3. Valida con validarContenido(); si hay errores o la API falla, reintenta
 //     esperando 30 s y alternando dos modelos (3.8 → 3.6 → 3.8 → 3.6),
@@ -13,7 +14,7 @@
 //     Telegram), aborta con error y el job no hace push (main queda intacto).
 //
 // Requiere GEMINI_API_KEY y el prompt en argv[2] o en la env PROMPT.
-// Escribe `ruta=`, `coleccion=` y `slug=` en GITHUB_OUTPUT si existe.
+// Escribe `ruta=`, `coleccion=`, `slug=` y `categoria=` en GITHUB_OUTPUT si existe.
 import {
   appendFile,
   access,
@@ -184,14 +185,23 @@ export async function construirSystem(raiz = "."): Promise<string> {
 
   return `Eres el redactor de entradas de una wiki técnica hecha con Astro (Markdown con frontmatter YAML, en español). Genera UNA sola entrada completa a partir de la petición del usuario.
 
-## Colecciones disponibles (elige exactamente una)
+## Colecciones disponibles (elige exactamente una; la eliges tú)
 ${plantillas.join("\n\n")}
+
+## Cómo eliges la colección, la categoría y los tags
+Las plantillas de arriba son solo estructura: sus valores de ejemplo (categoria, tags, web, npm...) NO son fijos por colección. Decide según la petición:
+- glosario: término o concepto que se explica por sí solo (closure, CI/CD, hidratación).
+- tecnologias: tecnología o producto que existe fuera de un paquete: lenguaje, framework, plataforma o servicio (React, Astro, GitHub Pages).
+- paquetes: paquete instalable de npm (vite, zod).
+- comparativas: la petición compara dos o más entradas existentes (Astro frente a Next.js).
+- No elijas glosario por defecto: si la petición nombra un producto, un framework o un paquete concreto, va en tecnologias o paquetes.
+- categoria: exactamente uno de: ${CATEGORIAS.join(", ")}. Elige la que mejor describa la entrada (framework para un framework, herramienta para un paquete, despliegue para un servicio de hosting, lenguaje para un lenguaje, concepto para un término del glosario); no te limites a la de la plantilla.
+- tags: 1-3 de: ${ETIQUETAS.join(", ")} que describan de verdad la entrada. Usa [] solo si ninguna aplica.
 
 ## Reglas del frontmatter
 - titulo: título de la entrada.
 - resumen: máximo 200 caracteres, descripción concisa.
-- categoria: uno de: ${CATEGORIAS.join(", ")}
-- tags: array con como máximo 3 valores de: ${ETIQUETAS.join(", ")} (usa [] si no aplica).
+- categoria y tags: los que hayas elegido en la sección anterior.
 - alias: array de sinónimos (puede ser []).
 - relacionados: array con máximo 4 slugs de los existentes (puede ser []).
 - fuentes: array de URLs http(s) reales; si no tienes fuentes fiables, [].
@@ -212,8 +222,8 @@ ${existentes.join("\n")}
 
 ## Salida
 Devuelve SOLO un JSON válido con exactamente esta forma, sin markdown ni comentarios:
-{"coleccion":"glosario","slug":"closure","contenido":"---\\n...frontmatter...\\n---\\n\\n## Definición\\n..."}
-- "contenido" es el archivo completo: frontmatter entre --- y cuerpo Markdown.
+{"coleccion":"paquetes","slug":"vite","contenido":"---\\n...frontmatter...\\n---\\n\\n## Qué es\\n..."}
+- "coleccion" es la que hayas elegido; "contenido" es el archivo completo: frontmatter entre --- y cuerpo Markdown.
 - slug en kebab-case minúsculas y sin acentos (ej: "static-site-generation").`;
 }
 
@@ -229,6 +239,13 @@ export function comprobar(entrada: EntradaGenerada): string | null {
     return `Slug "${entrada.slug}" inválido: usa kebab-case minúsculas (letras, dígitos y guiones)`;
   }
   return null;
+}
+
+/** Valor de `categoria:` del frontmatter (entre los --- iniciales) del contenido. */
+function categoriaDe(contenido: string): string {
+  const frontmatter = /^---\r?\n([\s\S]*?)\r?\n---/.exec(contenido)?.[1] ?? "";
+  const valor = /^categoria:\s*(.+)$/m.exec(frontmatter)?.[1] ?? "";
+  return valor.trim().replace(/^["']|["']$/g, "");
 }
 
 /** Genera, valida y escribe la entrada bajo `raiz` (repo; por defecto "."). */
@@ -251,8 +268,8 @@ export async function main(raiz = "."): Promise<void> {
     const modelo = MODELOS[(intento - 1) % MODELOS.length];
     const usuario =
       intento === 1
-        ? `Concepto solicitado: ${prompt}`
-        : `Concepto solicitado: ${prompt}\n\nTu intento anterior no pasó la validación. Corrígelo:\n${feedback}`;
+        ? `Entrada solicitada: ${prompt}`
+        : `Entrada solicitada: ${prompt}\n\nTu intento anterior no pasó la validación. Corrígelo:\n${feedback}`;
 
     // Tanto errores de API como respuestas ilegibles se reintentan con
     // feedback; si se agotan los intentos, main lanza y el job no hace push.
@@ -293,7 +310,7 @@ export async function main(raiz = "."): Promise<void> {
       if (process.env.GITHUB_OUTPUT) {
         await appendFile(
           process.env.GITHUB_OUTPUT,
-          `ruta=${ruta}\ncoleccion=${salida.coleccion}\nslug=${salida.slug}\n`,
+          `ruta=${ruta}\ncoleccion=${salida.coleccion}\nslug=${salida.slug}\ncategoria=${categoriaDe(salida.contenido)}\n`,
         );
       }
       console.log(`Entrada generada y validada: ${ruta}`);
