@@ -1,0 +1,78 @@
+---
+// Índice de testing: herramientas y prácticas de pruebas (§7.4).
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ListaEntradas from "../../components/ListaEntradas.astro";
+import { getPorColeccion } from "../../lib/content/entradas.ts";
+import { CATALOGO } from "../../lib/content/catalogo.ts";
+
+const pruebas = (await getPorColeccion("testing")).sort((a, b) =>
+  a.titulo.localeCompare(b.titulo, "es"),
+);
+const base = import.meta.env.BASE_URL;
+const colorText = CATALOGO.testing.colorText;
+---
+
+<BaseLayout
+  titulo="Testing"
+  descripcion="Herramientas y prácticas de pruebas: unitarias, integración y extremo a extremo."
+>
+  <div class="space-y-8">
+    <nav
+      aria-label="Ruta de navegación"
+      class="text-xs sm:text-sm text-[var(--color-muted-text)]"
+    >
+      <ol class="flex items-center gap-1.5 list-none p-0 m-0">
+        <li>
+          <a
+            href={base}
+            class="no-underline text-[var(--color-muted-text)] hover:text-[var(--color-text)] transition-colors"
+          >
+            Inicio
+          </a>
+        </li>
+        <li aria-hidden="true" class="text-[var(--color-border-strong)]">
+          /
+        </li>
+        <li aria-current="page" class="font-medium text-[var(--color-text)]">
+          Testing
+        </li>
+      </ol>
+    </nav>
+
+    <header class="pb-6 border-b border-[var(--color-border)]">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2 mb-2">
+            <span
+              class="text-xs font-mono uppercase tracking-wider font-semibold"
+              style={`color: ${colorText}`}
+            >
+              Colección Testing
+            </span>
+          </div>
+          <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-[var(--color-text)] m-0 mb-2">
+            Testing
+          </h1>
+          <p class="text-base text-[var(--color-muted-text)] m-0 max-w-2xl">
+            Herramientas y prácticas de pruebas: qué cubre cada tipo de prueba,
+            cómo usarlas, un ejemplo y alternativas.
+          </p>
+        </div>
+
+        <div class="sm:text-right shrink-0">
+          <span class="text-2xl sm:text-3xl font-extrabold font-mono text-[var(--color-text)] block">
+            {pruebas.length}
+          </span>
+          <span class="text-xs text-[var(--color-muted)] font-mono">
+            entradas
+          </span>
+        </div>
+      </div>
+    </header>
+
+    <ListaEntradas
+      entradas={pruebas}
+      vacio="Todavía no hay entradas de testing publicadas."
+    />
+  </div>
+</BaseLayout>

@@ -31,17 +31,9 @@ import {
   COLECCIONES,
   ETIQUETAS,
   SECCIONES_OBLIGATORIAS,
-  type Coleccion,
 } from "../src/lib/content/esquemas.ts";
+import { CATALOGO } from "../src/lib/content/catalogo.ts";
 import { validarContenido } from "./validate-content.ts";
-
-/** Plantilla de cada colección en specs/plantillas (nombres en singular). */
-const PLANTILLAS: Record<Coleccion, string> = {
-  glosario: "glosario.md",
-  tecnologias: "tecnologia.md",
-  paquetes: "paquete.md",
-  comparativas: "comparativa.md",
-};
 
 /** Modelos alternados en cada intento */
 const MODELOS = ["gemini-3.8-flash", "gemini-3.6-flash"];
@@ -165,7 +157,7 @@ export async function construirSystem(raiz = "."): Promise<string> {
   const plantillas: string[] = [];
   for (const coleccion of COLECCIONES) {
     const texto = await readFile(
-      join(raiz, "specs", "plantillas", PLANTILLAS[coleccion]),
+      join(raiz, "specs", "plantillas", CATALOGO[coleccion].plantilla),
       "utf8",
     );
     const secciones = SECCIONES_OBLIGATORIAS[coleccion]
@@ -194,7 +186,10 @@ Las plantillas de arriba son solo estructura: sus valores de ejemplo (categoria,
 - tecnologias: tecnología o producto que existe fuera de un paquete: lenguaje, framework, plataforma o servicio (React, Astro, GitHub Pages).
 - paquetes: paquete instalable de npm (vite, zod).
 - comparativas: la petición compara dos o más entradas existentes (Astro frente a Next.js).
-- No elijas glosario por defecto: si la petición nombra un producto, un framework o un paquete concreto, va en tecnologias o paquetes.
+- patrones: solución reutilizable a un problema recurrente, con estructura y ejemplo (Singleton, Observer, repositorio).
+- ia: modelos, agentes, prompts o técnicas de inteligencia artificial (LLM, agente, RAG, prompt engineering).
+- testing: herramientas, técnicas o conceptos de pruebas (cobertura, tests E2E, tests de carga).
+- No elijas glosario por defecto: si la petición nombra un producto, un framework o un paquete concreto, va en tecnologias o paquetes; si describe cómo se resuelve un problema repetido, en patrones; si es de IA o de pruebas, en ia o testing.
 - categoria: exactamente uno de: ${CATEGORIAS.join(", ")}. Elige la que mejor describa la entrada (framework para un framework, herramienta para un paquete, despliegue para un servicio de hosting, lenguaje para un lenguaje, concepto para un término del glosario); no te limites a la de la plantilla.
 - tags: 1-3 de: ${ETIQUETAS.join(", ")} que describan de verdad la entrada. Usa [] solo si ninguna aplica.
 

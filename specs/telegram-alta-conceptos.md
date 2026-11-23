@@ -167,10 +167,12 @@ flowchart TD
 Reglas que sostiene el flujo: el schema y las plantillas se leen del
 checkout (nunca van hardcodeados en el prompt), una entrada existente jamás
 se sobrescribe y sin `chat_id` la notificación se omite. La colección
-(`glosario`, `tecnologias`, `paquetes` o `comparativas`), la `categoria` y
+(`glosario`, `tecnologias`, `paquetes`, `comparativas`, `patrones`, `ia` o
+`testing`), la `categoria` y
 los `tags` no los elige el usuario: los decide el modelo entre los valores
 de los enums de `src/lib/content/esquemas.ts`, con criterios en el prompt
-(qué es concepto, qué es tecnología, qué es paquete, qué es comparativa) y
+(qué es concepto, qué es tecnología, qué es paquete, qué es comparativa,
+qué es patrón, qué es IA, qué es testing) y
 validados después por el validador; la notificación de éxito los muestra
 junto al enlace directo a la entrada publicada.
 

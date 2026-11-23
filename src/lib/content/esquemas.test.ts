@@ -6,9 +6,11 @@ import {
   SECCIONES_OBLIGATORIAS,
   esquemaComparativas,
   esquemaGlosario,
+  esquemaIa,
   esquemaPaquetes,
   esquemaPatrones,
   esquemaTecnologias,
+  esquemaTesting,
   esquemasPorColeccion,
 } from "./esquemas.ts";
 
@@ -19,12 +21,15 @@ const comunes = {
 } as const;
 
 describe("catálogo de colecciones y enums", () => {
-  it("declara las cuatro colecciones en orden", () => {
+  it("declara las siete colecciones en orden", () => {
     expect(COLECCIONES).toEqual([
       "glosario",
       "tecnologias",
       "paquetes",
       "comparativas",
+      "patrones",
+      "ia",
+      "testing",
     ]);
   });
 
@@ -138,6 +143,29 @@ describe("esquemas por colección", () => {
     );
     expect(
       esquemaPatrones.safeParse({ ...comunes, familia: "otra" }).success,
+    ).toBe(false);
+  });
+
+  it("ia añade alternativas y web opcional, sin terminoEn", () => {
+    expect(esquemaIa.parse(comunes).alternativas).toEqual([]);
+    expect(esquemaIa.parse({ ...comunes, web: "https://x.dev" }).web).toBe(
+      "https://x.dev",
+    );
+    expect(esquemaIa.safeParse({ ...comunes, web: "no-url" }).success).toBe(
+      false,
+    );
+    expect(esquemaIa.parse({ ...comunes, terminoEn: "x" })).not.toHaveProperty(
+      "terminoEn",
+    );
+  });
+
+  it("testing añade alternativas, web y npm opcional", () => {
+    expect(esquemaTesting.parse(comunes).alternativas).toEqual([]);
+    expect(esquemaTesting.parse({ ...comunes, npm: "vitest" }).npm).toBe(
+      "vitest",
+    );
+    expect(
+      esquemaTesting.safeParse({ ...comunes, web: "no-url" }).success,
     ).toBe(false);
   });
 });

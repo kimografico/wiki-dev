@@ -97,8 +97,8 @@ Entidad propia que compara 2 o más tecnologías o paquetes (`entidades`) respec
 - Incluye contexto de decisión, tabla de criterios, "cuándo elegir cada una" y ejemplos.
 - *Dado* una comparativa, *entonces* cada entidad comparada muestra un enlace a ella desde su ficha.
 
-### RF-05 · Patrones de diseño (C, fase 5)
-Colección opcional al estilo refactoring.guru: problema, solución, estructura, ejemplo y relación con otros patrones (esta última, mediante `relacionados`).
+### RF-05 · Patrones de diseño (C)
+Colección al estilo refactoring.guru: problema, solución, estructura, ejemplo y relación con otros patrones (esta última, mediante `relacionados`).
 
 ### RF-06 · Navegación y relaciones (M)
 - Índices por colección, por categoría y por etiqueta.
@@ -226,6 +226,8 @@ La categoría es temática y transversal a las colecciones. Añadir una categor�
 | `paquetes` | `alternativas` (slug[]), `web` (url, opcional), `npm` (string, nombre en npm, opcional) |
 | `comparativas` | `entidades` (slug[], mínimo 2, tecnologías o paquetes), `contexto` (string: la decisión que ayuda a tomar) |
 | `patrones` | `familia` enum `creacional \| estructural \| comportamiento` |
+| `ia` | `alternativas` (slug[]), `web` (url, opcional) |
+| `testing` | `alternativas` (slug[]), `web` (url, opcional), `npm` (string, nombre en npm, opcional) |
 
 ### 7.4 Plantillas de cuerpo (secciones obligatorias)
 
@@ -238,6 +240,8 @@ El validador comprueba que existan los encabezados `##` obligatorios; se permite
 | Paquete | Qué es · Para qué sirve · Cuándo usarlo · Cuándo no · Alternativas · Ejemplo |
 | Comparativa | Contexto · Criterios · Cuándo elegir cada una · Ejemplos |
 | Patrón | Problema · Solución · Estructura · Ejemplo · Cuándo usarlo |
+| IA | Qué es · Para qué sirve · Ejemplo · Limitaciones · Alternativas |
+| Testing | Qué es · Para qué sirve · Tipos de prueba · Ejemplo · Alternativas |
 
 Las plantillas con el frontmatter y las secciones vacías viven en `specs/plantillas/` (una por tipo), y las lee la skill `anadir-entrada`.
 
@@ -301,7 +305,9 @@ Cuatro piezas dependen de integraciones que hay que comprobar contra las version
 | `/tecnologias` · `/tecnologias/[slug]` | Índice y ficha |
 | `/paquetes` · `/paquetes/[slug]` | Índice y ficha |
 | `/comparativas` · `/comparativas/[slug]` | Índice y comparativa |
-| `/patrones` · `/patrones/[slug]` | (fase 5) |
+| `/patrones` · `/patrones/[slug]` | Índice y ficha |
+| `/ia` · `/ia/[slug]` | Índice y ficha |
+| `/testing` · `/testing/[slug]` | Índice y ficha |
 | `/categorias/[categoria]` | Entradas de todas las colecciones de una categoría |
 | `/etiquetas/[etiqueta]` | Entradas de todas las colecciones con una etiqueta |
 | `/buscar` | Búsqueda con filtros |
@@ -351,6 +357,7 @@ GitHub Pages sirve un sitio de proyecto en `https://<usuario>.github.io/<repo>/`
 ```
 content/
   glosario/ · tecnologias/ · paquetes/ · comparativas/ · patrones/
+  ia/ · testing/
 src/
   content.config.ts
   features/{glosario,tecnologias,paquetes,comparativas,busqueda,preferencias}/

@@ -1,8 +1,10 @@
 import { useState, useMemo, useEffect, useRef } from "react";
+import { CATALOGO, LISTA_COLECCIONES } from "../../lib/content/catalogo.ts";
+import type { Coleccion } from "../../lib/content/esquemas.ts";
 
 export interface ItemBusqueda {
   slug: string;
-  coleccion: "glosario" | "tecnologias" | "paquetes";
+  coleccion: Coleccion;
   titulo: string;
   resumen: string;
   categoria: string;
@@ -54,13 +56,15 @@ export default function BuscadorRapido({ entradas }: Props) {
     }
   }, [panelAbierto]);
 
+  // Conteo por colección, derivado del catálogo (F1).
   const conteos = useMemo(() => {
-    return {
-      todas: entradas.length,
-      glosario: entradas.filter((e) => e.coleccion === "glosario").length,
-      tecnologias: entradas.filter((e) => e.coleccion === "tecnologias").length,
-      paquetes: entradas.filter((e) => e.coleccion === "paquetes").length,
-    };
+    const porColeccion: Record<Coleccion, number> = Object.fromEntries(
+      LISTA_COLECCIONES.map((c) => [c, 0]),
+    ) as Record<Coleccion, number>;
+    for (const entrada of entradas) {
+      porColeccion[entrada.coleccion] += 1;
+    }
+    return porColeccion;
   }, [entradas]);
 
   const resultados = useMemo(() => {
@@ -83,18 +87,21 @@ export default function BuscadorRapido({ entradas }: Props) {
     });
   }, [consulta, filtroColeccion, entradas]);
 
-  const colecciones = [
-    { clave: "todas", label: "Todas", count: conteos.todas },
-    { clave: "glosario", label: "Glosario", count: conteos.glosario },
-    { clave: "tecnologias", label: "Tecnologías", count: conteos.tecnologias },
-    { clave: "paquetes", label: "Paquetes", count: conteos.paquetes },
+  // Chips de filtro: "Todas" + cada colección del catálogo.
+  const chips = [
+    { clave: "todas" as const, label: "Todas", count: entradas.length },
+    ...LISTA_COLECCIONES.map((coleccion) => ({
+      clave: coleccion,
+      label: CATALOGO[coleccion].nombre,
+      count: conteos[coleccion],
+    })),
   ];
 
-  const coleccionColor: Record<string, string> = {
-    glosario: "text-[var(--color-accent-text)]",
-    tecnologias: "text-[var(--color-dev-text)]",
-    paquetes: "text-[var(--color-design-text)]",
-  };
+  // Nombre visible de la colección filtrada (para los rótulos del panel).
+  const nombreFiltro =
+    filtroColeccion === "todas"
+      ? "todas las colecciones"
+      : (CATALOGO[filtroColeccion as Coleccion]?.nombre ?? filtroColeccion);
 
   return (
     <div className="buscador-rapido w-full my-6 text-left">
@@ -149,7 +156,7 @@ export default function BuscadorRapido({ entradas }: Props) {
           <span className="text-[var(--color-muted)] font-medium">
             Filtrar por:
           </span>
-          {colecciones.map((col) => {
+          {chips.map((col) => {
             const activo = filtroColeccion === col.clave;
             return (
               <button
@@ -189,14 +196,11 @@ export default function BuscadorRapido({ entradas }: Props) {
           <div className="flex items-center justify-between pb-3 mb-4 border-b border-[var(--color-border)] text-xs">
             <span className="font-semibold text-[var(--color-text)] text-sm">
               {consulta.trim()
-                ? `Resultados para "${consulta}" en ${
+                ? `Resultados para "${consulta}" en ${nombreFiltro} (${resultados.length})`
+                : `Mostrando ${resultados.length} entradas de ${
                     filtroColeccion === "todas"
                       ? "todas las colecciones"
-                      : filtroColeccion
-                  } (${resultados.length})`
-                : `Mostrando ${resultados.length} entradas de ${
-                    filtroColeccion.charAt(0).toUpperCase() +
-                    filtroColeccion.slice(1)
+                      : nombreFiltro
                   }`}
             </span>
             <button
@@ -228,12 +232,10 @@ export default function BuscadorRapido({ entradas }: Props) {
                         {item.titulo}
                       </span>
                       <span
-                        className={`text-[10px] uppercase font-mono font-bold tracking-wider px-1.5 py-0.5 rounded bg-[var(--color-surface)] border border-[var(--color-border)] shrink-0 ${
-                          coleccionColor[item.coleccion] ||
-                          "text-[var(--color-muted)]"
-                        }`}
+                        className="text-[10px] uppercase font-mono font-bold tracking-wider px-1.5 py-0.5 rounded bg-[var(--color-surface)] border border-[var(--color-border)] shrink-0"
+                        style={{ color: CATALOGO[item.coleccion].colorText }}
                       >
-                        {item.coleccion}
+                        {CATALOGO[item.coleccion].nombre}
                       </span>
                     </div>
                     <p className="text-xs text-[var(--color-muted-text)] m-0 line-clamp-2 leading-relaxed">

@@ -10,6 +10,7 @@ import Relacionados from "../components/Relacionados.astro";
 import MencionadoEn from "../components/MencionadoEn.astro";
 import BotonAprendida from "../features/preferencias/BotonAprendida.tsx";
 import { getComparativasDe, urlEntrada } from "../lib/content/entradas.ts";
+import { CATALOGO } from "../lib/content/catalogo.ts";
 
 interface Props {
   titulo: string;
@@ -18,32 +19,24 @@ interface Props {
   tags: string[];
   slug: string;
   coleccion: string;
-  urlColeccion: string;
-  nombreColeccion: string;
 }
 
-const {
-  titulo,
-  resumen,
-  categoria,
-  tags,
-  slug,
-  coleccion,
-  urlColeccion,
-  nombreColeccion,
-} = Astro.props;
+const { titulo, resumen, categoria, tags, slug, coleccion } = Astro.props;
 
 const base = import.meta.env.BASE_URL;
+
+// Nombre y URL de la colección, del catálogo (F1): cada página [slug] solo
+// pasa el slug y la colección.
+const nombreColeccion =
+  CATALOGO[coleccion as keyof typeof CATALOGO]?.nombre ?? coleccion;
+const urlColeccion = `${base}${coleccion}`;
 
 // Comparativas donde esta entrada es entidad comparada (RF-04).
 const comparativas = await getComparativasDe(slug);
 
 const colorColeccion =
-  coleccion === "glosario"
-    ? "text-[var(--color-accent-text)]"
-    : coleccion === "tecnologias"
-      ? "text-[var(--color-dev-text)]"
-      : "text-[var(--color-design-text)]";
+  CATALOGO[coleccion as keyof typeof CATALOGO]?.colorText ??
+  "var(--color-muted-text)";
 ---
 
 <BaseLayout titulo={titulo} descripcion={resumen}>
@@ -87,7 +80,8 @@ const colorColeccion =
       <div class="flex flex-wrap items-center justify-between gap-x-3 gap-y-2 mb-3">
         <div class="flex items-center gap-2">
           <span
-            class={`font-mono text-xs uppercase tracking-wider font-bold ${colorColeccion}`}
+            class="font-mono text-xs uppercase tracking-wider font-bold"
+            style={`color: ${colorColeccion}`}
           >
             <a
               href={urlColeccion}

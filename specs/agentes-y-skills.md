@@ -219,7 +219,7 @@ specs/plantillas/               # editable por wiki-dev; leída por anadir-entra
 >
 > Las plantillas viven en `specs/plantillas/` y no dentro de la skill, porque `.opencode/` es de sistema y `wiki-dev` no puede editarlo: así `evolucionar-esquema` puede actualizarlas cuando cambie el esquema.
 >
-> Las skills **no copian** enums ni listas del esquema (categorías, etiquetas, campos): las leen de `src/content.config.ts`. Así un cambio de esquema no obliga a tocar `.opencode/`.
+> Las skills **no copian** enums ni listas del esquema (categorías, etiquetas, campos, colecciones): las leen de `src/lib/content/esquemas.ts`, que es la fuente que consume `src/content.config.ts`. Así un cambio de esquema no obliga a tocar `.opencode/`.
 
 ### 5.1 `resolver-duda`
 - **Objetivo:** ejecutar el flujo de §2 de extremo a extremo.
@@ -237,7 +237,7 @@ specs/plantillas/               # editable por wiki-dev; leída por anadir-entra
 ### 5.2 `anadir-entrada`
 - **Objetivo:** crear un archivo válido a partir de la plantilla del tipo.
 - **Pasos:**
-  1. Elegir la colección con este criterio: *paquete* si es una dependencia o un CLI de un ecosistema (`mermaid`, `eslint`, `vite`, `npm`); *tecnología* si es un lenguaje, un framework de aplicación, una plataforma o un servicio (React, Astro, Git, GitHub Pages); *glosario* si es un concepto; *comparativa* si contrasta 2 o más entradas.
+  1. Elegir la colección con este criterio: *paquete* si es una dependencia o un CLI de un ecosistema (`mermaid`, `eslint`, `vite`, `npm`); *tecnología* si es un lenguaje, un framework de aplicación, una plataforma o un servicio (React, Astro, Git, GitHub Pages); *glosario* si es un concepto; *comparativa* si contrasta 2 o más entradas; *patrón* si es la solución reutilizable a un problema recurrente con estructura y ejemplo (`patrones`); *IA* si es un modelo, agente, prompt o técnica de inteligencia artificial (`ia`); *testing* si es una herramienta, técnica o concepto de pruebas (`testing`).
   2. Leer la plantilla correspondiente de `specs/plantillas/`.
   3. Generar el slug (kebab-case, sin acentos, singular, nombre canónico) y comprobar que **no existe** como slug ni como alias en ninguna colección.
   4. Rellenar el frontmatter: campos comunes (`titulo`, `resumen`, `categoria`, `tags` del catálogo, `alias` si procede) y los de la colección (`npm` en paquetes, etc.).
@@ -388,7 +388,7 @@ Sin commit; revisar con git diff
 | 5 | Una duda sobre un concepto ya existente sin matices nuevos | Amplía la entrada existente sin duplicar; el informe lo indica |
 | 6 | Una duda que requiere un dato de versión | El dato aparece con su fuente en `fuentes`, o se omite y se lista en "Pendiente" |
 | 7 | Una duda ambigua o demasiado amplia ("explícame frontend") | El curator propone un plan de varias entradas y espera confirmación (> 3 archivos) |
-| 8 | "¿Qué hace Playwright y en qué se diferencia de Vitest?" | Entradas `playwright` y `vitest` en `paquetes` (con `npm`, etiqueta `tests`); no se crean en `tecnologias`; enlazadas y, si procede, comparativa |
+| 8 | "¿Qué hace Playwright y en qué se diferencia de Vitest?" | Entradas `playwright` y `vitest` en `testing` (con `npm`, etiqueta `tests`); no se crean en `tecnologias`; enlazadas y, si procede, comparativa |
 | 9 | Una duda cuya respuesta menciona React dentro de `react-router` | El texto escribe «React» con el nombre exacto, sin enlace manual; `validate` en verde y la mención se enlaza sola en el build |
 
 Cada caso se considera superado si el revisor emite `aprobado`, `npm run validate` pasa y el autor confirma que la duda queda resuelta.

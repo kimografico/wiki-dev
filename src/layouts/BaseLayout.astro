@@ -3,6 +3,7 @@
 import "../styles/global.css";
 import InterruptorTema from "../features/preferencias/InterruptorTema.tsx";
 import InterruptorSoloPendientes from "../features/preferencias/InterruptorSoloPendientes.tsx";
+import { CATALOGO, LISTA_COLECCIONES } from "../lib/content/catalogo.ts";
 
 interface Props {
   titulo: string;
@@ -13,12 +14,11 @@ const { titulo, descripcion = "Wiki de consulta para programadores junior." } =
   Astro.props;
 
 const base = import.meta.env.BASE_URL;
-const enlaces = [
-  { href: `${base}glosario`, texto: "Glosario" },
-  { href: `${base}tecnologias`, texto: "Tecnologías" },
-  { href: `${base}paquetes`, texto: "Paquetes" },
-  { href: `${base}comparativas`, texto: "Comparativas" },
-];
+// Nav y pie derivan del catálogo: una colección nueva aparece sola (F1).
+const enlaces = LISTA_COLECCIONES.map((coleccion) => ({
+  href: `${base}${coleccion}`,
+  texto: CATALOGO[coleccion].nombre,
+}));
 const rutaActual = Astro.url.pathname;
 ---
 
@@ -146,7 +146,7 @@ const rutaActual = Astro.url.pathname;
         <!-- Zone 2: Navigation links -->
         <nav
           aria-label="Secciones principales"
-          class="hidden sm:flex items-center gap-1 text-sm font-medium"
+          class="hidden md:flex flex-wrap items-center gap-1 text-sm font-medium"
         >
           {enlaces.map(({ href, texto }) => {
             const activo = rutaActual.startsWith(href);
@@ -178,12 +178,13 @@ const rutaActual = Astro.url.pathname;
             Menú móvil: `<details>` nativo para abrir/cerrar, sin script propio.
             Se cierra solo al navegar (carga de página). Solo contiene la
             navegación: el resto de controles (filtro y tema) ya están en la
-            cabecera, también en móvil.
+            cabecera, también en móvil. Con 7 secciones el nav de escritorio
+            se muestra desde `md` y aquí debajo se usa este menú.
             ASTRO: no hay directivas en el `<details>`; es HTML estándar.
             REACT+VITE: sería un componente con estado `open` y un `useRef`
             para cerrar al pulsar fuera.
           -->
-          <details class="relative sm:hidden">
+          <details class="relative md:hidden">
             <summary class="list-none cursor-pointer inline-flex items-center justify-center w-9 h-9 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] hover:border-[var(--color-accent)] transition-colors [&::-webkit-details-marker]:hidden">
               <svg
                 class="w-5 h-5"
@@ -240,34 +241,18 @@ const rutaActual = Astro.url.pathname;
             wiki-dev · Base de conocimiento estática para programadores junior.
           </span>
         </div>
-        <div class="flex items-center gap-4 text-xs text-[var(--color-muted-text)]">
-          <a
-            href={`${base}glosario`}
-            class="no-underline hover:text-[var(--color-text)]"
-          >
-            Glosario
-          </a>
-          <span>·</span>
-          <a
-            href={`${base}tecnologias`}
-            class="no-underline hover:text-[var(--color-text)]"
-          >
-            Tecnologías
-          </a>
-          <span>·</span>
-          <a
-            href={`${base}paquetes`}
-            class="no-underline hover:text-[var(--color-text)]"
-          >
-            Paquetes
-          </a>
-          <span>·</span>
-          <a
-            href={`${base}comparativas`}
-            class="no-underline hover:text-[var(--color-text)]"
-          >
-            Comparativas
-          </a>
+        <div class="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-[var(--color-muted-text)]">
+          {enlaces.map((enlace, i) => (
+            <>
+              {i > 0 && <span aria-hidden="true">·</span>}
+              <a
+                href={enlace.href}
+                class="no-underline hover:text-[var(--color-text)]"
+              >
+                {enlace.texto}
+              </a>
+            </>
+          ))}
         </div>
       </div>
     </footer>

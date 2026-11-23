@@ -11,6 +11,8 @@ import {
   parsearSalida,
   slugsDe,
 } from "./add-concept.ts";
+import { COLECCIONES } from "../src/lib/content/esquemas.ts";
+import { CATALOGO } from "../src/lib/content/catalogo.ts";
 
 const CONTENIDO_VALIDO = `---
 titulo: Closure
@@ -61,25 +63,20 @@ autoenlace: true
 Solo trae una sección.
 `;
 
-const PLANTILLAS = [
-  "glosario.md",
-  "tecnologia.md",
-  "paquete.md",
-  "comparativa.md",
-];
-
-/** Crea un repo mínimo: specs/plantillas + las cuatro carpetas de content. */
+/**
+ * Crea un repo mínimo: `specs/plantillas` con la plantilla de cada colección
+ * y sus carpetas de `content`. Se deriva de `COLECCIONES` y del catálogo para
+ * que una colección nueva no rompa la suite.
+ */
 async function crearRepo(): Promise<string> {
   const raiz = await mkdtemp(join(tmpdir(), "wiki-add-concept-"));
   const dirs = [
     "specs/plantillas",
-    "content/glosario",
-    "content/tecnologias",
-    "content/paquetes",
-    "content/comparativas",
+    ...COLECCIONES.map((coleccion) => `content/${coleccion}`),
   ];
   for (const dir of dirs) await mkdir(join(raiz, dir), { recursive: true });
-  for (const plantilla of PLANTILLAS) {
+  for (const coleccion of COLECCIONES) {
+    const plantilla = CATALOGO[coleccion].plantilla;
     await writeFile(
       join(raiz, "specs", "plantillas", plantilla),
       `# Plantilla ${plantilla}\n`,
@@ -177,7 +174,7 @@ describe("comprobar", () => {
 
   it("rechaza una colección desconocida", () => {
     expect(
-      comprobar({ coleccion: "patrones", slug: "x", contenido: "" }),
+      comprobar({ coleccion: "podcast", slug: "x", contenido: "" }),
     ).toContain("no existe");
   });
 
@@ -405,7 +402,7 @@ describe("main", () => {
     raices.push(raiz);
     const fetchM = stubFetch([
       respuestaJson({
-        coleccion: "patrones",
+        coleccion: "podcast",
         slug: "x",
         contenido: CONTENIDO_VALIDO,
       }),

@@ -1,0 +1,27 @@
+---
+// Ficha de patrón: Problema · Solución · Estructura · Ejemplo · Cuándo usarlo
+// las exige el validador (§7.4).
+import FichaLayout from "../../layouts/FichaLayout.astro";
+import { getPorColeccion } from "../../lib/content/entradas.ts";
+import { getPaginaEntrada } from "../../lib/content/entradas.ts";
+
+export async function getStaticPaths() {
+  const patrones = await getPorColeccion("patrones");
+  return patrones.map((patron) => ({ params: { slug: patron.slug } }));
+}
+
+const pagina = await getPaginaEntrada(Astro.params.slug ?? "");
+if (!pagina) throw new Error(`Patrón no encontrado: ${Astro.params.slug}`);
+const { Content, entrada } = pagina;
+---
+
+<FichaLayout
+  titulo={entrada.titulo}
+  resumen={entrada.resumen}
+  categoria={entrada.categoria}
+  tags={entrada.tags}
+  slug={entrada.slug}
+  coleccion={entrada.coleccion}
+>
+  <Content />
+</FichaLayout>

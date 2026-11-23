@@ -4,19 +4,18 @@ resumen: "Entidad de software autónoma que percibe su entorno mediante herramie
 categoria: "concepto"
 tags: []
 alias: ["AI Agent", "Agente Autónomo", "Agente Inteligente"]
-relacionados: ["glosario/llm"]
+relacionados: ["llm"]
 fuentes: ["https://en.wikipedia.org/wiki/Intelligent_agent"]
 autoenlace: true
-terminoEn: "Agent"
 ---
 
-## Definición
+## Qué es
 
 Un agente es un sistema o programa informático diseñado para percibir su entorno, tomar decisiones de forma autónoma y ejecutar acciones utilizando un conjunto de herramientas o capacidades predefinidas para lograr una meta u objetivo concreto.
 
 En el contexto de la inteligencia artificial moderna y los modelos de lenguaje (LLM), un agente combina la capacidad de razonamiento de un modelo con la ejecución de funciones externas (como realizar peticiones HTTP, consultar bases de datos o ejecutar código) en un bucle interactivo de planificación y acción.
 
-## Por qué importa
+## Para qué sirve
 
 Los agentes permiten ir más allá de los modelos de lenguaje tradicionales que solo generan texto estático. Al dotar a un sistema de la capacidad de usar herramientas y tomar decisiones en cascada, es posible automatizar flujos de trabajo complejos de principio a fin sin intervención humana constante.
 
@@ -58,7 +57,16 @@ async function runAgent(goal: string) {
 runAgent("Obtener el estado de los pedidos del usuario");
 ```
 
-## Se confunde con
+## Limitaciones
 
-- **[LLM (Large Language Model)](/glosario/llm)**: El LLM es el "cerebro" o motor de procesamiento del lenguaje dentro del agente, pero por sí solo no ejecuta acciones ni guarda contexto de ejecución activa. El agente incluye la lógica envolvente, las herramientas y el bucle de toma de decisiones.
-- **Bot de chat simple**: Un bot tradicional sigue un árbol de decisión rígido basado en reglas fijas, mientras que un agente analiza la meta dada y decide de forma dinámica qué pasos y herramientas utilizar para resolverla.
+- **Depende del modelo:** el bucle de decisión es tan bueno como el LLM que lo alimenta; una mala interpretación de la meta lleva a acciones equivocadas.
+- **Coste y no determinismo:** cada paso consume tokens y puede dar resultados distintos ante la misma petición, por lo que cuesta testear y controlar.
+- **Seguridad:** al ejecutar herramientas reales (HTTP, base de datos, código), un objetivo mal interpretado puede provocar efectos no deseados; hace falta acotar permisos y revisar trazas.
+- **No es una AGI:** el agente decide dentro de un conjunto de herramientas y una meta definidas; no comprende el mundo ni actúa fuera de ese marco.
+
+## Alternativas
+
+- **[LLM (Large Language Model)](/ia/llm)**: el LLM es el «cerebro» del agente, pero por sí solo no ejecuta acciones ni guarda contexto de ejecución; combinarlos es el planteamiento habitual, no una opción excluyente.
+- **Bot de chat simple:** un bot tradicional sigue un árbol de decisión rígido con reglas fijas; es más barato y predecible cuando el flujo se conoce por completo.
+- **Flujos con reglas o BPM:** para procesos deterministas, un motor de reglas o un workflow explícito es auditable y no depende de un modelo probabilístico.
+- **Script programado:** si la secuencia de pasos siempre es la misma, un script directo evita el bucle de planificación.

@@ -19,6 +19,12 @@ Playwright controla navegadores reales (Chromium, Firefox y WebKit) desde códig
 
 Prueba la aplicación de extremo a extremo: que una página carga, que un enlace navega, que el interruptor de tema cambia de verdad. Aquí es la vía prevista para pruebas de UI y de accesibilidad en el navegador.
 
+## Tipos de prueba
+
+- **Extremo a extremo (E2E):** flujos completos en un navegador real (Chromium, Firefox y WebKit).
+- **De API:** peticiones HTTP directas contra el servidor, sin pasar por la interfaz.
+- **Visuales:** capturas comparadas para detectar cambios de aspecto no previstos.
+
 ## Cuándo usarlo
 
 Cuando quieres verificar flujos reales en un navegador de verdad, más allá de las unidades de Vitest.

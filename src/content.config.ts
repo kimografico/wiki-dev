@@ -1,6 +1,8 @@
 // Esquemas Zod de las content collections (Patrón 2).
 //
 // ASTRO: `defineCollection` + un loader `glob` declaran y cargan cada colección.
+//   Aquí se generan desde `COLECCIONES` para no repetir el bloque por colección:
+//   una colección nueva solo exige su esquema en `esquemas.ts` y su carpeta.
 // REACT+VITE: cargarías con `import.meta.glob('/content/**/*.md', { eager: true })`
 //   y validarías cada frontmatter con `schema.parse()` en un script de build.
 //
@@ -9,30 +11,17 @@
 import { defineCollection } from "astro:content";
 import { glob } from "astro/loaders";
 import {
-  esquemaComparativas,
-  esquemaGlosario,
-  esquemaPaquetes,
-  esquemaTecnologias,
+  COLECCIONES,
+  esquemasPorColeccion,
+  type Coleccion,
 } from "./lib/content/esquemas.ts";
 
-const glosario = defineCollection({
-  loader: glob({ pattern: "**/*.md", base: "./content/glosario" }),
-  schema: esquemaGlosario,
-});
+const crearColeccion = (coleccion: Coleccion) =>
+  defineCollection({
+    loader: glob({ pattern: "**/*.md", base: `./content/${coleccion}` }),
+    schema: esquemasPorColeccion[coleccion],
+  });
 
-const tecnologias = defineCollection({
-  loader: glob({ pattern: "**/*.md", base: "./content/tecnologias" }),
-  schema: esquemaTecnologias,
-});
-
-const paquetes = defineCollection({
-  loader: glob({ pattern: "**/*.md", base: "./content/paquetes" }),
-  schema: esquemaPaquetes,
-});
-
-const comparativas = defineCollection({
-  loader: glob({ pattern: "**/*.md", base: "./content/comparativas" }),
-  schema: esquemaComparativas,
-});
-
-export const collections = { glosario, tecnologias, paquetes, comparativas };
+export const collections = Object.fromEntries(
+  COLECCIONES.map((coleccion) => [coleccion, crearColeccion(coleccion)]),
+) as Record<Coleccion, ReturnType<typeof crearColeccion>>;

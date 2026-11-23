@@ -1,29 +1,18 @@
 ---
 // Página de error 404.
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { CATALOGO, LISTA_COLECCIONES } from "../lib/content/catalogo.ts";
 
 const base = import.meta.env.BASE_URL;
 
-const enlaces = [
-  {
-    href: `${base}glosario`,
-    texto: "Glosario",
-    desc: "Términos y conceptos",
-    icono: "Aa",
-  },
-  {
-    href: `${base}tecnologias`,
-    texto: "Tecnologías",
-    desc: "Lenguajes y frameworks",
-    icono: "</>",
-  },
-  {
-    href: `${base}paquetes`,
-    texto: "Paquetes",
-    desc: "Librerías y dependencias",
-    icono: "{ }",
-  },
-];
+// Accesos a todas las colecciones, derivados del catálogo (F1).
+const enlaces = LISTA_COLECCIONES.map((coleccion) => ({
+  href: `${base}${coleccion}`,
+  texto: CATALOGO[coleccion].nombre,
+  desc: CATALOGO[coleccion].descripcion,
+  icono: CATALOGO[coleccion].icono,
+  colorText: CATALOGO[coleccion].colorText,
+}));
 ---
 
 <BaseLayout titulo="Página no encontrada" descripcion="La página no existe.">
@@ -40,13 +29,16 @@ const enlaces = [
       Prueba a explorar desde nuestras colecciones principales:
     </p>
 
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8">
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mb-8">
       {enlaces.map((e) => (
         <a
           href={e.href}
           class="p-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--color-accent)] hover:shadow-xs transition-all no-underline text-center group"
         >
-          <span class="font-mono text-sm font-bold block mb-1 text-[var(--color-accent-text)]">
+          <span
+            class="font-mono text-sm font-bold block mb-1"
+            style={`color: ${e.colorText}`}
+          >
             {e.icono}
           </span>
           <span class="font-bold text-sm text-[var(--color-text)] group-hover:text-[var(--color-accent-text)] transition-colors block">

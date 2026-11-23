@@ -9,12 +9,15 @@ import { z } from "astro/zod";
 //   y desaparece en Astro 8.
 // REACT+VITE: importarías `zod` directamente y validarías en un script de build.
 
-/** Colecciones de contenido. `patrones` existe desde F5. */
+/** Colecciones de contenido (el orden es el de navegación; ver `catalogo.ts`). */
 export const COLECCIONES = [
   "glosario",
   "tecnologias",
   "paquetes",
   "comparativas",
+  "patrones",
+  "ia",
+  "testing",
 ] as const;
 
 export type Coleccion = (typeof COLECCIONES)[number];
@@ -82,12 +85,26 @@ export const esquemaPatrones = base.extend({
   familia: z.enum(["creacional", "estructural", "comportamiento"]),
 });
 
+export const esquemaIa = base.extend({
+  alternativas: z.array(z.string()).default([]),
+  web: z.url().optional(),
+});
+
+export const esquemaTesting = base.extend({
+  alternativas: z.array(z.string()).default([]),
+  web: z.url().optional(),
+  npm: z.string().optional(),
+});
+
 /** Esquema de cada colección, indexado por su nombre. */
 export const esquemasPorColeccion = {
   glosario: esquemaGlosario,
   tecnologias: esquemaTecnologias,
   paquetes: esquemaPaquetes,
   comparativas: esquemaComparativas,
+  patrones: esquemaPatrones,
+  ia: esquemaIa,
+  testing: esquemaTesting,
 } as const;
 
 /** Secciones `##` obligatorias del cuerpo por tipo (§7.4). */
@@ -115,6 +132,15 @@ export const SECCIONES_OBLIGATORIAS: Record<Coleccion, readonly string[]> = {
     "Cuándo elegir cada una",
     "Ejemplos",
   ],
+  patrones: ["Problema", "Solución", "Estructura", "Ejemplo", "Cuándo usarlo"],
+  ia: ["Qué es", "Para qué sirve", "Ejemplo", "Limitaciones", "Alternativas"],
+  testing: [
+    "Qué es",
+    "Para qué sirve",
+    "Tipos de prueba",
+    "Ejemplo",
+    "Alternativas",
+  ],
 };
 
 /**
@@ -126,6 +152,9 @@ export const CAMPOS_RELACION: Record<Coleccion, readonly string[]> = {
   tecnologias: ["relacionados", "alternativas"],
   paquetes: ["relacionados", "alternativas"],
   comparativas: ["relacionados", "entidades"],
+  patrones: ["relacionados"],
+  ia: ["relacionados", "alternativas"],
+  testing: ["relacionados", "alternativas"],
 };
 
 /** Nombres de sección reservados: los genera el layout, no se escriben (§7.4). */

@@ -2,6 +2,7 @@
 // El slug/valor del enum es la clave de URL; aquí está cómo se escribe para el
 // lector. TypeScript comprueba que no falte ninguno de los enums de esquemas.ts.
 import { CATEGORIAS, ETIQUETAS, type Coleccion } from "./esquemas.ts";
+import { CATALOGO } from "./catalogo.ts";
 
 const NOMBRES_CATEGORIA: Record<(typeof CATEGORIAS)[number], string> = {
   lenguaje: "Lenguaje",
@@ -25,13 +26,6 @@ const NOMBRES_ETIQUETA: Record<(typeof ETIQUETAS)[number], string> = {
   seguridad: "Seguridad",
 };
 
-const NOMBRES_COLECCION: Record<Coleccion, string> = {
-  glosario: "Glosario",
-  tecnologias: "Tecnologías",
-  paquetes: "Paquetes",
-  comparativas: "Comparativas",
-};
-
 /** Nombre visible de una categoría; si el valor no existe, se muestra tal cual. */
 export function nombreCategoria(valor: string): string {
   return (
@@ -44,7 +38,7 @@ export function nombreEtiqueta(valor: string): string {
   return NOMBRES_ETIQUETA[valor as keyof typeof NOMBRES_ETIQUETA] ?? valor;
 }
 
-/** Nombre visible de una colección. */
+/** Nombre visible de una colección (del catálogo; desconocida, tal cual). */
 export function nombreColeccion(valor: string): string {
-  return NOMBRES_COLECCION[valor as keyof typeof NOMBRES_COLECCION] ?? valor;
+  return valor in CATALOGO ? CATALOGO[valor as Coleccion].nombre : valor;
 }

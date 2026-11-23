@@ -19,6 +19,12 @@ Vitest es un framework de pruebas para proyectos basados en Vite. Ejecuta los te
 
 Comprueba que la lógica se comporta como se espera: por ejemplo, que la normalización de entradas o el cálculo de relaciones devuelvan lo correcto. Aquí también vigila que la cobertura de `src/lib` no baje del umbral.
 
+## Tipos de prueba
+
+- **Unitarias:** la lógica aislada (`src/lib`, utilidades, cálculos) con aserciones y espías.
+- **De integración:** módulos que trabajan juntos, como leer el frontmatter y normalizar una entrada.
+- **De componente (con `@testing-library/*`):** comportamiento de un componente en `happy-dom` o `jsdom`, sin navegador real.
+
 ## Cuándo usarlo
 
 En cualquier módulo con lógica propia que merezca una prueba automática y repetible. Se integra sin fricción si el proyecto ya usa Vite.

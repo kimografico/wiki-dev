@@ -1,8 +1,9 @@
 # wiki-dev
 
-Wiki **estática** de consulta para programadores junior: glosario, tecnologías, paquetes y
-comparativas. El contenido son archivos Markdown que **se añaden por código** (normalmente
-mediante agentes de opencode); la página no tiene ninguna interfaz para crear entradas.
+Wiki **estática** de consulta para programadores junior: glosario, tecnologías, paquetes,
+comparativas, patrones, IA y testing. El contenido son archivos Markdown que **se añaden por
+código** (normalmente mediante agentes de opencode); la página no tiene ninguna interfaz para
+crear entradas.
 
 - No hay backend ni base de datos: el sitio se genera en build (SSG) y se sirve desde
   GitHub Pages.
@@ -102,7 +103,7 @@ Formato: **definición breve** + para qué se usa aquí.
 | Zod                  | Validación de esquemas en TypeScript.                           | Valida el frontmatter de cada entrada.                                 |
 | Markdown             | Formato de texto ligero.                                        | Formato de todas las entradas (sin MDX).                               |
 | frontmatter          | Cabecera YAML entre `---` al inicio de un `.md`.                | Datos de la entrada (título, categoría…).                              |
-| content collection   | Conjunto de archivos validados por un esquema en Astro.         | Glosario, tecnologías, paquetes, comparativas y patrones.              |
+| content collection   | Conjunto de archivos validados por un esquema en Astro.         | Glosario, tecnologías, paquetes, comparativas, patrones, IA y testing. |
 | slug                 | Identificador de la entrada (nombre del archivo, kebab-case).   | Único en toda la wiki; clave de relaciones y menciones.                |
 | SSG                  | Generación estática del sitio en build.                         | Todo el sitio se pre-renderiza a HTML.                                 |
 | hidratación          | Añadir JavaScript a HTML estático.                              | Solo en las islas.                                                     |

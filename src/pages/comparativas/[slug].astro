@@ -17,7 +17,6 @@ export async function getStaticPaths() {
 const pagina = await getPaginaEntrada(Astro.params.slug ?? "");
 if (!pagina) throw new Error(`Comparativa no encontrada: ${Astro.params.slug}`);
 const { Content, entrada } = pagina;
-const base = import.meta.env.BASE_URL;
 ---
 
 <FichaLayout
@@ -27,8 +26,6 @@ const base = import.meta.env.BASE_URL;
   tags={entrada.tags}
   slug={entrada.slug}
   coleccion={entrada.coleccion}
-  urlColeccion={`${base}comparativas`}
-  nombreColeccion="Comparativas"
 >
   <Content />
 </FichaLayout>

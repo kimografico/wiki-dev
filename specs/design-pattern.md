@@ -1,6 +1,6 @@
 # Patrones de diseño del proyecto
 
-> Wiki **estática** de consulta para programadores junior: glosario, tecnologías, paquetes y comparativas. El contenido son archivos Markdown que se añaden por código (normalmente mediante agentes); la página no tiene funcionalidad para crear entradas.
+> Wiki **estática** de consulta para programadores junior: glosario, tecnologías, paquetes, comparativas, patrones, IA y testing. El contenido son archivos Markdown que se añaden por código (normalmente mediante agentes); la página no tiene funcionalidad para crear entradas.
 > Stack: **Astro + TypeScript + Tailwind + Zod**, Markdown plano (sin MDX), con islas de React cuando haga falta.
 
 Este documento recoge los patrones de diseño y arquitectura elegidos, **por qué** se eligieron para este proyecto y **cómo** se aplican. Cada patrón incluye su equivalencia en React + Vite, porque uno de los objetivos del proyecto es aprender conceptos extrapolables a otros frameworks.
@@ -129,41 +129,21 @@ const base = z.object({
   autoenlace: z.boolean().default(true),
 });
 
-const glosario = defineCollection({
-  // ASTRO: la collection carga los archivos y los valida con el esquema.
-  // REACT+VITE: cargarías con import.meta.glob('/content/glosario/*.md', { eager: true })
-  //   y validarías cada frontmatter con schema.parse() en un script de build (scripts/validate-content.ts).
-  loader: glob({ pattern: '**/*.md', base: './content/glosario' }),
-  schema: base.extend({ terminoEn: z.string().optional() }),
-});
+// Las colecciones se generan de `COLECCIONES` × `esquemasPorColeccion`
+// (glosario, tecnologias, paquetes, comparativas, patrones, ia, testing):
+// una colección nueva solo exige su esquema en `esquemas.ts` y su carpeta.
+const crearColeccion = (coleccion: Coleccion) =>
+  defineCollection({
+    // ASTRO: la collection carga los archivos y los valida con el esquema.
+    // REACT+VITE: cargarías con import.meta.glob('/content/**/*.md', { eager: true })
+    //   y validarías cada frontmatter con schema.parse() en un script de build (scripts/validate-content.ts).
+    loader: glob({ pattern: '**/*.md', base: `./content/${coleccion}` }),
+    schema: esquemasPorColeccion[coleccion],
+  });
 
-const tecnologias = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './content/tecnologias' }),
-  schema: base.extend({
-    alternativas: z.array(z.string()).default([]),
-    web: z.string().url().optional(),
-  }),
-});
-
-const paquetes = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './content/paquetes' }),
-  schema: base.extend({
-    alternativas: z.array(z.string()).default([]),
-    web: z.string().url().optional(),
-    npm: z.string().optional(), // nombre en el registro de npm
-  }),
-});
-
-const comparativas = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './content/comparativas' }),
-  schema: base.extend({
-    entidades: z.array(z.string()).min(2),
-    contexto: z.string(),
-  }),
-});
-
-// `patrones` (fase 5) se añade con el mismo esquema base + `familia`.
-export const collections = { glosario, tecnologias, paquetes, comparativas };
+export const collections = Object.fromEntries(
+  COLECCIONES.map((coleccion) => [coleccion, crearColeccion(coleccion)]),
+);
 ```
 
 ### Ejemplo de entrada válida
@@ -211,7 +191,7 @@ import { getCollection } from 'astro:content';
 // REACT+VITE: aquí iría import.meta.glob + parseo del frontmatter.
 // Las funciones exportadas serían IDÉNTICAS: ese es el objetivo del patrón.
 
-const COLECCIONES = ['glosario', 'tecnologias', 'paquetes', 'comparativas'] as const;
+const COLECCIONES = ['glosario', 'tecnologias', 'paquetes', 'comparativas', 'patrones', 'ia', 'testing'] as const;
 
 // Como el slug es único en toda la wiki, se puede resolver sin saber la colección.
 export async function getTodasLasEntradas() {
@@ -265,7 +245,7 @@ El plugin de menciones (Patrón 7) tampoco importa `astro:content`: lee el front
 ## 5. Patrón 4: Estructura por funcionalidades (Feature-based)
 
 ### Qué es
-El código se organiza por **dominio** (glosario, tecnologías, paquetes, comparativas, búsqueda, preferencias) y no por tipo de archivo (todos los componentes juntos, todas las páginas juntas).
+El código se organiza por **dominio** (glosario, tecnologías, paquetes, comparativas, patrones, IA, testing, búsqueda, preferencias) y no por tipo de archivo (todos los componentes juntos, todas las páginas juntas).
 
 ### Por qué aquí
 La wiki irá añadiendo secciones. Con estructura por tipo, cada sección nueva toca cinco carpetas distintas. Con estructura por funcionalidad, una sección nueva es **una carpeta nueva**.
@@ -279,6 +259,8 @@ content/                       # Datos (fuera de src: separa contenido de códig
   paquetes/
   comparativas/
   patrones/
+  ia/
+  testing/
 
 src/
   content.config.ts            # Esquemas Zod

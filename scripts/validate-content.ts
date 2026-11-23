@@ -182,10 +182,7 @@ export async function validarContenido(
       const segmentos = url.replace(/^\.\//, "").split("/").filter(Boolean);
       const posibleSlug = segmentos[segmentos.length - 1] ?? "";
       const esPaginaConocida = [
-        "glosario",
-        "tecnologias",
-        "paquetes",
-        "comparativas",
+        ...COLECCIONES,
         "categorias",
         "etiquetas",
         "buscar",

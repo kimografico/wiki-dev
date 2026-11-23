@@ -1,0 +1,28 @@
+---
+// Ficha de testing: Qué es · Para qué sirve · Tipos de prueba · Ejemplo ·
+// Alternativas las exige el validador (§7.4).
+import FichaLayout from "../../layouts/FichaLayout.astro";
+import { getPorColeccion } from "../../lib/content/entradas.ts";
+import { getPaginaEntrada } from "../../lib/content/entradas.ts";
+
+export async function getStaticPaths() {
+  const entradas = await getPorColeccion("testing");
+  return entradas.map((entrada) => ({ params: { slug: entrada.slug } }));
+}
+
+const pagina = await getPaginaEntrada(Astro.params.slug ?? "");
+if (!pagina)
+  throw new Error(`Entrada de testing no encontrada: ${Astro.params.slug}`);
+const { Content, entrada } = pagina;
+---
+
+<FichaLayout
+  titulo={entrada.titulo}
+  resumen={entrada.resumen}
+  categoria={entrada.categoria}
+  tags={entrada.tags}
+  slug={entrada.slug}
+  coleccion={entrada.coleccion}
+>
+  <Content />
+</FichaLayout>
