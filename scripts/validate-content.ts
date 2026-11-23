@@ -17,6 +17,7 @@ import {
   COLECCIONES,
   SECCIONES_GENERADAS,
   SECCIONES_OBLIGATORIAS,
+  esquemaPaginaTelegramBot,
   esquemasPorColeccion,
   type Coleccion,
 } from "../src/lib/content/esquemas.ts";
@@ -107,6 +108,31 @@ export async function validarContenido(
         }
       }
       entradas.push({ ruta, coleccion, slug, data, cuerpo: content });
+    }
+  }
+
+  for (const ruta of await archivosMarkdown(join(raiz, "telegrambot"))) {
+    const fuente = await readFile(ruta, "utf8");
+    const { data } = matter(fuente);
+    const parsed = esquemaPaginaTelegramBot.safeParse(data);
+    if (!parsed.success) {
+      for (const problema of parsed.error.issues) {
+        errores.push(
+          `${ruta}: esquema inválido en "${problema.path.join(".")}": ${problema.message}`,
+        );
+      }
+      continue;
+    }
+
+    const slug = ruta
+      .replace(/\\/g, "/")
+      .split("/")
+      .pop()!
+      .replace(/\.md$/, "");
+    if (parsed.data.apartado !== slug) {
+      errores.push(
+        `${ruta}: el apartado "${parsed.data.apartado}" debe coincidir con el nombre del archivo`,
+      );
     }
   }
 

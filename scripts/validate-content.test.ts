@@ -20,6 +20,7 @@ async function raiz(): Promise<string> {
   for (const coleccion of COLECCIONES) {
     await mkdir(join(dir, coleccion), { recursive: true });
   }
+  await mkdir(join(dir, "telegrambot"), { recursive: true });
   return dir;
 }
 
@@ -54,6 +55,35 @@ describe("validarContenido", () => {
     const { errores, entradas } = await validarContenido("ruta/inventada");
     expect(errores).toEqual([]);
     expect(entradas).toEqual([]);
+  });
+
+  it("valida las páginas Markdown de TelegramBot", async () => {
+    const dir = await raiz();
+    await escribir(
+      dir,
+      "telegrambot",
+      "funcional",
+      "titulo: TelegramBot\nresumen: Guía funcional\napartado: funcional",
+      "## Uso\nContenido",
+    );
+    const { errores, entradas } = await validarContenido(dir);
+    expect(errores).toEqual([]);
+    expect(entradas).toEqual([]);
+  });
+
+  it("detecta un apartado que no coincide con el nombre del archivo", async () => {
+    const dir = await raiz();
+    await escribir(
+      dir,
+      "telegrambot",
+      "funcional",
+      "titulo: TelegramBot\nresumen: Guía técnica\napartado: tecnico",
+      "## Uso\nContenido",
+    );
+    const { errores } = await validarContenido(dir);
+    expect(errores).toContain(
+      `${join(dir, "telegrambot", "funcional.md")}: el apartado "tecnico" debe coincidir con el nombre del archivo`,
+    );
   });
 
   it("devuelve las entradas leídas con su slug y colección", async () => {

@@ -1,102 +1,13 @@
 ---
-import BaseLayout from "../../layouts/BaseLayout.astro";
-import BotonEnlace from "../../components/BotonEnlace.astro";
-const base = import.meta.env.BASE_URL;
+import TelegramBotMarkdownLayout from "../../layouts/TelegramBotMarkdownLayout.astro";
+import { getPaginaTelegramBot } from "../../lib/content/entradas.ts";
+
+const pagina = await getPaginaTelegramBot("funcional");
+if (!pagina)
+  throw new Error("No se encontró el contenido funcional de TelegramBot");
+const { Content, ...frontmatter } = pagina;
 ---
 
-<BaseLayout
-  titulo="TelegramBot"
-  descripcion="Aprende a utilizar el bot de Telegram de wiki-dev para interactuar y añadir contenido mediante comandos."
->
-  <article class="max-w-3xl mx-auto space-y-10 py-4">
-    <!-- Encabezado de la página -->
-    <header class="space-y-4 border-b border-[var(--color-border)] pb-6">
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--color-surface)] border border-[var(--color-border)] text-xs font-mono text-[var(--color-muted-text)]">
-        <span class="w-2 h-2 rounded-full bg-[var(--color-accent)] inline-block"></span>
-        <span>Integración Telegram</span>
-      </div>
-
-      <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-[var(--color-text)] m-0">
-        TelegramBot <span class="text-[var(--color-accent)]">wiki-dev</span>
-      </h1>
-
-      <p class="text-base sm:text-lg text-[var(--color-muted-text)] leading-relaxed m-0 text-balance">
-        Interactúa con la wiki de conocimiento, consulta el estado y añade
-        nuevas entradas directamente desde tu chat de Telegram.
-      </p>
-    </header>
-
-    <!-- Contenido Funcional -->
-    <div class="space-y-8">
-      <section class="space-y-4">
-        <h2 class="text-2xl font-bold tracking-tight text-[var(--color-text)] m-0">
-          Apartado Funcional: ¿Qué hace y cómo se usa?
-        </h2>
-        <p class="text-sm sm:text-base text-[var(--color-muted-text)] leading-relaxed m-0">
-          El bot de Telegram de <strong>wiki-dev</strong> sirve como pasarela
-          para automatizar tareas de mantenimiento e incorporación de contenido
-          sobre las colecciones estáticas.
-        </p>
-      </section>
-
-      <!-- Tarjeta: Qué hace -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div class="p-5 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] space-y-2">
-          <h3 class="text-base font-bold text-[var(--color-text)] m-0">
-            Añadir entradas guiadas
-          </h3>
-          <p class="text-xs sm:text-sm text-[var(--color-muted-text)] m-0 leading-relaxed">
-            Permite iniciar el flujo de creación de nuevas fichas interactivas
-            siguiendo las plantillas oficiales del proyecto.
-          </p>
-        </div>
-
-        <div class="p-5 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] space-y-2">
-          <h3 class="text-base font-bold text-[var(--color-text)] m-0">
-            Automatización y avisos
-          </h3>
-          <p class="text-xs sm:text-sm text-[var(--color-muted-text)] m-0 leading-relaxed">
-            Facilita notificaciones y control rápido sobre el repositorio sin
-            necesidad de abrir el entorno de desarrollo local.
-          </p>
-        </div>
-      </div>
-
-      <!-- Comando único -->
-      <section class="space-y-4 p-6 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)]">
-        <h3 class="text-lg font-bold text-[var(--color-text)] m-0">
-          Comando principal del bot
-        </h3>
-        <ul class="space-y-3 list-none p-0 m-0 text-sm">
-          <li class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 p-3 rounded-xl bg-[var(--color-bg)] border border-[var(--color-border)]/60">
-            <code class="font-mono font-bold text-[var(--color-accent-text)] text-xs sm:text-sm">
-              /add
-            </code>
-            <span class="text-[var(--color-muted-text)] text-xs sm:text-sm">
-              Inicia el proceso guiado para añadir una nueva entrada a la wiki.
-            </span>
-          </li>
-        </ul>
-      </section>
-
-      <!-- Enlace a la sección técnica con color del tema -->
-      <section class="p-6 rounded-2xl border-2 border-dashed border-[var(--color-border)] bg-[var(--color-surface)] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div class="space-y-1">
-          <h3 class="text-base font-bold text-[var(--color-text)] m-0">
-            ¿Interesado en la arquitectura?
-          </h3>
-          <p class="text-xs sm:text-sm text-[var(--color-muted-text)] m-0">
-            Consulta los detalles técnicos y la implementación del bot.
-          </p>
-        </div>
-        <BotonEnlace
-          href={`${base}telegrambot/tecnico`}
-          variante="principal"
-          class="shrink-0 no-underline"
-        >
-          Ver apartado técnico →
-        </BotonEnlace>
-      </section>
-    </div>
-  </article>
-</BaseLayout>
+<TelegramBotMarkdownLayout frontmatter={frontmatter}>
+  <Content />
+</TelegramBotMarkdownLayout>

@@ -12,6 +12,7 @@ import { defineCollection } from "astro:content";
 import { glob } from "astro/loaders";
 import {
   COLECCIONES,
+  esquemaPaginaTelegramBot,
   esquemasPorColeccion,
   type Coleccion,
 } from "./lib/content/esquemas.ts";
@@ -22,6 +23,14 @@ const crearColeccion = (coleccion: Coleccion) =>
     schema: esquemasPorColeccion[coleccion],
   });
 
-export const collections = Object.fromEntries(
+const coleccionesWiki = Object.fromEntries(
   COLECCIONES.map((coleccion) => [coleccion, crearColeccion(coleccion)]),
 ) as Record<Coleccion, ReturnType<typeof crearColeccion>>;
+
+export const collections = {
+  ...coleccionesWiki,
+  telegrambot: defineCollection({
+    loader: glob({ pattern: "**/*.md", base: "./content/telegrambot" }),
+    schema: esquemaPaginaTelegramBot,
+  }),
+};

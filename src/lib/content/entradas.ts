@@ -7,9 +7,21 @@
 //   componente `Content` de una entrada.
 // REACT+VITE: aquí iría `import.meta.glob` + parseo del frontmatter; las
 //   funciones exportadas serían idénticas (ese es el objetivo del patrón).
-import { getCollection, render } from "astro:content";
+import { getCollection, getEntry, render } from "astro:content";
 import type { CollectionEntry } from "astro:content";
-import { COLECCIONES, type Coleccion } from "./esquemas.ts";
+import {
+  COLECCIONES,
+  type ApartadoTelegramBot,
+  type Coleccion,
+} from "./esquemas.ts";
+
+/** Contenido Markdown de las páginas funcional y técnica del TelegramBot. */
+export async function getPaginaTelegramBot(apartado: ApartadoTelegramBot) {
+  const entry = await getEntry("telegrambot", apartado);
+  if (!entry) return undefined;
+  const { Content } = await render(entry);
+  return { ...entry.data, Content };
+}
 
 /** Entrada normalizada: campos comunes ya resueltos + la entrada original. */
 export interface Entrada {

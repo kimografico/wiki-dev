@@ -2,6 +2,7 @@
 import { defineConfig } from "astro/config";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@astrojs/react";
+import mermaid from "astro-mermaid";
 import astrobook from "astrobook";
 import { unified } from "@astrojs/markdown-remark";
 import { remarkMenciones } from "./src/lib/markdown/remark-menciones.ts";
@@ -21,6 +22,7 @@ export default defineConfig({
   base,
 
   integrations: [
+    mermaid({ autoTheme: true, enableLog: false }),
     // ASTRO: la integración de React permite las islas interactivas (RF-13, RF-14).
     // REACT+VITE: React ya está en todas partes; aquí solo hidrata las islas.
     react(),

@@ -96,6 +96,16 @@ export const esquemaTesting = base.extend({
   npm: z.string().optional(),
 });
 
+export const esquemaPaginaTelegramBot = z.object({
+  titulo: z.string().min(1),
+  resumen: z.string().max(200),
+  apartado: z.enum(["funcional", "tecnico"]),
+});
+
+export type ApartadoTelegramBot = z.infer<
+  typeof esquemaPaginaTelegramBot
+>["apartado"];
+
 /** Esquema de cada colección, indexado por su nombre. */
 export const esquemasPorColeccion = {
   glosario: esquemaGlosario,
