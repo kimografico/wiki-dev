@@ -1,0 +1,14 @@
+---
+import Boton from "../components/Boton.astro";
+
+interface Props {
+  variante?: "principal" | "secundaria" | "sutil";
+  disabled?: boolean;
+}
+
+const { variante = "secundaria", disabled = false } = Astro.props;
+---
+
+<Boton variante={variante} disabled={disabled}>
+  Guardar cambios
+</Boton>

@@ -5,7 +5,7 @@
 // La cabecera también enlaza la comparativa de la entidad (RF-04) y hace
 // navegables la categoría y las etiquetas (RF-06).
 import BaseLayout from "./BaseLayout.astro";
-import Badge from "../components/Badge.astro";
+import EnlaceEtiqueta from "../components/EnlaceEtiqueta.astro";
 import Relacionados from "../components/Relacionados.astro";
 import MencionadoEn from "../components/MencionadoEn.astro";
 import BotonAprendida from "../features/preferencias/BotonAprendida.tsx";
@@ -91,12 +91,12 @@ const colorColeccion =
             </a>
           </span>
           <span class="text-[var(--color-border-strong)]">·</span>
-          <a
+          <EnlaceEtiqueta
             href={`${base}categorias/${categoria}`}
-            class="no-underline hover:underline underline-offset-2"
+            tipo="categoria"
           >
-            <Badge tipo="categoria">{categoria}</Badge>
-          </a>
+            {categoria}
+          </EnlaceEtiqueta>
         </div>
 
         <!-- ISLA: marcar como aprendida (RF-14). -->
@@ -115,12 +115,9 @@ const colorColeccion =
         <div class="flex flex-wrap items-center gap-2 pt-3 border-t border-[var(--color-border)]/60">
           <span class="text-xs text-[var(--color-muted)]">Etiquetas:</span>
           {tags.map((tag) => (
-            <a
-              href={`${base}etiquetas/${tag}`}
-              class="no-underline hover:underline underline-offset-2"
-            >
-              <Badge tipo="tag">{tag}</Badge>
-            </a>
+            <EnlaceEtiqueta href={`${base}etiquetas/${tag}`} tipo="tag">
+              {tag}
+            </EnlaceEtiqueta>
           ))}
         </div>
       )}

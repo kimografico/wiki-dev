@@ -1,0 +1,13 @@
+---
+import BotonEnlace from "../components/BotonEnlace.astro";
+
+interface Props {
+  variante?: "principal" | "secundaria" | "sutil";
+}
+
+const { variante = "principal" } = Astro.props;
+---
+
+<BotonEnlace href="#arquitectura" variante={variante}>
+  Ver apartado técnico →
+</BotonEnlace>

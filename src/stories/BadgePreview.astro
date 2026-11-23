@@ -1,0 +1,12 @@
+---
+import Badge from "../components/Badge.astro";
+
+interface Props {
+  tipo?: "categoria" | "tag";
+}
+
+const { tipo = "tag" } = Astro.props;
+const texto = tipo === "categoria" ? "Frontend" : "Astro";
+---
+
+<Badge tipo={tipo}>{texto}</Badge>

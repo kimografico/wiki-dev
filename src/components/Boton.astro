@@ -1,0 +1,24 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import {
+  clasesBoton,
+  type TamanoBoton,
+  type VarianteBoton,
+} from "./boton-clases.ts";
+
+type Props = HTMLAttributes<"button"> & {
+  variante?: VarianteBoton;
+  tamano?: TamanoBoton;
+};
+
+const {
+  variante = "secundaria",
+  tamano = "normal",
+  class: clase,
+  ...atributos
+} = Astro.props;
+---
+
+<button class:list={clasesBoton(variante, tamano, clase)} {...atributos}>
+  <slot />
+</button>

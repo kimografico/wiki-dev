@@ -36,6 +36,15 @@ npm run build    # genera dist/
 npm run preview  # sirve dist/
 ```
 
+### Catálogo de componentes
+
+Con el servidor de desarrollo abierto, visita `http://localhost:3000/astrobook`.
+Astrobook solo se activa en desarrollo; las stories están junto a los componentes
+y muestran variantes y ejemplos con datos de muestra.
+Para simular la base de GitHub Pages, define `ASTRO_BASE_URL=/wiki-dev/` antes
+de iniciar Astro; en ese caso el catálogo queda en
+`http://localhost:3000/wiki-dev/astrobook`.
+
 ## Scripts
 
 | Script                  | Qué hace                                       |

@@ -2,6 +2,7 @@
 // Listado genérico de entradas (componente compartido por varias features).
 import type { Entrada } from "../lib/content/entradas.ts";
 import EntradaItem from "./EntradaItem.astro";
+import Boton from "./Boton.astro";
 
 interface Props {
   entradas: Entrada[];
@@ -42,13 +43,9 @@ const {
     -->
     <div class="vacio-filtro p-6 rounded-xl border border-dashed border-[var(--color-border)] text-center text-sm text-[var(--color-muted-text)]">
       <p class="m-0 mb-3">No queda nada pendiente en esta lista.</p>
-      <button
-        type="button"
-        data-ver-todo
-        class="px-3 py-1.5 rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] text-xs font-semibold text-[var(--color-text)] cursor-pointer transition-colors hover:border-[var(--color-accent)]"
-      >
+      <Boton type="button" data-ver-todo tamano="pequeno">
         Mostrar todo
-      </button>
+      </Boton>
     </div>
   </div>
 )}

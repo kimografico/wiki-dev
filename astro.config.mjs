@@ -8,9 +8,12 @@ import { remarkMenciones } from "./src/lib/markdown/remark-menciones.ts";
 
 // Sitio de proyecto en GitHub Pages: https://kimografico.github.io/wiki-dev/
 // Todo enlace y asset debe construirse con import.meta.env.BASE_URL.
-// ASTRO_BASE_URL permite sobreescribir la base para previsualizaciones locales.
+// En desarrollo se usa la raíz para que Astrobook esté en /astrobook; la build
+// usa /wiki-dev/. ASTRO_BASE_URL permite simular otra base en local.
 const site = "https://kimografico.github.io";
-const base = process.env.ASTRO_BASE_URL || "/wiki-dev/";
+const base =
+  process.env.ASTRO_BASE_URL ||
+  (process.env.NODE_ENV === "development" ? "/" : "/wiki-dev/");
 
 // https://astro.build/config
 export default defineConfig({

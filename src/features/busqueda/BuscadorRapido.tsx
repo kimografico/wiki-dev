@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect, useRef } from "react";
 import { CATALOGO, LISTA_COLECCIONES } from "../../lib/content/catalogo.ts";
 import type { Coleccion } from "../../lib/content/esquemas.ts";
+import CampoBusqueda from "../../components/CampoBusqueda.tsx";
 
 export interface ItemBusqueda {
   slug: string;
@@ -107,49 +108,14 @@ export default function BuscadorRapido({ entradas }: Props) {
     <div className="buscador-rapido w-full my-6 text-left">
       {/* Searchbar y filtros: centrados y con su ancho original */}
       <div className="w-full max-w-3xl mx-auto relative">
-        <div className="flex items-center gap-2 p-1.5 pl-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-xs outline-none hover:outline-none focus-within:outline-none focus-within:ring-0 focus-within:border-[var(--color-border-strong)] transition-all">
-          <svg
-            className="w-5 h-5 text-[var(--color-muted)] shrink-0"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth="2"
-            aria-hidden="true"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-            />
-          </svg>
-
-          <input
-            ref={inputRef}
-            type="search"
-            value={consulta}
-            onChange={(e) => setConsulta(e.target.value)}
-            placeholder="Buscar término, tecnología o paquete..."
-            aria-label="Buscar en la wiki"
-            className="w-full bg-transparent border-0 py-2.5 text-sm text-[var(--color-text)] placeholder:text-[var(--color-muted)] outline-none focus:outline-none focus:ring-0 focus-visible:outline-none hover:outline-none ring-0"
-          />
-
-          {consulta && (
-            <button
-              type="button"
-              onClick={() => setConsulta("")}
-              className="px-2 py-1 text-xs text-[var(--color-muted)] hover:text-[var(--color-text)] cursor-pointer"
-              aria-label="Limpiar búsqueda"
-            >
-              ✕
-            </button>
-          )}
-
-          <div className="hidden sm:flex items-center gap-1 pr-2 shrink-0">
-            <kbd className="px-2 py-0.5 text-[11px] font-mono text-[var(--color-muted)] bg-[var(--color-bg)] border border-[var(--color-border)] rounded-md">
-              /
-            </kbd>
-          </div>
-        </div>
+        <CampoBusqueda
+          value={consulta}
+          onChange={setConsulta}
+          placeholder="Buscar término, tecnología o paquete..."
+          ariaLabel="Buscar en la wiki"
+          shortcut="/"
+          inputRef={inputRef}
+        />
 
         {/* Filtros de colección */}
         <div className="flex flex-wrap items-center gap-2 mt-3 text-xs">

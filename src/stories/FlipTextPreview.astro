@@ -1,0 +1,18 @@
+---
+import FlipText from "../components/FlipText.astro";
+
+interface Props {
+  junto?: boolean;
+}
+
+const { junto = false } = Astro.props;
+---
+
+<FlipText
+  class="text-2xl font-bold text-[var(--color-text)]"
+  duration={2}
+  loop={false}
+  together={junto}
+>
+  Wiki técnica
+</FlipText>

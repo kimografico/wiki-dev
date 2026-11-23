@@ -1,0 +1,24 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import {
+  clasesBoton,
+  type TamanoBoton,
+  type VarianteBoton,
+} from "./boton-clases.ts";
+
+interface Props extends HTMLAttributes<"a"> {
+  variante?: VarianteBoton;
+  tamano?: TamanoBoton;
+}
+
+const {
+  variante = "secundaria",
+  tamano = "normal",
+  class: clase,
+  ...atributos
+} = Astro.props;
+---
+
+<a class:list={clasesBoton(variante, tamano, clase)} {...atributos}>
+  <slot />
+</a>

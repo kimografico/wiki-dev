@@ -1,0 +1,95 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  titulo="Acerca de"
+  descripcion="Información sobre wiki-dev, qué hace la app, para qué se ha creado y quién está detrás del proyecto."
+>
+  <article class="max-w-3xl mx-auto space-y-10 py-4">
+    <!-- Encabezado de la página -->
+    <header class="space-y-4 border-b border-[var(--color-border)] pb-6">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--color-surface)] border border-[var(--color-border)] text-xs font-mono text-[var(--color-muted-text)]">
+        <span class="w-2 h-2 rounded-full bg-[var(--color-accent)] inline-block"></span>
+        <span>Información del proyecto</span>
+      </div>
+
+      <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-[var(--color-text)] m-0">
+        Acerca de <span class="text-[var(--color-accent)]">wiki-dev</span>
+      </h1>
+
+      <p class="text-base sm:text-lg text-[var(--color-muted-text)] leading-relaxed m-0 text-balance">
+        Una base de conocimiento estática, rápida y accesible diseñada para
+        acompañar el aprendizaje diario de programadores web.
+      </p>
+    </header>
+
+    <!-- Contenido principal -->
+    <div class="space-y-8 text-[var(--color-text)] leading-relaxed">
+      <!-- Sección 1: Qué hace la app -->
+      <section class="space-y-3 p-6 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)]">
+        <div class="flex items-center gap-3">
+          <span class="w-8 h-8 rounded-lg flex items-center justify-center font-mono font-bold text-sm bg-[var(--color-bg)] border border-[var(--color-border)] text-[var(--color-accent-text)]">
+            01
+          </span>
+          <h2 class="text-xl font-bold tracking-tight m-0 text-[var(--color-text)]">
+            ¿Qué hace la app?
+          </h2>
+        </div>
+        <p class="text-sm sm:text-base text-[var(--color-muted-text)] m-0 leading-relaxed">
+          <strong class="text-[var(--color-text)]">wiki-dev</strong> es una
+          aplicación web estática de consulta técnica. Centraliza fichas
+          concisas y estructuradas sobre{" "}
+          <strong>
+            glosario web, tecnologías, paquetes, patrones de diseño,
+            inteligencia artificial y testing
+          </strong>
+          . Permite buscar términos al instante, filtrar por categorías y marcar
+          conceptos como aprendidos para llevar un seguimiento personal del
+          estudio.
+        </p>
+      </section>
+
+      <!-- Sección 2: Para qué se ha hecho -->
+      <section class="space-y-3 p-6 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)]">
+        <div class="flex items-center gap-3">
+          <span class="w-8 h-8 rounded-lg flex items-center justify-center font-mono font-bold text-sm bg-[var(--color-bg)] border border-[var(--color-border)] text-[var(--color-dev-text)]">
+            02
+          </span>
+          <h2 class="text-xl font-bold tracking-tight m-0 text-[var(--color-text)]">
+            ¿Para qué se ha hecho?
+          </h2>
+        </div>
+        <p class="text-sm sm:text-base text-[var(--color-muted-text)] m-0 leading-relaxed">
+          Nació para solucionar la sobrecarga de información y el ruido que a
+          menudo dificulta el aprendizaje de los desarrolladores junior. El
+          objetivo principal es ofrecer explicaciones claras, sin rodeos y
+          orientadas a resolver dudas reales de la práctica profesional diaria,
+          sirviendo como una guía rápida a la que acudir durante el desarrollo
+          de proyectos.
+        </p>
+      </section>
+
+      <!-- Sección 3: Quién soy -->
+      <section class="space-y-3 p-6 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)]">
+        <div class="flex items-center gap-3">
+          <span class="w-8 h-8 rounded-lg flex items-center justify-center font-mono font-bold text-sm bg-[var(--color-bg)] border border-[var(--color-border)] text-[var(--color-design-text)]">
+            03
+          </span>
+          <h2 class="text-xl font-bold tracking-tight m-0 text-[var(--color-text)]">
+            ¿Quién soy?
+          </h2>
+        </div>
+        <p class="text-sm sm:text-base text-[var(--color-muted-text)] m-0 leading-relaxed">
+          Soy un desarrollador entusiasta de las tecnologías web modernas, la
+          arquitectura limpia y la creación de herramientas útiles para la
+          comunidad de desarrollo. Esta wiki representa un proyecto personal
+          enfocado en la simplicidad, el rendimiento y la accesibilidad web.
+        </p>
+        <p class="text-sm sm:text-base font-semibold text-[var(--color-accent-text)] m-0 pt-2">
+          ... (continuará)
+        </p>
+      </section>
+    </div>
+  </article>
+</BaseLayout>

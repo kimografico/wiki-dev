@@ -9,13 +9,16 @@ import { CATEGORIAS, ETIQUETAS } from "../lib/content/esquemas.ts";
 import { nombreCategoria, nombreEtiqueta } from "../lib/content/nombres.ts";
 import { CATALOGO, LISTA_COLECCIONES } from "../lib/content/catalogo.ts";
 import ListaEntradas from "../components/ListaEntradas.astro";
+import EnlaceEtiqueta from "../components/EnlaceEtiqueta.astro";
 import FlipText from "../components/FlipText.astro";
 import BuscadorRapido from "../features/busqueda/BuscadorRapido.tsx";
 
 const base = import.meta.env.BASE_URL;
 
-// Tarjetas y secciones de la portada: todas las colecciones del catálogo (F1).
-const coleccionesInfo = LISTA_COLECCIONES.map((clave) => ({
+// Tarjetas y secciones de la portada: colecciones del catálogo excepto comparativas.
+const coleccionesInfo = LISTA_COLECCIONES.filter(
+  (clave) => clave !== "comparativas",
+).map((clave) => ({
   nombre: CATALOGO[clave].nombre,
   url: `${base}${clave}`,
   clave,
@@ -142,15 +145,13 @@ const etiquetasListadas = ETIQUETAS.filter(
         <ul class="flex flex-wrap gap-2 list-none p-0 m-0">
           {categoriasListadas.map((valor) => (
             <li>
-              <a
+              <EnlaceEtiqueta
                 href={`${base}categorias/${valor}`}
-                class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border bg-[var(--color-surface)] text-[var(--color-muted-text)] border-[var(--color-border)] text-sm no-underline transition-colors hover:text-[var(--color-text)] hover:border-[var(--color-accent)]/60"
+                tipo="categoria"
+                conteo={conteoCategorias.get(valor)}
               >
-                <span>{nombreCategoria(valor)}</span>
-                <span class="text-[11px] font-mono text-[var(--color-muted)]">
-                  {conteoCategorias.get(valor)}
-                </span>
-              </a>
+                {nombreCategoria(valor)}
+              </EnlaceEtiqueta>
             </li>
           ))}
         </ul>
@@ -168,15 +169,13 @@ const etiquetasListadas = ETIQUETAS.filter(
         <ul class="flex flex-wrap gap-2 list-none p-0 m-0">
           {etiquetasListadas.map((valor) => (
             <li>
-              <a
+              <EnlaceEtiqueta
                 href={`${base}etiquetas/${valor}`}
-                class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border bg-[var(--color-surface)] text-[var(--color-muted-text)] border-[var(--color-border)] text-sm no-underline transition-colors hover:text-[var(--color-text)] hover:border-[var(--color-accent)]/60"
+                tipo="tag"
+                conteo={conteoEtiquetas.get(valor)}
               >
-                <span class="font-mono">#{nombreEtiqueta(valor)}</span>
-                <span class="text-[11px] font-mono text-[var(--color-muted)]">
-                  {conteoEtiquetas.get(valor)}
-                </span>
-              </a>
+                {nombreEtiqueta(valor)}
+              </EnlaceEtiqueta>
             </li>
           ))}
         </ul>

@@ -1,0 +1,89 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+const base = import.meta.env.BASE_URL;
+---
+
+<BaseLayout
+  titulo="TelegramBot - Detalles Técnicos"
+  descripcion="Documentación técnica sobre la arquitectura e implementación del bot de Telegram de wiki-dev."
+>
+  <article class="max-w-3xl mx-auto space-y-10 py-4">
+    <!-- Migas / Volver -->
+    <nav aria-label="Volver">
+      <a
+        href={`${base}telegrambot`}
+        class="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--color-muted-text)] hover:text-[var(--color-text)] no-underline transition-colors"
+      >
+        <span>← Volver a TelegramBot</span>
+      </a>
+    </nav>
+
+    <!-- Encabezado de la página -->
+    <header class="space-y-4 border-b border-[var(--color-border)] pb-6">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--color-surface)] border border-[var(--color-border)] text-xs font-mono text-[var(--color-muted-text)]">
+        <span class="w-2 h-2 rounded-full bg-[var(--color-dev-text)] inline-block"></span>
+        <span>Documentación técnica</span>
+      </div>
+
+      <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-[var(--color-text)] m-0">
+        Implementación <span class="text-[#229ED9]">Técnica</span>
+      </h1>
+
+      <p class="text-base sm:text-lg text-[var(--color-muted-text)] leading-relaxed m-0 text-balance">
+        Arquitectura, integración de plantillas y flujo de procesamiento de
+        consultas del bot.
+      </p>
+    </header>
+
+    <!-- Apartado Técnico -->
+    <div class="space-y-8 text-[var(--color-text)] leading-relaxed">
+      <!-- Sección 1: Arquitectura general -->
+      <section class="space-y-3 p-6 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)]">
+        <h2 class="text-xl font-bold tracking-tight text-[var(--color-text)] m-0">
+          1. Arquitectura y Fuente de Datos
+        </h2>
+        <p class="text-sm sm:text-base text-[var(--color-muted-text)] m-0 leading-relaxed">
+          El bot de Telegram está construido en <strong>TypeScript</strong> y se
+          integra directamente con el catálogo unificado de la wiki (
+          <code class="font-mono text-xs bg-[var(--color-bg)] px-1.5 py-0.5 rounded border border-[var(--color-border)]">
+            src/lib/content/catalogo.ts
+          </code>
+          ). Lee las entradas estáticas formateadas en Markdown e interpreta el
+          frontmatter para ofrecer respuestas inmediatas.
+        </p>
+      </section>
+
+      <!-- Sección 2: Uso de plantillas -->
+      <section class="space-y-3 p-6 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)]">
+        <h2 class="text-xl font-bold tracking-tight text-[var(--color-text)] m-0">
+          2. Integración con plantillas Markdown
+        </h2>
+        <p class="text-sm sm:text-base text-[var(--color-muted-text)] m-0 leading-relaxed">
+          Cada tipo de contenido (glosario, tecnología, paquete, patrón, IA o
+          testing) utiliza su plantilla correspondiente guardada en{" "}
+          <code class="font-mono text-xs bg-[var(--color-bg)] px-1.5 py-0.5 rounded border border-[var(--color-border)]">
+            specs/plantillas/
+          </code>
+          . El bot aprovecha estas definiciones de estructura para formatear los
+          mensajes salientes adaptados a la API de Telegram.
+        </p>
+      </section>
+
+      <!-- Sección 3: Manejo de Webhooks / Polling -->
+      <section class="space-y-3 p-6 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)]">
+        <h2 class="text-xl font-bold tracking-tight text-[var(--color-text)] m-0">
+          3. Procesamiento de comandos y secretos
+        </h2>
+        <p class="text-sm sm:text-base text-[var(--color-muted-text)] m-0 leading-relaxed">
+          Las solicitudes entrantes se validan usando el token de autenticación
+          configurado en las variables de entorno (
+          <code class="font-mono text-xs bg-[var(--color-bg)] px-1.5 py-0.5 rounded border border-[var(--color-border)]">
+            TELEGRAM_BOT_TOKEN
+          </code>
+          ). Siguiendo las directrices del proyecto, no se almacenan
+          credenciales ni tokens en el repositorio.
+        </p>
+      </section>
+    </div>
+  </article>
+</BaseLayout>

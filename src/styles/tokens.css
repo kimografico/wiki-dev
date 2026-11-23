@@ -186,10 +186,12 @@ h4 {
   line-height: var(--leading-heading);
   text-wrap: balance;
 }
-a {
-  color: var(--color-accent-text);
-  text-underline-offset: 0.2em;
-} /* enlaces en texto siempre subrayados */
+@layer base {
+  a {
+    color: var(--color-accent-text);
+    text-underline-offset: 0.2em;
+  }
+}
 code,
 kbd,
 pre {
