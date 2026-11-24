@@ -35,44 +35,48 @@ las tres fases y muestra qué credencial interviene en cada salto.
 flowchart TD
   U["Usuario autorizado<br/>/add concepto"] --> TG["Telegram<br/>@KimoWiki_Bot"]
 
-  subgraph Worker["Cloudflare Worker · /webhook"]
-    TG -->|"POST + X-Telegram-Bot-Api-Secret-Token"| R1{"¿POST /webhook?"}
-    R1 -->|"No"| E404["404 No encontrado"]
-    R1 -->|"Sí"| R2{"¿Coincide TELEGRAM_SECRET?"}
-    R2 -->|"No"| E401["401 No autorizado"]
-    R2 -->|"Sí"| R3{"¿JSON válido?"}
-    R3 -->|"No"| E400["400 Petición inválida"]
-    R3 -->|"Sí"| R4{"¿from.id autorizado?"}
-    R4 -->|"No"| SIL["200 silencioso<br/>sin respuesta"]
-    R4 -->|"Sí"| R5{"¿/start?"}
-    R5 -->|"Sí"| HELP["Instrucciones<br/>por Telegram"]
-    R5 -->|"No"| R6{"¿Hay concepto?"}
-    R6 -->|"No"| EMPTY["Aviso: falta el concepto"]
-    R6 -->|"Sí"| DISP["workflow_dispatch con GITHUB_TOKEN<br/>inputs: prompt + chat_id"]
+  subgraph Worker["Cloudflare Worker"]
+    TG --> VAL{"POST<br/>/webhook +<br/>Validaciones"}
+    VAL --> DISP["workflow_dispatch<br/>(prompt + chat_id)"]
   end
 
-  subgraph Actions["GitHub Actions · add-concept.yml"]
-    CO["Checkout con ADD_CONCEPT_TOKEN<br/>+ npm ci"]
-    CO --> GEN["System prompt con plantillas, enums<br/>y slugs del checkout"]
-    GEN --> LLM["Gemini con LLM_API_KEY<br/>JSON {coleccion, slug, contenido}"]
-    LLM --> PARSE{"¿JSON válido, colección y slug<br/>correctos y archivo nuevo?"}
-    PARSE -->|"No; quedan intentos"| RETRY["Espera 30 s y cambia de modelo<br/>con el error anterior"]
-    RETRY --> LLM
-    PARSE -->|"No; 4 intentos agotados"| FAIL["Escribe el último error<br/>en ERROR_FILE"]
-    PARSE -->|"Sí"| WRITE["Escribe content/coleccion/slug.md<br/>y ejecuta el validador del repo"]
-    WRITE -->|"Inválido; quedan intentos"| RETRY
-    WRITE -->|"Válido"| CHECKS["Prettier + check + lint<br/>+ format:check + validate + build"]
+  DISP --> OK204["204 Aceptado"]
+  DISP --> DISPERR["Aviso: no se pudo lanzar<br/>el workflow"]
+
+  OK204 --> ACK["Acuse inicial<br/>en Telegram"]
+  ACK --> CO["Checkout + npm ci<br/>y prompt con contexto"]
+
+  subgraph Actions["GitHub Actions"]
+    CO --> GEN["Gemini genera JSON<br/>{coleccion, slug, contenido}"]
+    GEN --> CHK{"¿JSON, validación<br/>y checks pasan?"}
+    CHK --> PUSH["Commit y push a main"]
+    CHK --> LEFT{"¿Quedan intentos?"}
+    LEFT -->|"SI"| RETRY["Espera 30 s, cambia modelo<br/>y reintenta con el error"]
+    RETRY --> GEN
+    LEFT -->|"NO"| FAIL["Registrar error"]
   end
 
-  DISP -->|"204 aceptado"| ACK["Acuse inicial en Telegram"]
-  DISP -->|"204 aceptado"| CO
-  DISP -->|"Error"| DISPERR["Aviso: no se pudo lanzar<br/>el workflow"]
-  CHECKS -->|"Falla"| FAIL
-  CHECKS -->|"Pasa"| PUSH["Commit y push a main<br/>con ADD_CONCEPT_TOKEN"]
-  FAIL --> NFAIL["Notificación de fallo en Telegram<br/>error + enlace + si se publicó"]
-  PUSH --> NOK["Notificación de éxito en Telegram<br/>colección/slug · categoría + enlace"]
-  PUSH --> CI["ci.yml y deploy.yml"]
+  FAIL --> NFAIL["Notificación de fallo<br/>en Telegram"]
+  PUSH --> NOK["Notificación de éxito<br/>en Telegram"]
+  NOK --> CI["ci.yml y deploy.yml"]
   CI --> PAGES["Publicación en GitHub Pages"]
+
+  classDef telegram fill:#26A5E4,stroke:#0088cc,stroke-width:2px,color:#ffffff
+  classDef okbox fill:#16a34a,stroke:#15803d,stroke-width:2px,color:#ffffff
+  classDef errbox fill:#dc2626,stroke:#b91c1c,stroke-width:2px,color:#ffffff
+  classDef darkblue fill:#1e3a8a,stroke:#172554,stroke-width:2px,color:#ffffff
+
+  class TG,ACK,NOK telegram
+  class OK204 okbox
+  class DISPERR,NFAIL errbox
+  class GEN darkblue
+
+  linkStyle 3 stroke:#16a34a,stroke-width:2.5px,color:#16a34a
+  linkStyle 4 stroke:#dc2626,stroke-width:2.5px,color:#dc2626
+  linkStyle 9 stroke:#16a34a,stroke-width:2.5px,color:#16a34a
+  linkStyle 10 stroke:#dc2626,stroke-width:2.5px,color:#dc2626
+  linkStyle 13 stroke:#dc2626,stroke-width:2.5px,color:#dc2626
+  linkStyle 14 stroke:#dc2626,stroke-width:2.5px,color:#dc2626
 ```
 
 La notificación de éxito sale al hacer el push, no cuando termina el despliegue;
