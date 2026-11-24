@@ -127,7 +127,7 @@ export default {
 		}
 
 		if (await lanzarWorkflow(concepto, chatId)) {
-			await enviar(chatId, "Recibido. En unos 5 minutos aproxímadamente recibirás la confirmación.");
+			await enviar(chatId, "Recibido. En unos 5 minutos aproximadamente recibirás la confirmación.");
 		} else {
 			await enviar(chatId, "No se pudo lanzar el alta. Revisa los logs de GitHub Actions.");
 		}

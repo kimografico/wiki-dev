@@ -23,13 +23,13 @@ flowchart LR
     N["Notificación con el resultado<br/>en <b>Telegram</b>"]:::visible
     X["❌ El job aborta<br/>y main queda intacto"]:::error
 
-    U -- "mensaje /add" --> T
+    U -- "mensaje /add o texto" --> T
     T -- "webhook" --> W
     W -- "workflow_dispatch" --> G
     G -- "genera la entrada" --> L
     L --> G
-    G -- "validación" --> V
-    V -- "validación fallida" --> X
+    G -- "valida la entrada" --> V
+    V -- "falla tras los reintentos" --> X
     V -- "resultado" --> N
     G -- "commit + push con PAT" --> R
     R -- "ci.yml + deploy.yml" --> P
@@ -59,22 +59,23 @@ automáticos**.
 
 ## Credenciales y configuración
 
-Todo el flujo se sostiene sobre cuatro credenciales. Ninguna vive en el
-código: siempre en secrets.
+Las credenciales no viven en el código: se cargan como secretos en el Worker o
+en GitHub Actions. Solo la configuración no sensible (`GITHUB_REPO` y
+`TELEGRAM_ALLOWED_USER_ID`) está en `worker/cloudflare.config.ts`.
 
 | Credencial | Dónde vive | Para qué | Obtención |
 |---|---|---|---|
-| `TELEGRAM_BOT_TOKEN` | GitHub Secrets + Worker | Firmar las respuestas del bot a Telegram | @BotFather → `/newbot` |
-| `TELEGRAM_USER_ID` | Worker | Autorizar solo al usuario propietario (`from.id`) | `getUpdates` tras enviar `/start` al bot |
-| `ADD_CONCEPT_TOKEN` | GitHub Secrets | PAT que permite el push a `main` **y** lanzar el workflow desde el Worker | GitHub → Fine-grained PAT |
-| `LLM_API_KEY` | GitHub Secrets | Llamar a la API de Gemini desde el workflow | Google AI Studio → Create API key |
+| `TELEGRAM_BOT_TOKEN` | Worker + GitHub Secrets | Autenticar las llamadas a la Bot API para enviar mensajes | @BotFather → `/newbot` |
+| `TELEGRAM_ALLOWED_USER_ID` | Config del Worker | Autorizar solo al usuario propietario (`from.id`) | `getUpdates` tras enviar `/start` al bot |
+| `ADD_CONCEPT_TOKEN` | GitHub Secrets | PAT para el checkout y el push a `main` del workflow | GitHub → Fine-grained PAT |
+| `GITHUB_TOKEN` | Worker (secreto) | El mismo PAT, para lanzar el `workflow_dispatch` desde el Worker | El PAT anterior |
+| `LLM_API_KEY` | GitHub Secrets | Llamar a la API de Gemini desde el workflow (se expone como `GEMINI_API_KEY`) | Google AI Studio → Create API key |
+| `TELEGRAM_SECRET` | Worker (secreto) | Validar el `secret_token` del webhook | Cadena aleatoria propia del despliegue |
 
-El Worker se autentica además con un quinto secreto, `TELEGRAM_SECRET`, una
-cadena aleatoria generada en su despliegue que se registra como
-`secret_token` en el webhook de Telegram; Telegram la devuelve en la cabecera
-`X-Telegram-Bot-Api-Secret-Token` de cada notificación para demostrar que
-llega realmente de él. El registro se hace con `setWebhook` apuntando a la
-ruta `/webhook` del Worker.
+`TELEGRAM_SECRET` se registra como `secret_token` en el webhook de Telegram;
+Telegram lo devuelve en la cabecera `X-Telegram-Bot-Api-Secret-Token` de cada
+notificación para demostrar que llega realmente de él. El registro se hace con
+`setWebhook` apuntando a la ruta `/webhook` del Worker.
 
 ### Por qué un PAT y no el token por defecto
 
@@ -83,7 +84,9 @@ hechos con ese token **no disparan otros workflows**. Sin PAT, el commit del
 concepto subiría a `main` pero `ci.yml` y `deploy.yml` no se ejecutarían: la
 wiki no se validaría ni se publicaría. El PAT (permisos `Contents: read
 and write` y `Actions: read and write`, limitado al repositorio) evita eso y
-a la vez sirve al Worker para lanzar el `workflow_dispatch`.
+a la vez sirve al Worker para lanzar el `workflow_dispatch`. Se guarda con dos
+nombres: `ADD_CONCEPT_TOKEN` en GitHub Secrets (checkout y push) y
+`GITHUB_TOKEN` en el Worker (dispatch).
 
 ### Por qué Gemini
 
@@ -98,15 +101,17 @@ Configuración adoptada; se documenta tal y como queda establecida:
 - **Identidad del bot** — `kimo_wiki_add` (`@KimoWiki_Bot`), creado con
   @BotFather, con descripción propia y comandos `/add` y `/start`. El
   `TELEGRAM_BOT_TOKEN` obtenido ahí es el valor integrado en GitHub Secrets
-  y el que usa el Worker.
+  y el que usa el Worker. El prefijo `/add` es opcional: cualquier otro texto
+  se interpreta como el concepto solicitado.
 - **Modelo de autorización** — un único usuario autorizado:
-  `TELEGRAM_USER_ID = 123347601`, el `from.id` del chat privado tras enviar
-  `/start`. (Atajo fácil de dar: la primera parte del token del bot,
+  `TELEGRAM_ALLOWED_USER_ID = 123347601`, el `from.id` del chat privado tras
+  enviar `/start`. (Atajo fácil de dar: la primera parte del token del bot,
   `9250531026`, es el ID del propio bot, no el del usuario.)
 - **Acceso a GitHub** — PAT *fine-grained* con alcance exclusivo a
   `kimografico/wiki-dev`, permisos `Contents` y `Actions` en lectura y
   escritura, caducidad de 90 días. Un único token cumple las dos funciones
-  del flujo: el push del workflow y el `workflow_dispatch` del Worker.
+  del flujo: el push del workflow (`ADD_CONCEPT_TOKEN`) y el
+  `workflow_dispatch` del Worker (`GITHUB_TOKEN`).
 - **Proveedor de LLM** — Google Gemini (`gemini-3.8-flash`) por su tier
   gratuito; la key pertenece a un proyecto de Google Cloud gratuito y vive
   solo en GitHub Secrets.
@@ -127,6 +132,14 @@ Configuración adoptada; se documenta tal y como queda establecida:
   previa obligatoria (el job no hace push si algo falla), en lugar de rama
   y PR: con un solo mantenedor el coste del PR no compensa.
 
+## Comportamiento del webhook
+
+El Worker solo atiende `POST /webhook`. Si el encabezado secreto no coincide
+responde `401`; si el cuerpo no es JSON, `400`; y cualquier otra ruta, `404`.
+Un mensaje de otra cuenta se ignora con `200` y sin respuesta para no revelar
+que el bot existe. `/start` devuelve las instrucciones, `/add` es un prefijo
+opcional y un mensaje sin concepto recibe un aviso.
+
 ## Flujo de ejecución
 
 ```mermaid
@@ -135,33 +148,36 @@ flowchart TD
     B["Checkout con el PAT e instalación"]
     C["add-concept.ts inyecta plantillas, enums<br/>y slugs existentes del checkout"]
     D["<b>Gemini</b> devuelve JSON:<br/>coleccion, slug, contenido"]
-    E["Se escribe el archivo .md en content/"]
-    F{"validate + check + lint<br/>+ format + build"}
-    G["Reintento tras 30 s de espera<br/>con el modelo alterno"]
+    E{"¿Colección y slug válidos<br/>y el archivo no existe?"}
+    F["Se escribe el .md en content/<br/>y se ejecuta el validador"]
+    G["Reintento tras 30 s de espera<br/>con el modelo alterno y el error"]
     H["El job aborta:<br/>main queda intacto"]:::error
-    I["Commit wiki-bot<br/>+ push con el PAT"]
-    J["<b>GitHub</b> Actions ejecuta<br/>ci.yml y deploy.yml"]
-    K["Publicación en <b>GitHub</b> Pages"]:::visible
-    L["Notificación con el resultado<br/>en <b>Telegram</b>"]:::visible
+    I["Prettier + check + lint<br/>+ format:check + validate + build"]
+    J["Commit wiki-bot<br/>+ push con el PAT"]
+    K["<b>GitHub</b> Actions ejecuta<br/>ci.yml y deploy.yml"]
+    L["Publicación en <b>GitHub</b> Pages"]:::visible
+    M["Notificación de éxito<br/>en <b>Telegram</b>"]:::visible
+    N["Notificación de fallo<br/>en <b>Telegram</b>"]:::error
 
     A --> B
     B --> C
     C --> D
     D --> E
-    E --> F
-    F -- "falla" --> G
+    E -- "no" --> G
+    E -- "sí" --> F
+    F -- "inválido" --> G
+    F -- "válido" --> I
     G -- "volver a intentar" --> D
     G -- "se agotan los intentos" --> H
-    F -- "pasa" --> I
-    I --> J
+    I -- "falla" --> H
+    I -- "pasa" --> J
     J --> K
-    I -- "si hay chat_id" --> L
+    K --> L
+    J -- "si hay chat_id" --> M
+    H -- "si hay chat_id" --> N
 
     classDef visible fill:#198754,stroke:#0f5132,color:#ffffff
     classDef error fill:#842029,stroke:#dc3545,color:#ffffff
-
-    linkStyle 0,10,11 stroke:#198754,stroke-width:2px
-    linkStyle 5,7 stroke:#dc3545,stroke-width:2px
 ```
 
 Reglas que sostiene el flujo: el schema y las plantillas se leen del
@@ -173,14 +189,19 @@ los `tags` no los elige el usuario: los decide el modelo entre los valores
 de los enums de `src/lib/content/esquemas.ts`, con criterios en el prompt
 (qué es concepto, qué es tecnología, qué es paquete, qué es comparativa,
 qué es patrón, qué es IA, qué es testing) y
-validados después por el validador; la notificación de éxito los muestra
-junto al enlace directo a la entrada publicada.
+validados después por el validador. La notificación de éxito muestra la
+colección, el slug y la categoría junto al enlace directo a la entrada, y avisa
+de que la publicación se completa después del push; la de fallo incluye el
+último error disponible, el enlace a la ejecución y si el cambio llegó a
+`main`. Si no se subió, indica que no se ha publicado nada y que
+hay que corregir e intentarlo de nuevo.
 
 ## Notas operativas
 
-- **Caducidades**: el PAT caduca a los 90 días (renovarlo y sobrescribir
-  `ADD_CONCEPT_TOKEN`); el token OAuth de la CLI de Cloudflare caducó el
-  16/11/2026 y se renueva con `cf auth login`.
+- **Caducidades**: el PAT caduca a los 90 días; al renovarlo hay que
+  sobrescribir `ADD_CONCEPT_TOKEN` en GitHub Secrets y `GITHUB_TOKEN` en el
+  Worker. El token OAuth de la CLI de Cloudflare se renueva con
+  `cf auth login`.
 - **Rotación**: si un secreto se filtra, se regenera el valor y se
   sobrescribe el secret en GitHub o en el Worker; los secrets no se pueden
   leer desde la UI, solo ver si existen.

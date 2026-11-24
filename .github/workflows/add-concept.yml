@@ -83,6 +83,9 @@ jobs:
           git commit -m "Nuevo contenido: ${{ steps.generar.outputs.slug }} (Telegram)"
           git pull --rebase origin main
           git push origin HEAD:main
+          # Marca que el push se completó; la notificación de fallo la usa
+          # para no afirmar "no se publicó nada" si el fallo fue posterior.
+          touch "$RUNNER_TEMP/add-concept-push-ok"
 
       - name: Notificar a Telegram (éxito)
         if: success()
@@ -98,11 +101,12 @@ jobs:
             echo "Sin TELEGRAM_BOT_TOKEN o chat_id; se omite la notificación."
             exit 0
           fi
-          MSG="✅ Entrada publicada: ${COLECCION}/${SLUG}"
+          MSG="✅ Entrada creada: ${COLECCION}/${SLUG}"
           if [ -n "$CATEGORIA" ]; then
             MSG="$MSG · categoría: $CATEGORIA"
           fi
           MSG="$MSG"$'\n'"${SITE_URL}${COLECCION}/${SLUG}/"
+          MSG="$MSG"$'\n'"La publicación en el sitio se completará en breve."
           curl -sS -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage" \
             -H "Content-Type: application/json" \
             -d "$(jq -n --arg chat "$CHAT_ID" --arg text "$MSG" \
@@ -114,6 +118,7 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           CHAT_ID: ${{ inputs.chat_id }}
           ERROR_FILE: ${{ runner.temp }}/add-concept-error.txt
+          PUSH_MARKER: ${{ runner.temp }}/add-concept-push-ok
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           if [ -z "$TELEGRAM_BOT_TOKEN" ] || [ -z "$CHAT_ID" ]; then
@@ -125,6 +130,11 @@ jobs:
             MSG="$MSG"$'\n'"$(cat "$ERROR_FILE")"
           fi
           MSG="$MSG"$'\n'"$RUN_URL"
+          if [ -f "$PUSH_MARKER" ]; then
+            MSG="$MSG"$'\n'"El cambio sí se subió a main; el fallo fue posterior."
+          else
+            MSG="$MSG"$'\n'"No se ha publicado ningún cambio. Resuelve el error e inténtalo de nuevo."
+          fi
           curl -sS -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage" \
             -H "Content-Type: application/json" \
             -d "$(jq -n --arg chat "$CHAT_ID" --arg text "$MSG" \
