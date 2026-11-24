@@ -99,6 +99,35 @@ describe("construirIndiceMenciones", () => {
     const { terminos } = await construirIndiceMenciones("ruta/que-no-existe");
     expect(terminos).toEqual([]);
   });
+
+  it("omite los archivos que no son .md", async () => {
+    const raiz = await raizContenido();
+    await escribir(raiz, "glosario", "x", "titulo: X");
+    await writeFile(join(raiz, "glosario", "notas.txt"), "ignorado");
+    const { terminos } = await construirIndiceMenciones(raiz);
+    expect(terminos.map((t) => t.termino)).toEqual(["X"]);
+  });
+
+  it("ignora los títulos que no son texto", async () => {
+    const raiz = await raizContenido();
+    await escribir(raiz, "glosario", "x", "titulo: 42");
+    const { terminos } = await construirIndiceMenciones(raiz);
+    expect(terminos).toEqual([]);
+  });
+
+  it("ignora los alias que no son texto", async () => {
+    const raiz = await raizContenido();
+    await escribir(
+      raiz,
+      "glosario",
+      "x",
+      "titulo: X\nalias:\n  - 42\n  - valido",
+    );
+    const { terminos } = await construirIndiceMenciones(raiz);
+    expect(terminos.map((t) => t.termino).sort()).toEqual(
+      ["X", "valido"].sort(),
+    );
+  });
 });
 
 describe("indiceMenciones", () => {

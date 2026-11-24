@@ -1,7 +1,7 @@
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import type { TerminoMencion } from "./indice-menciones.ts";
 import { remarkMenciones, type OpcionesMenciones } from "./remark-menciones.ts";
 
@@ -157,5 +157,40 @@ describe("remarkMenciones", () => {
     const arbol = root([parrafo(texto("Astro"))]);
     await remarkMenciones({ base: "/b", raizContenido: raiz })(arbol);
     expect(enlaces(arbol)).toEqual(["/b/tecnologias/astro"]);
+  });
+
+  it("lee 'content' del directorio actual si no se indica índice ni raíz", async () => {
+    const raiz = await mkdtemp(join(tmpdir(), "wiki-remark-defecto-"));
+    raices.push(raiz);
+    await mkdir(join(raiz, "content", "tecnologias"), { recursive: true });
+    await writeFile(
+      join(raiz, "content", "tecnologias", "astro.md"),
+      "---\ntitulo: Astro\n---\n\ncuerpo\n",
+    );
+    const anterior = process.cwd();
+    vi.resetModules();
+    process.chdir(raiz);
+    try {
+      // Módulo recién importado: su índice memoizado aún está vacío.
+      const { remarkMenciones: fresca } = await import("./remark-menciones.ts");
+      const arbol = root([parrafo(texto("Astro"))]);
+      await fresca({ base: "/b" })(arbol);
+      expect(enlaces(arbol)).toEqual(["/b/tecnologias/astro"]);
+    } finally {
+      process.chdir(anterior);
+    }
+  });
+
+  it("ignora una coincidencia que no está en el índice", async () => {
+    // 'ς' (sigma final) coincide con 'σ' por case folding del regex, pero la
+    // clave del índice es 'ς': la coincidencia no tiene entrada y se descarta.
+    const arbol = root([parrafo(texto("sigma σ final"))]);
+    await remarkMenciones({
+      base: "/b",
+      indice: {
+        terminos: [{ termino: "ς", slug: "sigma", coleccion: "glosario" }],
+      },
+    })(arbol);
+    expect(enlaces(arbol)).toEqual([]);
   });
 });

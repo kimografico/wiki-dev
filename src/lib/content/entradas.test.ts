@@ -1,17 +1,22 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { getCollection, render } = vi.hoisted(() => ({
+const { getCollection, getEntry, render } = vi.hoisted(() => ({
   getCollection: vi.fn(),
+  getEntry: vi.fn(),
   render: vi.fn(),
 }));
 
-vi.mock("astro:content", () => ({ getCollection, render }));
+vi.mock("astro:content", () => ({ getCollection, getEntry, render }));
 
 import {
   getBacklinks,
+  getComparativasDe,
   getEntrada,
   getPaginaEntrada,
+  getPaginaTelegramBot,
+  getPorCategoria,
   getPorColeccion,
+  getPorEtiqueta,
   getRelacionados,
   getTodasLasEntradas,
   urlEntrada,
@@ -36,7 +41,11 @@ function entrada(id: string, extra: Record<string, unknown> = {}) {
 const datos: Record<string, ReturnType<typeof entrada>[]> = {
   glosario: [entrada("hidratacion"), entrada("slug")],
   tecnologias: [
-    entrada("astro", { relacionados: ["hidratacion", "react", "fantasma"] }),
+    entrada("astro", {
+      relacionados: ["hidratacion", "react", "fantasma"],
+      categoria: "framework",
+      tags: ["frontend"],
+    }),
     entrada("react"),
     entrada("nextjs"),
   ],
@@ -47,6 +56,7 @@ const datos: Record<string, ReturnType<typeof entrada>[]> = {
 beforeEach(() => {
   getCollection.mockReset();
   getCollection.mockImplementation(async (coleccion: string) => datos[coleccion] ?? []);
+  getEntry.mockReset();
   render.mockReset();
 });
 
@@ -115,6 +125,55 @@ describe("getPaginaEntrada", () => {
   it("devuelve undefined y no renderiza si no existe", async () => {
     await expect(getPaginaEntrada("no-existe")).resolves.toBeUndefined();
     expect(render).not.toHaveBeenCalled();
+  });
+});
+
+describe("getPaginaTelegramBot", () => {
+  it("devuelve la página con su contenido renderizado", async () => {
+    getEntry.mockResolvedValue({
+      id: "funcional",
+      data: { titulo: "TelegramBot", resumen: "Guía", apartado: "funcional" },
+    });
+    render.mockResolvedValue({ Content: "contenido" });
+    const pagina = await getPaginaTelegramBot("funcional");
+    expect(getEntry).toHaveBeenCalledWith("telegrambot", "funcional");
+    expect(pagina).toMatchObject({
+      titulo: "TelegramBot",
+      resumen: "Guía",
+      apartado: "funcional",
+      Content: "contenido",
+    });
+  });
+
+  it("devuelve undefined y no renderiza si el apartado no existe", async () => {
+    getEntry.mockResolvedValue(undefined);
+    await expect(getPaginaTelegramBot("tecnico")).resolves.toBeUndefined();
+    expect(render).not.toHaveBeenCalled();
+  });
+});
+
+describe("getPorCategoria / getPorEtiqueta", () => {
+  it("filtra las entradas por categoría", async () => {
+    const frameworks = await getPorCategoria("framework");
+    expect(frameworks.map((e) => e.slug)).toEqual(["astro"]);
+    await expect(getPorCategoria("inexistente")).resolves.toEqual([]);
+  });
+
+  it("filtra las entradas por etiqueta", async () => {
+    const conEtiqueta = await getPorEtiqueta("frontend");
+    expect(conEtiqueta.map((e) => e.slug)).toEqual(["astro"]);
+    await expect(getPorEtiqueta("backend")).resolves.toEqual([]);
+  });
+});
+
+describe("getComparativasDe", () => {
+  it("encuentra las comparativas que incluyen la entidad", async () => {
+    const comparativas = await getComparativasDe("astro");
+    expect(comparativas.map((e) => e.slug)).toEqual(["frameworks"]);
+  });
+
+  it("devuelve vacío si ninguna comparativa incluye la entidad", async () => {
+    await expect(getComparativasDe("zod")).resolves.toEqual([]);
   });
 });
 

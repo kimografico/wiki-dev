@@ -1,6 +1,7 @@
 import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   comprobar,
@@ -62,6 +63,47 @@ autoenlace: true
 
 Solo trae una sección.
 `;
+
+/**
+ * Entrada válida con el frontmatter en JSON (`---json`): gray-matter lo
+ * interpreta, pero el extractor de `categoria` solo entiende YAML.
+ */
+const CONTENIDO_FRONTMATTER_JSON = `---json
+${JSON.stringify({
+  titulo: "Closure",
+  resumen: "Función que recuerda su ámbito léxico.",
+  categoria: "concepto",
+  tags: [],
+  alias: [],
+  relacionados: [],
+  fuentes: [],
+  autoenlace: true,
+})}
+---
+
+## Definición
+
+Función junto con su entorno léxico.
+
+## Por qué importa
+
+Permite estado privado sin clases.
+
+## Ejemplo
+
+\`\`\`js
+let n = 0;
+\`\`\`
+
+## Se confunde con
+
+No es un ámbito global.
+`;
+
+/** Ruta del script con barras normales, como la compara su ejecución directa. */
+const RUTA_SCRIPT = fileURLToPath(
+  new URL("./add-concept.ts", import.meta.url),
+).replace(/\\/g, "/");
 
 /**
  * Crea un repo mínimo: `specs/plantillas` con la plantilla de cada colección
@@ -286,6 +328,13 @@ describe("llamarGemini", () => {
         json: async () => ({ candidates: [{ content: { parts: [] } }] }),
       } as Response,
     ]);
+    await expect(llamarGemini("k", "s", "u")).rejects.toThrow(
+      "Gemini devolvió una respuesta vacía",
+    );
+  });
+
+  it("lanza si la respuesta no trae candidatos", async () => {
+    stubFetch([{ ok: true, json: async () => ({}) } as Response]);
     await expect(llamarGemini("k", "s", "u")).rejects.toThrow(
       "Gemini devolvió una respuesta vacía",
     );
@@ -515,6 +564,88 @@ describe("main", () => {
     vi.stubEnv("PROMPT", "");
     await expect(main(raiz)).rejects.toThrow("Falta el prompt");
   });
+
+  it("escribe la categoría del frontmatter JSON aunque no pueda extraerla", async () => {
+    const raiz = await crearRepo();
+    raices.push(raiz);
+    const salida = join(raiz, "salida.txt");
+    vi.stubEnv("GITHUB_OUTPUT", salida);
+    stubFetch([
+      respuestaJson({
+        coleccion: "glosario",
+        slug: "closure",
+        contenido: CONTENIDO_FRONTMATTER_JSON,
+      }),
+    ]);
+
+    await main(raiz);
+
+    const output = await readFile(salida, "utf8");
+    expect(output).toContain("slug=closure");
+    expect(output).toContain("categoria=\n");
+  });
+
+  it("usa la espera por defecto cuando ESPERA_REINTENTO_MS no está definida", async () => {
+    vi.stubEnv("ESPERA_REINTENTO_MS", undefined);
+    const raiz = await crearRepo();
+    raices.push(raiz);
+    // Éxito al primer intento: no llega a esperar los 30 s por defecto.
+    stubFetch([
+      respuestaJson({
+        coleccion: "glosario",
+        slug: "closure",
+        contenido: CONTENIDO_VALIDO,
+      }),
+    ]);
+
+    await main(raiz);
+
+    expect(
+      await readFile(join(raiz, "content", "glosario", "closure.md"), "utf8"),
+    ).toBe(CONTENIDO_VALIDO);
+  });
+
+  it("reintenta cuando la API falla con algo que no es un Error", async () => {
+    const raiz = await crearRepo();
+    raices.push(raiz);
+    const fetchM = vi
+      .fn()
+      .mockRejectedValueOnce("sin conexión")
+      .mockResolvedValueOnce(
+        respuestaJson({
+          coleccion: "glosario",
+          slug: "closure",
+          contenido: CONTENIDO_VALIDO,
+        }),
+      );
+    vi.stubGlobal("fetch", fetchM);
+
+    await main(raiz);
+
+    expect(fetchM).toHaveBeenCalledTimes(2);
+    const cuerpo = JSON.parse(fetchM.mock.calls[1]![1]!.body as string) as {
+      contents: Array<{ parts: Array<{ text: string }> }>;
+    };
+    expect(cuerpo.contents[0]!.parts[0]!.text).toContain(
+      "No se pudo generar: sin conexión",
+    );
+  });
+});
+
+describe("ejecución directa", () => {
+  it("lanza el error de main al importar el módulo como script", async () => {
+    vi.resetModules();
+    vi.stubEnv("GEMINI_API_KEY", "");
+    const anterior = process.argv[1];
+    process.argv[1] = RUTA_SCRIPT;
+    try {
+      await expect(import("./add-concept.ts")).rejects.toThrow(
+        "GEMINI_API_KEY",
+      );
+    } finally {
+      process.argv[1] = anterior;
+    }
+  });
 });
 
 describe("guardarError", () => {
@@ -537,5 +668,16 @@ describe("guardarError", () => {
 
   it("no hace nada si ERROR_FILE no está configurada", async () => {
     await expect(guardarError(new Error("nada"))).resolves.toBeUndefined();
+  });
+
+  it("acepta un error que no es instancia de Error", async () => {
+    const raiz = await mkdtemp(join(tmpdir(), "wiki-error-"));
+    raices.push(raiz);
+    const ruta = join(raiz, "error.txt");
+    vi.stubEnv("ERROR_FILE", ruta);
+
+    await guardarError("algo\nraro");
+
+    expect(await readFile(ruta, "utf8")).toBe("algo raro");
   });
 });

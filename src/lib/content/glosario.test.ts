@@ -21,17 +21,19 @@ function termino(id: string, titulo: string) {
   };
 }
 
-getCollection.mockImplementation(async (coleccion: string) =>
-  coleccion === "glosario"
-    ? [
-        termino("zod", "Zod"),
-        termino("astro", "Astro"),
-        termino("indice", "Índice"),
-        termino("nandu", "Ñandú"),
-        termino("capas", "3 capas"),
-      ]
-    : [],
-);
+const glosarioPorDefecto = [
+  termino("zod", "Zod"),
+  termino("astro", "Astro"),
+  termino("indice", "Índice"),
+  termino("nandu", "Ñandú"),
+  termino("capas", "3 capas"),
+];
+
+function implPorDefecto(coleccion: string) {
+  return Promise.resolve(coleccion === "glosario" ? glosarioPorDefecto : []);
+}
+
+getCollection.mockImplementation(implPorDefecto);
 
 describe("getTodosLosTerminos", () => {
   it("ordena alfabéticamente en español", async () => {
@@ -52,5 +54,24 @@ describe("getGlosarioPorLetra", () => {
       "astro",
     ]);
     expect(grupos.at(-1)?.entradas.map((e) => e.slug)).toEqual(["capas"]);
+  });
+
+  it("deja el grupo '#' al final aunque se inserte antes que otros", async () => {
+    getCollection.mockImplementation(async (coleccion: string) =>
+      coleccion === "glosario"
+        ? [
+            termino("omega", "Ωmega"),
+            termino("astro", "Astro"),
+            termino("nandu", "Ñandú"),
+          ]
+        : [],
+    );
+    try {
+      const grupos = await getGlosarioPorLetra();
+      expect(grupos.map((g) => g.letra)).toEqual(["A", "N", "#"]);
+      expect(grupos.at(-1)?.entradas.map((e) => e.slug)).toEqual(["omega"]);
+    } finally {
+      getCollection.mockImplementation(implPorDefecto);
+    }
   });
 });
