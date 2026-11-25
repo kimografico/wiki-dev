@@ -115,7 +115,7 @@ export function remarkMenciones(opciones: OpcionesMenciones) {
         }
         partes.push({
           type: "link",
-          url: `${base}${info.coleccion}/${info.slug}`,
+          url: `${base}${info.coleccion}/${info.slug}/`,
           children: [{ type: "text", value: termino }],
         });
         vistos.add(clave);

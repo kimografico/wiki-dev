@@ -73,15 +73,17 @@ function normalizar(
   };
 }
 
-/** Todas las entradas de todas las colecciones. */
+let cacheEntradas: Promise<Entrada[]> | undefined;
+
+/** Todas las entradas de todas las colecciones (una sola lectura por build). */
 export async function getTodasLasEntradas(): Promise<Entrada[]> {
-  const porColeccion = await Promise.all(
+  cacheEntradas ??= Promise.all(
     COLECCIONES.map(async (coleccion) => {
       const entries = await getCollection(coleccion);
       return entries.map((entry) => normalizar(entry, coleccion));
     }),
-  );
-  return porColeccion.flat();
+  ).then((porColeccion) => porColeccion.flat());
+  return cacheEntradas;
 }
 
 /** Las entradas de una colección concreta. */
@@ -98,9 +100,9 @@ export async function getEntrada(slug: string): Promise<Entrada | undefined> {
 
 /** Entradas declaradas en `relacionados`, ya resueltas. */
 export async function getRelacionados(slug: string): Promise<Entrada[]> {
-  const entrada = await getEntrada(slug);
-  if (!entrada) return [];
   const todas = await getTodasLasEntradas();
+  const entrada = todas.find((e) => e.slug === slug);
+  if (!entrada) return [];
   const porSlug = new Map(todas.map((e) => [e.slug, e]));
   return entrada.relacionados
     .map((s) => porSlug.get(s))
@@ -151,5 +153,5 @@ export function urlEntrada(
   slug: string,
   base: string,
 ): string {
-  return `${base}${coleccion}/${slug}`;
+  return `${base}${coleccion}/${slug}/`;
 }

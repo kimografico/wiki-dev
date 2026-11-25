@@ -59,19 +59,19 @@ describe("remarkMenciones", () => {
       parrafo(texto("Uso React a diario. React es genial.")),
     ]);
     await remarkMenciones(opciones())(arbol);
-    expect(enlaces(arbol)).toEqual(["/wiki-dev/tecnologias/react"]);
+    expect(enlaces(arbol)).toEqual(["/wiki-dev/tecnologias/react/"]);
   });
 
   it("prefiere la coincidencia más larga", async () => {
     const arbol = root([parrafo(texto("React Router ayuda"))]);
     await remarkMenciones(opciones())(arbol);
-    expect(enlaces(arbol)).toEqual(["/wiki-dev/paquetes/react-router"]);
+    expect(enlaces(arbol)).toEqual(["/wiki-dev/paquetes/react-router/"]);
   });
 
   it("ignora mayúsculas/minúsculas y respeta los límites de palabra", async () => {
     const arbol = root([parrafo(texto("react y Reactive"))]);
     await remarkMenciones(opciones())(arbol);
-    expect(enlaces(arbol)).toEqual(["/wiki-dev/tecnologias/react"]);
+    expect(enlaces(arbol)).toEqual(["/wiki-dev/tecnologias/react/"]);
   });
 
   it("reinicia las primeras menciones en cada sección '##'", async () => {
@@ -84,8 +84,8 @@ describe("remarkMenciones", () => {
     ]);
     await remarkMenciones(opciones())(arbol);
     expect(enlaces(arbol)).toEqual([
-      "/wiki-dev/tecnologias/react",
-      "/wiki-dev/tecnologias/react",
+      "/wiki-dev/tecnologias/react/",
+      "/wiki-dev/tecnologias/react/",
     ]);
   });
 
@@ -137,7 +137,7 @@ describe("remarkMenciones", () => {
   it("normaliza un base sin barra final", async () => {
     const arbol = root([parrafo(texto("astro"))]);
     await remarkMenciones({ base: "/wiki-dev", indice: { terminos } })(arbol);
-    expect(enlaces(arbol)).toEqual(["/wiki-dev/tecnologias/astro"]);
+    expect(enlaces(arbol)).toEqual(["/wiki-dev/tecnologias/astro/"]);
   });
 
   it("no cambia nada si no hay términos", async () => {
@@ -156,7 +156,7 @@ describe("remarkMenciones", () => {
     );
     const arbol = root([parrafo(texto("Astro"))]);
     await remarkMenciones({ base: "/b", raizContenido: raiz })(arbol);
-    expect(enlaces(arbol)).toEqual(["/b/tecnologias/astro"]);
+    expect(enlaces(arbol)).toEqual(["/b/tecnologias/astro/"]);
   });
 
   it("lee 'content' del directorio actual si no se indica índice ni raíz", async () => {
@@ -175,7 +175,7 @@ describe("remarkMenciones", () => {
       const { remarkMenciones: fresca } = await import("./remark-menciones.ts");
       const arbol = root([parrafo(texto("Astro"))]);
       await fresca({ base: "/b" })(arbol);
-      expect(enlaces(arbol)).toEqual(["/b/tecnologias/astro"]);
+      expect(enlaces(arbol)).toEqual(["/b/tecnologias/astro/"]);
     } finally {
       process.chdir(anterior);
     }

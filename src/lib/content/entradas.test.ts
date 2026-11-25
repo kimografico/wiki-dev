@@ -187,7 +187,7 @@ describe("getComparativasDe", () => {
 describe("urlEntrada", () => {
   it("compone la URL respetando base, colección y slug", () => {
     expect(urlEntrada("tecnologias", "astro", "/wiki-dev/")).toBe(
-      "/wiki-dev/tecnologias/astro",
+      "/wiki-dev/tecnologias/astro/",
     );
   });
 });
