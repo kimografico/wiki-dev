@@ -7,9 +7,10 @@
 > **Actualización (misma fecha):** tras la aprobación del autor se ha ejecutado el
 > paso 1 y la vía minimalista del paso 2: React ya no está en el proyecto, las
 > cuatro islas son custom elements y el buscador lee un `buscador.json`
-> generado en build. Pagefind sigue sin implantarse: era la otra vía del paso 2
-> y continúa pendiente, no descartada. Este documento conserva el estado y las
-> mediciones anteriores a ese cambio.
+> generado en build. Pagefind no se implantó: era la otra vía del paso 2 y queda
+> en espera de decisión futura, ni descartada ni como tarea pendiente o trabajo
+> sin terminar (ver `specs/PAGEFIND-EN-ESPERA.md`). Este documento conserva el
+> estado y las mediciones anteriores a ese cambio.
 
 ## Resumen ejecutivo
 
