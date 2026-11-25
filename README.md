@@ -60,92 +60,104 @@ de iniciar Astro; en ese caso el catálogo queda en
 | `npm run lint`          | ESLint                                              |
 | `npm run format`        | Prettier (escribe)                                  |
 | `npm run format:check`  | Prettier (solo comprueba)                           |
+| `npm run validate`      | Valida el contenido (esquema, enlaces y secciones)  |
 | `npm run test`          | Vitest                                              |
 | `npm run test:coverage` | Vitest con cobertura ≥ 90 % (objetivo 95 %, RNF-10) |
 | `npm run astro`         | CLI de Astro                                        |
-
-> F1 añade `npm run validate` (validación del contenido, RF-10).
 
 ## Estructura
 
 ```
 content/            Markdown del contenido (fuera de src)
 src/
-  features/         código por dominio (glosario, busqueda, preferencias…)
+  features/         código por dominio (glosario, busqueda, preferencias, telegrambot…)
   components/       componentes compartidos (EntradaItem, Badge…)
   layouts/          plantillas base y de ficha
-  pages/            rutas (Astro enruta por archivos)
+  pages/            rutas (Astro enruta por archivos; `_stories/` no son rutas)
   styles/           Tailwind y tokens de tema
   lib/              content · preferencias · markdown (TypeScript puro)
-scripts/            utilidades (validate-content en F1)
-specs/              estos SDD y las plantillas de las entradas
+scripts/            validate-content y add-concept (generación desde Telegram)
+specs/              SDD, plantillas de entradas y spec del bot
+worker/             webhook de Telegram
+.opencode/          agentes, skills y comandos
 ```
 
-Detalle completo en `specs/spec.md` §13.
+Detalle completo en [`specs/spec.md` §13](./specs/spec.md).
 
-## De la duda a la entrada
+## Tests y cobertura
 
-1. Planteas una duda en lenguaje natural a opencode (agente `wiki-curator`).
-2. Busca si el concepto ya existe: amplía la entrada o crea una nueva.
-3. El subagente `content-researcher` reúne fuentes oficiales y se redacta con las
-   plantillas de `specs/plantillas/`.
-4. El subagente `content-reviewer` valida. El resultado es un artículo de wiki autónomo
-   (nunca formato pregunta/respuesta) y se revisa en el `git diff`.
+Los tests van **colocados** junto al módulo que prueban (`src/**/*.test.ts`,
+`scripts/**/*.test.ts`); no hay una carpeta `tests/` aparte. `npm run test` lanza Vitest y
+`npm run test:coverage` mide `src/lib/**` y `scripts/**`: el umbral obligatorio es el 90 %
+en líneas, funciones, ramas y sentencias, con un objetivo de calidad del 95 % (RNF-10), y
+el hook `pre-push` lo exige. El flujo de contenido del agente no ejecuta tests; la cobertura
+se comprueba al cerrar cambios de código.
 
-El flujo y las reglas completas están en `specs/agentes-y-skills.md`.
+## Cómo añadir conceptos
 
-## Documentos
+Hay dos vías, y ambas usan las plantillas de `specs/plantillas/` y los enums de
+`src/lib/content/esquemas.ts` como fuente de verdad: la colección, la categoría y las
+etiquetas las elige el modelo, no quien escribe.
 
-- [`specs/spec.md`](./specs/spec.md) — requisitos funcionales y no funcionales, modelo de
-  contenido y plan por fases.
-- [`specs/design-pattern.md`](./specs/design-pattern.md) — patrones de diseño y arquitectura.
-- [`specs/agentes-y-skills.md`](./specs/agentes-y-skills.md) — agentes, skills y flujo de
-  contenido.
+### 🤖 Con el agente (OpenCode en VS Code)
 
-## Glosario del proyecto
+Selecciona el agente **`wiki-curator`** en el chat de OpenCode y escribe la duda o la lista
+de conceptos en lenguaje natural; no hay un comando específico. Por ejemplo:
 
-Formato: **definición breve** + para qué se usa aquí.
+> Añade `closure` y explícalo frente a ámbito léxico; también quiero `hoisting` y `event loop`.
 
-| Término              | Definición breve                                                | Para qué se usa aquí                                                            |
-| -------------------- | --------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| Astro                | Framework para sitios estáticos con «islas».                    | Framework base: rutas, content collections y SSG.                               |
-| React                | Librería de UI basada en componentes.                           | Solo para las islas interactivas (buscador, preferencias).                      |
-| Vite                 | Bundler y servidor de desarrollo.                               | Motor bajo Astro y referencia didáctica (React + Vite).                         |
-| TypeScript           | JavaScript con tipos.                                           | Lenguaje del código, en modo estricto.                                          |
-| Tailwind             | Framework de utilidades CSS.                                    | Estilos y tokens de tema.                                                       |
-| Zod                  | Validación de esquemas en TypeScript.                           | Valida el frontmatter de cada entrada.                                          |
-| Markdown             | Formato de texto ligero.                                        | Formato de todas las entradas (sin MDX).                                        |
-| frontmatter          | Cabecera YAML entre `---` al inicio de un `.md`.                | Datos de la entrada (título, categoría…).                                       |
-| content collection   | Conjunto de archivos validados por un esquema en Astro.         | Glosario, tecnologías, paquetes, comparativas, patrones, IA y testing.          |
-| slug                 | Identificador de la entrada (nombre del archivo, kebab-case).   | Único en toda la wiki; clave de relaciones y menciones.                         |
-| SSG                  | Generación estática del sitio en build.                         | Todo el sitio se pre-renderiza a HTML.                                          |
-| hidratación          | Añadir JavaScript a HTML estático.                              | Solo en las islas.                                                              |
-| isla                 | Componente interactivo hidratado dentro de una página estática. | Buscador y controles de preferencias.                                           |
-| directiva `client:*` | Controla cuándo se hidrata un componente.                       | `client:load` / `client:idle` en las islas.                                     |
-| Pagefind             | Buscador estático ejecutado tras el build.                      | Página `/buscar` (F2).                                                          |
-| unified              | Ecosistema de procesado de Markdown/HTML.                       | El pipeline de Markdown del proyecto.                                           |
-| remark               | Conjunto de plugins de unified para Markdown.                   | Plugin de menciones enlazadas (F1).                                             |
-| rehype               | Conjunto de plugins de unified para HTML.                       | Contenedor con scroll propio de las tablas (RNF-08).                            |
-| Mermaid              | Diagramas generados desde texto.                                | Bloques ` ```mermaid ` vía `astro-mermaid` (F2).                                |
-| Astrobook            | Visor de componentes para desarrollo.                           | Ver componentes sin Storybook (F1).                                             |
-| Lighthouse           | Auditoría de rendimiento, accesibilidad y SEO.                  | `npm run lighthouse` a demanda.                                                 |
-| lint                 | Análisis estático de estilo y errores.                          | ESLint en pre-commit y CI.                                                      |
-| ESLint               | Linter de JavaScript, TypeScript y Astro.                       | El «lint» del proyecto.                                                         |
-| Prettier             | Formateador de código.                                          | Formato en pre-commit y CI.                                                     |
-| Vitest               | Framework de tests.                                             | Tests de `lib/` y `scripts/` con cobertura ≥ 90 %.                              |
-| cobertura            | Porcentaje de código ejecutado por los tests.                   | Umbral obligatorio del 90 % en pre-push; objetivo de calidad, 95 %.             |
-| Husky                | Herramienta que gestiona hooks de git.                          | Hooks `pre-commit` y `pre-push`.                                                |
-| hook de git          | Script que git ejecuta ante un evento.                          | `pre-commit` (lint-staged y validación) y `pre-push` (cobertura).               |
-| CI                   | Integración continua.                                           | GitHub Actions en cada push y PR.                                               |
-| GitHub Pages         | Alojamiento estático de GitHub.                                 | Despliegue del sitio (proyecto, bajo `/<repo>/`).                               |
-| localStorage         | Almacén de datos del navegador.                                 | Preferencias (tema, aprendidas, «solo pendientes»), prefijo `wiki:`.            |
-| SDD                  | Desarrollo guiado por especificación.                           | `specs/` es la fuente de verdad del proyecto.                                   |
-| agente               | Rol de opencode con instrucciones y permisos.                   | `wiki-curator`, `content-researcher`, `content-reviewer` y `wiki-dev`.          |
-| skill                | Capacidad reutilizable que un agente puede cargar.              | Tareas concretas (`resolver-duda`, `ponytail`…).                                |
-| opencode             | Herramienta de agentes que ejecuta el proyecto.                 | Ejecuta agentes y skills para crear contenido y código.                         |
-| ponytail             | Modo «senior perezoso» (DietrichGebert/ponytail, MIT).          | Escribir la implementación más pequeña que cumpla la SDD.                       |
-| YAGNI                | «You Aren't Gonna Need It»: no construyas lo que no necesitas.  | Primer peldaño del modo ponytail.                                               |
-| `shortcut:`          | Comentario `shortcut: <límite>, <cuándo revisar>`.              | Marca un atajo aceptado con su límite conocido.                                 |
-| repository (patrón)  | Capa única que encapsula el acceso a los datos.                 | `src/lib/content/` es el único que lee las entradas.                            |
-| facade               | Fachada que ofrece una API simple sobre algo complejo.          | `src/lib/content/`, junto con repository.                                       |
-| token de color       | Variable CSS semántica con un valor seguro para texto.          | Secciones (`--color-glosario-text`) y categorías (`--color-cat-concepto-text`). |
+La skill `resolver-duda` orquesta el flujo «de la duda a la entrada» (reglas completas en
+[`specs/agentes-y-skills.md`](./specs/agentes-y-skills.md)):
+
+1. Extrae los conceptos y busca en `content/` por título, alias, etiquetas y categoría;
+   **prefiere ampliar** una entrada existente antes que crear otra.
+2. Invoca a `content-researcher` para reunir fuentes oficiales.
+3. Redacta con `anadir-entrada` y `redactar-orientado-a-duda`, enlaza con
+   `enlazar-entradas` y revisa con `content-reviewer` (máximo 2 rondas).
+4. Ejecuta `npm run validate` e informa de entradas creadas, ampliadas y pendientes.
+
+Hasta 3 archivos afectados actúa directamente; con más, muestra un plan y espera
+confirmación. El resultado es un artículo autónomo (nunca formato pregunta/respuesta), sin
+fechas ni sección `## Relacionados`: las menciones se enlazan solas en el build. El agente
+**no hace commit ni ejecuta tests**: tú revisas con `git diff` y pasas el resto de checks
+antes de commitear.
+
+### 📱 Con el bot de Telegram
+
+Envía el concepto al bot `@KimoWiki_Bot` (el prefijo `/add` es opcional); cada mensaje
+genera una entrada. El Worker de `worker/src/index.ts` comprueba el secreto y lanza el
+workflow [`add-concept.yml`](./.github/workflows/add-concept.yml), que ejecuta
+`scripts/add-concept.ts`: inyecta en el prompt de Gemini las plantillas, los enums y los
+slugs existentes del checkout, y el modelo devuelve colección, slug y contenido (la fecha
+la pone el script).
+
+Si la colección y el slug son válidos y el archivo no existe, el workflow aplica Prettier,
+`check`, `lint`, `format:check`, `validate` y `build`. Solo si todo pasa hace commit y push
+a `main`, lo que dispara la CI y el despliegue en GitHub Pages; si algo falla, `main` queda
+intacto y se notifica el error. El detalle está en
+[`specs/telegram-bot.md`](./specs/telegram-bot.md).
+
+El bot **nunca sobrescribe ni amplía**: si el slug ya existe, reintenta con uno más
+específico. Es una vía de creación rápida, no de mantenimiento.
+
+### Cuándo usar cada uno
+
+| Aspecto                  | Agente (`wiki-curator`)                       | Bot de Telegram                                                     |
+| ------------------------ | --------------------------------------------- | ------------------------------------------------------------------- |
+| Crear o ampliar          | Busca y **prefiere ampliar**                  | Solo crea; si el slug existe, busca otro                            |
+| Investigación y revisión | `content-researcher` y `content-reviewer`     | Un solo modelo, con reintentos ante errores                         |
+| Redacción y enlazado     | Principios de redacción y grafo de relaciones | Reglas básicas del prompt; sin revisión de grafo                    |
+| Listas de conceptos      | Sí, con confirmación a partir de 4 archivos   | Un concepto por mensaje                                             |
+| Verificación automática  | `npm run validate`                            | Prettier + `check` + `lint` + `format:check` + `validate` + `build` |
+| Publicación              | Sin commit; revisión en `git diff`            | Commit y push automáticos a `main`                                  |
+| Desde el móvil, sin IDE  | No                                            | Sí                                                                  |
+
+El agente da mejor contenido: investiga, evita duplicados, enriquece entradas ya existentes
+y cuida las relaciones. El bot da más automatización y unas barreras de verificación más
+completas antes de publicar, a costa de crear siempre una entrada nueva.
+
+**Recomendación:** usa el agente como vía principal para el contenido que importa —conceptos
+ambiguos, comparativas, listas o entradas que quizá ya existan— y reserva el bot para
+capturar conceptos nuevos y sencillos cuando estés fuera del ordenador y te interese la
+publicación automática. Tras trabajar con el agente, ejecuta `check`, `lint`,
+`format:check`, `validate` y `test:coverage` antes de commitear.
