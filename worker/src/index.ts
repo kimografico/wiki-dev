@@ -2,9 +2,9 @@
 //
 // Flujo: Telegram POSTea cada actualización en /webhook → se comprueba el
 // secret_token de la cabecera X-Telegram-Bot-Api-Secret-Token y que el remitente
-// sea el usuario autorizado → se lanza add-concept.yml por workflow_dispatch con
-// el prompt y el chat de notificación → se contesta 200 a Telegram (nunca se
-// hace esperar) y se avisa al chat del resultado del envío.
+// sea el usuario autorizado → se contesta 200 de inmediato → en segundo plano se
+// lanza add-concept.yml por workflow_dispatch con el prompt y el chat de
+// notificación, y se avisa al chat del resultado. Así Telegram nunca espera.
 //
 // Los secretos llegan como bindings de cloudflare.config.ts (bindings.secret());
 // el resto de configuración, igualmente desde el config, no se duplica aquí.
@@ -37,6 +37,12 @@ function coincide(a: string, b: string): boolean {
 	let diferencia = 0;
 	for (let i = 0; i < x.length; i++) diferencia |= x[i]! ^ y[i]!;
 	return diferencia === 0;
+}
+
+/** Sin cabecera o sin secreto configurado no hay autorización posible. */
+export function autorizado(token: string | null, secreto: string): boolean {
+	if (!token || !secreto) return false;
+	return coincide(token, secreto);
 }
 
 /** Aviso al chat; un fallo de Telegram no debe tumbar el webhook. */
@@ -86,13 +92,13 @@ async function lanzarWorkflow(concepto: string, chatId: string): Promise<boolean
 }
 
 export default {
-	async fetch(request) {
+	async fetch(request, _env, ctx) {
 		if (request.method !== "POST" || new URL(request.url).pathname !== "/webhook") {
 			return new Response("No encontrado", { status: 404 });
 		}
 
-		const token = request.headers.get("X-Telegram-Bot-Api-Secret-Token") ?? "";
-		if (!coincide(token, env.TELEGRAM_SECRET)) {
+		const token = request.headers.get("X-Telegram-Bot-Api-Secret-Token");
+		if (!autorizado(token, env.TELEGRAM_SECRET)) {
 			return new Response("No autorizado", { status: 401 });
 		}
 
@@ -115,22 +121,27 @@ export default {
 		const chatId = String(mensaje.chat.id);
 		const texto = mensaje.text.trim();
 		if (texto === "/start" || texto.startsWith("/start ")) {
-			await enviar(chatId, AYUDA);
+			ctx.waitUntil(enviar(chatId, AYUDA));
 			return new Response(null, { status: 200 });
 		}
 
 		// El concepto es todo el texto; "/add" es un prefijo opcional.
 		const concepto = texto.replace(/^\/add(?:@\w+)?\s*/, "").trim();
 		if (!concepto) {
-			await enviar(chatId, "Falta el concepto: escribe /add <concepto>.");
+			ctx.waitUntil(enviar(chatId, "Falta el concepto: escribe /add <concepto>."));
 			return new Response(null, { status: 200 });
 		}
 
-		if (await lanzarWorkflow(concepto, chatId)) {
-			await enviar(chatId, "Recibido. En unos 5 minutos aproximadamente recibirás la confirmación.");
-		} else {
-			await enviar(chatId, "No se pudo lanzar el alta. Revisa los logs de GitHub Actions.");
-		}
+		ctx.waitUntil(
+			lanzarWorkflow(concepto, chatId).then((aceptado) =>
+				enviar(
+					chatId,
+					aceptado
+						? "Recibido. En unos 5 minutos aproximadamente recibirás la confirmación."
+						: "No se pudo lanzar el alta. Revisa los logs de GitHub Actions.",
+				),
+			),
+		);
 		return new Response(null, { status: 200 });
 	},
 } satisfies ExportedHandler;

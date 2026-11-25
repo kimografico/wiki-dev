@@ -25,13 +25,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
-      # withastro/action detecta npm por package-lock.json, instala, construye y
-      # sube el artefacto de Pages. Usa Node 24 por defecto.
-      # F2: indexar con Pagefind añadiendo:
-      #   with:
-      #     build-cmd: npm run build && npx pagefind --site dist
-      - name: Instalar, construir y subir
+      # withastro/action detecta npm por package-lock.json, instala, ejecuta
+      # build-cmd y sube el artefacto de Pages. Usa Node 24 por defecto.
+      # Validar aquí evita publicar contenido que CI rechazaría después.
+      # Si se reactiva Pagefind, build-cmd será:
+      #   npm run validate && npm run build && npx pagefind --site dist
+      - name: Instalar, validar, construir y subir
         uses: withastro/action@v6
+        with:
+          build-cmd: npm run validate && npm run build
 
   deploy:
     name: Deploy

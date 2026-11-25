@@ -1,6 +1,7 @@
 import { env } from "cloudflare:workers";
 import { SELF } from "cloudflare:test";
 import { afterEach, expect, it, vi } from "vite-plus/test";
+import { autorizado } from "../src/index";
 
 const URL_WEBHOOK = "https://example.com/webhook";
 
@@ -55,6 +56,11 @@ function dobleFetch(estadoGitHub = 204) {
 	return { llamadas, fn };
 }
 
+/** El handler contesta antes de lanzar el trabajo en segundo plano. */
+async function esperarLlamadas(llamadas: Llamada[], numero: number) {
+	await vi.waitFor(() => expect(llamadas).toHaveLength(numero));
+}
+
 afterEach(() => {
 	vi.unstubAllGlobals();
 	vi.restoreAllMocks();
@@ -74,6 +80,14 @@ it("rechaza el webhook sin secret_token", async () => {
 		}),
 	);
 	expect(respuesta.status).toBe(401);
+});
+
+it("no autoriza si falta la cabecera o el secreto configurado", () => {
+	expect(autorizado(null, "secreto")).toBe(false);
+	expect(autorizado("", "")).toBe(false);
+	expect(autorizado("secreto", "")).toBe(false);
+	expect(autorizado("secreto", "otro")).toBe(false);
+	expect(autorizado("secreto", "secreto")).toBe(true);
 });
 
 it("rechaza el webhook con un secret_token incorrecto", async () => {
@@ -111,7 +125,7 @@ it("contesta a /start con las instrucciones de uso", async () => {
 	const { llamadas } = dobleFetch();
 	const respuesta = await SELF.fetch(post(actualizacion(env.TELEGRAM_ALLOWED_USER_ID, "/start")));
 	expect(respuesta.status).toBe(200);
-	expect(llamadas).toHaveLength(1);
+	await esperarLlamadas(llamadas, 1);
 	expect(llamadas[0]!.url).toContain("sendMessage");
 	const cuerpo = JSON.parse(llamadas[0]!.body) as { chat_id: string; text: string };
 	expect(cuerpo.chat_id).toBe("4242");
@@ -124,7 +138,7 @@ it("lanza el workflow con el prompt y el chat, y confirma en el chat", async () 
 		post(actualizacion(env.TELEGRAM_ALLOWED_USER_ID, "/add closure")),
 	);
 	expect(respuesta.status).toBe(200);
-	expect(llamadas).toHaveLength(2);
+	await esperarLlamadas(llamadas, 2);
 
 	const despacho = llamadas[0]!;
 	expect(despacho.url).toContain(
@@ -152,7 +166,7 @@ it("avisa en el chat si GitHub rechaza el lanzamiento", async () => {
 	const respuesta = await SELF.fetch(post(actualizacion(env.TELEGRAM_ALLOWED_USER_ID, "closure")));
 
 	expect(respuesta.status).toBe(200);
-	expect(llamadas).toHaveLength(2);
+	await esperarLlamadas(llamadas, 2);
 	const aviso = llamadas[1]!;
 	expect(aviso.url).toContain("sendMessage");
 	const cuerpoAviso = JSON.parse(aviso.body) as { text: string };
