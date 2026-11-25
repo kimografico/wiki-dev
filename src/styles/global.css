@@ -168,6 +168,28 @@ pre {
   line-height: 1.6;
 }
 
+/*
+ * Ficha: el bloque de contenido ocupa todo el ancho en móvil. Hay que anular
+ * el `max-width` de `.prose`/`.prose-wiki`, porque con márgenes negativos el
+ * ancho se limitaba al del contenedor y dejaba hueco en el lado derecho.
+ * Desde 640 px vuelve a ser un recuadro normal.
+ */
+.ficha-contenido {
+  max-width: none;
+  margin-inline: calc(var(--space-4) * -1);
+  border-radius: 0;
+  border-inline-width: 0;
+}
+
+@media (min-width: 640px) {
+  .ficha-contenido {
+    max-width: 100%;
+    margin-inline: 0;
+    border-radius: var(--radius-lg);
+    border-inline-width: 1px;
+  }
+}
+
 .prose-wiki h2 {
   font-size: var(--text-lg);
   font-weight: 700;
