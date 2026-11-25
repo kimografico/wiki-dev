@@ -1,0 +1,51 @@
+---
+// Isla nativa «marcar como aprendida» (RF-14). Solo cambia su propio estado y
+// delega en `lib/preferencias/aprendidas.ts`, que es TypeScript puro y compartido
+// con el script inline del head.
+// ASTRO: el HTML se renderiza en servidor y el script se incluye una vez por
+// página; REACT+VITE: sería una isla React con su propio useState.
+import svgBrain from "../../assets/icons/brain.svg?raw";
+import svgBrainOff from "../../assets/icons/brain-off.svg?raw";
+
+interface Props {
+  slug: string;
+}
+
+const { slug } = Astro.props;
+---
+
+<wiki-aprendida slug={slug}>
+  <button
+    type="button"
+    aria-pressed="false"
+    aria-label="Marcar como aprendida"
+    title="Marcar como aprendida"
+    class="inline-flex items-center justify-center w-10 h-10 p-0 rounded-full transition-opacity cursor-pointer enabled:hover:opacity-70 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-[var(--color-focus)]"
+  >
+    <span class="icono-svg inline-flex w-6 h-6" aria-hidden="true">
+      <span data-icono="off" set:html={svgBrainOff} />
+      <span data-icono="on" set:html={svgBrain} />
+    </span>
+  </button>
+</wiki-aprendida>
+
+<style is:global>
+  wiki-aprendida:not([data-aprendida="true"]) [data-icono="on"] {
+    display: none;
+  }
+  wiki-aprendida[data-aprendida="true"] [data-icono="off"] {
+    display: none;
+  }
+  wiki-aprendida:not([data-aprendida="true"]) .icono-svg {
+    color: var(--color-muted-text);
+  }
+  wiki-aprendida[data-aprendida="true"] .icono-svg {
+    color: var(--color-dev-text);
+  }
+</style>
+
+<script>
+  import { registrarIslas } from "../../scripts/islas.ts";
+
+  registrarIslas();
+</script>

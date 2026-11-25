@@ -12,7 +12,7 @@ import { ordenarPorFecha } from "../lib/content/orden.ts";
 import ListaEntradas from "../components/ListaEntradas.astro";
 import EnlaceEtiqueta from "../components/EnlaceEtiqueta.astro";
 import FlipText from "../components/FlipText.astro";
-import BuscadorRapido from "../features/busqueda/BuscadorRapido.tsx";
+import BuscadorRapido from "../features/busqueda/BuscadorRapido.astro";
 
 const base = import.meta.env.BASE_URL;
 
@@ -29,15 +29,6 @@ const coleccionesInfo = LISTA_COLECCIONES.filter(
 }));
 
 const todas = await getTodasLasEntradas();
-const entradasParaBusqueda = todas.map((e) => ({
-  slug: e.slug,
-  coleccion: e.coleccion,
-  titulo: e.titulo,
-  resumen: e.resumen,
-  categoria: e.categoria,
-  tags: e.tags,
-  url: `${base}${e.coleccion}/${e.slug}`,
-}));
 
 const resumen = await Promise.all(
   coleccionesInfo.map(async (coleccion) => ({
@@ -84,8 +75,8 @@ const etiquetasListadas = ETIQUETAS.filter(
       </p>
     </div>
 
-    <!-- Buscador rápido interactivo -->
-    <BuscadorRapido client:idle entradas={entradasParaBusqueda} />
+    <!-- Buscador rápido: isla nativa, sin props de entradas en el HTML -->
+    <BuscadorRapido />
   </section>
 
   <div id="secciones-portada" class="space-y-14">

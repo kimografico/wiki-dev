@@ -1,4 +1,4 @@
-import BotonAprendida from "./BotonAprendida.tsx";
+import BotonAprendida from "./BotonAprendida.astro";
 
 export default {
   component: BotonAprendida,

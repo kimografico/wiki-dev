@@ -1,8 +1,8 @@
 ---
 // Plantilla base (Patrón 5): estructura común, cabecera, pie y metadatos.
 import "../styles/global.css";
-import InterruptorTema from "../features/preferencias/InterruptorTema.tsx";
-import InterruptorSoloPendientes from "../features/preferencias/InterruptorSoloPendientes.tsx";
+import InterruptorTema from "../features/preferencias/InterruptorTema.astro";
+import InterruptorSoloPendientes from "../features/preferencias/InterruptorSoloPendientes.astro";
 import { CATALOGO, LISTA_COLECCIONES } from "../lib/content/catalogo.ts";
 
 interface Props {
@@ -279,11 +279,11 @@ const rutaActual = Astro.url.pathname;
 
           <!-- Zone 3: Controles (filtro, tema y menú hamburguesa en móvil) -->
           <div class="flex items-center gap-2 sm:gap-3 shrink-0">
-            <!-- ISLA: filtro «todo / solo pendientes» (RF-14), antes del tema. -->
-            <InterruptorSoloPendientes client:load />
+            <!-- ISLA nativa: filtro «todo / solo pendientes» (RF-14), antes del tema. -->
+            <InterruptorSoloPendientes />
 
-            <!-- ISLA: el interruptor de tema se hidrata en el cliente (RF-13). -->
-            <InterruptorTema client:load />
+            <!-- ISLA nativa: el interruptor de tema lee el estado del head (RF-13). -->
+            <InterruptorTema />
 
             <!--
               Menú móvil: `<details>` nativo para abrir/cerrar, sin script propio.

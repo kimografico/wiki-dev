@@ -1,0 +1,47 @@
+---
+// Isla nativa del filtro «todo / solo pendientes» (RF-14). El <head> ya fijó
+// `data-filtro` y los estilos de los listados antes del primer pintado.
+// ASTRO: el script se empaqueta una sola vez por página aunque lo importen
+// varias islas; aquí solo registra el custom element.
+// REACT+VITE: sería un botón React con useEffect y useState.
+import svgOjo from "../../assets/icons/eye.svg?raw";
+import svgOjoOff from "../../assets/icons/eye-off.svg?raw";
+---
+
+<wiki-filtro>
+  <button
+    type="button"
+    aria-pressed="false"
+    aria-label="Mostrar: todo"
+    title="Mostrar solo lo que queda por aprender"
+    class="inline-flex items-center justify-center w-10 h-10 p-0 rounded-full transition-opacity cursor-pointer enabled:hover:opacity-70 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-[var(--color-focus)]"
+  >
+    <span
+      data-icono="on"
+      class="icono-svg inline-flex w-6 h-6 text-[var(--color-dev-text)]"
+      aria-hidden="true"
+      set:html={svgOjo}
+    />
+    <span
+      data-icono="off"
+      class="icono-svg inline-flex w-6 h-6 text-[var(--color-muted-text)]"
+      aria-hidden="true"
+      set:html={svgOjoOff}
+    />
+  </button>
+</wiki-filtro>
+
+<style is:global>
+  html[data-filtro="todo"] wiki-filtro [data-icono="off"] {
+    display: none;
+  }
+  html[data-filtro="solo-pendientes"] wiki-filtro [data-icono="on"] {
+    display: none;
+  }
+</style>
+
+<script>
+  import { registrarIslas } from "../../scripts/islas.ts";
+
+  registrarIslas();
+</script>

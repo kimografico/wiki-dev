@@ -1,0 +1,131 @@
+---
+// Buscador de la portada (RF-08). Es una isla nativa: no recibe entradas como
+// props, sino que pide el JSON generado en build y filtra en el navegador.
+// ASTRO: los estilos y el markup son estáticos; el `<script>` se empaqueta una
+// sola vez por página y registra el custom element.
+// REACT+VITE: sería una isla React con `useState`/`useMemo` y las entradas
+// serializadas en el HTML.
+import CampoBusqueda from "../../components/CampoBusqueda.astro";
+import { getTodasLasEntradas } from "../../lib/content/entradas.ts";
+import { CATALOGO, LISTA_COLECCIONES } from "../../lib/content/catalogo.ts";
+
+const base = import.meta.env.BASE_URL;
+const todas = await getTodasLasEntradas();
+const conteos = Object.fromEntries(
+  LISTA_COLECCIONES.map((coleccion) => [coleccion, 0]),
+) as Record<string, number>;
+for (const entrada of todas) {
+  conteos[entrada.coleccion] = (conteos[entrada.coleccion] ?? 0) + 1;
+}
+---
+
+<wiki-buscador base={base} class="buscador-rapido w-full my-6 text-left">
+  <div class="w-full relative">
+    <CampoBusqueda
+      placeholder="Buscar término, tecnología o paquete..."
+      ariaLabel="Buscar en la wiki"
+      shortcut="/"
+    />
+
+    <div
+      class="flex flex-wrap items-center gap-2 mt-3 text-xs"
+      role="group"
+      aria-label="Filtrar por colección"
+    >
+      {[
+        { clave: "todas", label: "Todas", count: todas.length },
+        ...LISTA_COLECCIONES.map((coleccion) => ({
+          clave: coleccion,
+          label: CATALOGO[coleccion].nombre,
+          count: conteos[coleccion],
+        })),
+      ].map((col) => (
+        <button
+          data-chip
+          data-coleccion={col.clave}
+          type="button"
+          aria-pressed={col.clave === "todas"}
+          class="chip-filtro inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-muted-text)] cursor-pointer font-medium transition-all hover:border-[var(--color-border-strong)] hover:text-[var(--color-text)]"
+        >
+          <span>{col.label}</span>
+          <span class="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-[var(--color-bg)] text-[var(--color-muted)]">
+            {col.count}
+          </span>
+        </button>
+      ))}
+    </div>
+  </div>
+
+  <div
+    data-panel
+    hidden
+    class="w-full mt-6 p-5 sm:p-6 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-lg animate-in fade-in duration-150"
+  >
+    <div class="flex items-center justify-between pb-3 mb-4 border-b border-[var(--color-border)] text-xs">
+      <span
+        data-etiqueta
+        class="font-semibold text-[var(--color-text)] text-sm"
+      ></span>
+      <button
+        data-limpiar-filtro
+        type="button"
+        class="text-xs font-medium text-[var(--color-muted-text)] hover:text-[var(--color-accent-text)] cursor-pointer transition-colors"
+      >
+        Limpiar filtro ✕
+      </button>
+    </div>
+
+    <div
+      data-resultados
+      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 p-0.5 list-none m-0"
+    ></div>
+  </div>
+
+  <template data-plantilla>
+    <li>
+      <a
+        href="#"
+        class="block p-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)]/40 hover:bg-[var(--color-bg)] hover:border-[var(--color-accent)] transition-all no-underline group h-full"
+      >
+        <div class="flex items-center justify-between gap-2 mb-1.5">
+          <span
+            data-titulo
+            class="font-bold text-sm text-[var(--color-text)] group-hover:text-[var(--color-accent-text)] transition-colors line-clamp-1"
+          ></span>
+          <span
+            data-coleccion
+            class="text-[10px] uppercase font-mono font-bold tracking-wider px-1.5 py-0.5 rounded bg-[var(--color-surface)] border border-[var(--color-border)] shrink-0"
+          ></span>
+        </div>
+        <p
+          data-resumen
+          class="text-xs text-[var(--color-muted-text)] m-0 line-clamp-2 leading-relaxed"
+        ></p>
+      </a>
+    </li>
+  </template>
+</wiki-buscador>
+
+<style is:global>
+  /* La isla solo escribe `data-activo`: CSS oculta el resto de la portada. */
+  html:has(wiki-buscador[data-activo="true"]) #secciones-portada {
+    display: none;
+  }
+
+  .chip-filtro[aria-pressed="true"] {
+    border-color: var(--color-accent);
+    background: var(--color-accent);
+    color: var(--color-on-accent);
+    box-shadow: var(--shadow-xs);
+  }
+  .chip-filtro[aria-pressed="true"] span:last-child {
+    background: rgb(0 0 0 / 20%);
+    color: white;
+  }
+</style>
+
+<script>
+  import { registrarIslas } from "../../scripts/islas.ts";
+
+  registrarIslas();
+</script>

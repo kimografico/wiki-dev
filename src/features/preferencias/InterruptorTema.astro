@@ -1,0 +1,75 @@
+---
+// Isla nativa del interruptor de tema (RF-13). El HTML ya viene del servidor;
+// el custom element solo actualiza el estado accesible y escribe localStorage.
+// ASTRO: el script se empaqueta y se incluye una vez por página, aunque lo
+// importen varios componentes; el <head> ya aplicó el tema antes del pintado.
+// REACT+VITE: aquí sería un componente React hidratado con `hydrateRoot`.
+---
+
+<wiki-tema>
+  <button
+    type="button"
+    data-tema-boton
+    aria-pressed="false"
+    aria-label="Pulsa para cambiar el tema"
+    title="Cambiar a tema oscuro"
+    class="inline-flex items-center justify-center gap-2 w-9 h-9 p-0 rounded-full text-xs font-medium border border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--color-accent)] text-[var(--color-text)] transition-all cursor-pointer shadow-xs focus-visible:outline-2 focus-visible:outline-[var(--color-focus)] sm:w-auto sm:h-auto sm:px-3 sm:py-1.5"
+  >
+    <span
+      data-icono="luna"
+      class="w-5 h-5 text-[var(--color-dev)] sm:w-3.5 sm:h-3.5"
+    >
+      <svg
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+        aria-hidden="true"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+        ></path>
+      </svg>
+    </span>
+    <span
+      data-icono="sol"
+      class="w-5 h-5 text-[var(--color-design)] sm:w-3.5 sm:h-3.5"
+    >
+      <svg
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="2"
+        aria-hidden="true"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+        ></path>
+      </svg>
+    </span>
+    <span data-texto class="hidden sm:inline text-xs font-medium">
+      Claro
+    </span>
+    <span class="visually-hidden">Pulsa para cambiar el tema</span>
+  </button>
+</wiki-tema>
+
+<style is:global>
+  /* El atributo lo fija el script inline del head antes del primer pintado. */
+  html[data-theme="dark"] wiki-tema [data-icono="luna"] {
+    display: none;
+  }
+  html[data-theme="light"] wiki-tema [data-icono="sol"] {
+    display: none;
+  }
+</style>
+
+<script>
+  import { registrarIslas } from "../../scripts/islas.ts";
+
+  registrarIslas();
+</script>

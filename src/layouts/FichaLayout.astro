@@ -8,7 +8,7 @@ import BaseLayout from "./BaseLayout.astro";
 import EnlaceEtiqueta from "../components/EnlaceEtiqueta.astro";
 import Relacionados from "../components/Relacionados.astro";
 import MencionadoEn from "../components/MencionadoEn.astro";
-import BotonAprendida from "../features/preferencias/BotonAprendida.tsx";
+import BotonAprendida from "../features/preferencias/BotonAprendida.astro";
 import { getComparativasDe, urlEntrada } from "../lib/content/entradas.ts";
 import { CATALOGO } from "../lib/content/catalogo.ts";
 
@@ -100,8 +100,8 @@ const colorColeccion =
           </EnlaceEtiqueta>
         </div>
 
-        <!-- ISLA: marcar como aprendida (RF-14). -->
-        <BotonAprendida slug={slug} client:load />
+        <!-- ISLA nativa: marcar como aprendida (RF-14). -->
+        <BotonAprendida slug={slug} />
       </div>
 
       <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-[var(--color-text)] m-0 mb-3">
