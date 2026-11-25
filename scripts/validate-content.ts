@@ -9,9 +9,10 @@
 // verdad) y lee el frontmatter con `gray-matter`, sin depender de Astro.
 //
 // Se ejecuta con el TypeScript nativo de Node (`node scripts/validate-content.ts`).
-import { readFile, readdir } from "node:fs/promises";
+import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import matter from "gray-matter";
+import { archivosMarkdown } from "../src/lib/content/archivos.ts";
 import {
   CAMPOS_RELACION,
   COLECCIONES,
@@ -28,25 +29,6 @@ interface EntradaLeida {
   slug: string;
   data: Record<string, unknown>;
   cuerpo: string;
-}
-
-async function archivosMarkdown(dir: string): Promise<string[]> {
-  let entradas;
-  try {
-    entradas = await readdir(dir, { withFileTypes: true });
-  } catch {
-    return [];
-  }
-  const rutas: string[] = [];
-  for (const entrada of entradas) {
-    const ruta = join(dir, entrada.name);
-    if (entrada.isDirectory()) {
-      rutas.push(...(await archivosMarkdown(ruta)));
-    } else if (entrada.name.endsWith(".md")) {
-      rutas.push(ruta);
-    }
-  }
-  return rutas;
 }
 
 /** Encabezados `##` del cuerpo, ignorando los que están dentro de code fences. */

@@ -30,9 +30,8 @@ jobs:
       - name: Formato
         run: npm run format:check
 
-      # El script `validate` (RF-10) llega en F1; --if-present lo activa sin fallar.
       - name: Validación de contenido
-        run: npm run --if-present validate
+        run: npm run validate
 
       - name: Build
         run: npm run build

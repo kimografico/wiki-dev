@@ -11,8 +11,8 @@ import {
   llamarGemini,
   main,
   parsearSalida,
-  slugsDe,
 } from "./add-concept.ts";
+import { slugsDe } from "../src/lib/content/archivos.ts";
 import { COLECCIONES } from "../src/lib/content/esquemas.ts";
 import { CATALOGO } from "../src/lib/content/catalogo.ts";
 

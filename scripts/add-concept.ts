@@ -20,12 +20,11 @@ import {
   access,
   mkdir,
   readFile,
-  readdir,
   unlink,
   writeFile,
 } from "node:fs/promises";
-import type { Dirent } from "node:fs";
 import { join } from "node:path";
+import { slugsDe } from "../src/lib/content/archivos.ts";
 import {
   CATEGORIAS,
   COLECCIONES,
@@ -130,26 +129,6 @@ export function parsearSalida(texto: string): EntradaGenerada {
     slug: dato.slug,
     contenido: dato.contenido,
   };
-}
-
-/** Slugs (nombre de archivo sin .md) de una colección, recursivo. */
-export async function slugsDe(dir: string): Promise<string[]> {
-  let items: Dirent[];
-  try {
-    items = await readdir(dir, { withFileTypes: true });
-  } catch {
-    return [];
-  }
-  const slugs: string[] = [];
-  for (const item of items) {
-    const ruta = join(dir, item.name);
-    if (item.isDirectory()) {
-      slugs.push(...(await slugsDe(ruta)));
-    } else if (item.name.endsWith(".md")) {
-      slugs.push(item.name.replace(/\.md$/, ""));
-    }
-  }
-  return slugs;
 }
 
 /** Ensambla el system prompt con plantillas, enums y slugs del repo. */

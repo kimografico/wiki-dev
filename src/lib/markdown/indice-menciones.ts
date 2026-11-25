@@ -3,9 +3,10 @@
 // Lee el frontmatter de `content/` con `gray-matter` y NO importa
 // `astro:content` (regla §8), para que el plugin siga siendo un plugin estándar
 // de remark, portable a cualquier proyecto con unified (RNF-07).
-import { readFile, readdir } from "node:fs/promises";
+import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import matter from "gray-matter";
+import { archivosMarkdown } from "../content/archivos.ts";
 import { COLECCIONES, type Coleccion } from "../content/esquemas.ts";
 
 export interface TerminoMencion {
@@ -17,25 +18,6 @@ export interface TerminoMencion {
 
 export interface IndiceMenciones {
   terminos: TerminoMencion[];
-}
-
-async function archivosMarkdown(dir: string): Promise<string[]> {
-  let entradas;
-  try {
-    entradas = await readdir(dir, { withFileTypes: true });
-  } catch {
-    return [];
-  }
-  const rutas: string[] = [];
-  for (const entrada of entradas) {
-    const ruta = join(dir, entrada.name);
-    if (entrada.isDirectory()) {
-      rutas.push(...(await archivosMarkdown(ruta)));
-    } else if (entrada.name.endsWith(".md")) {
-      rutas.push(ruta);
-    }
-  }
-  return rutas;
 }
 
 /** Construye el índice leyendo los `.md` de `content/<coleccion>`. */
