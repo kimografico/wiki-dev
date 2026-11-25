@@ -14,13 +14,27 @@ const { titulo, descripcion = "Wiki de consulta para programadores junior." } =
   Astro.props;
 
 const base = import.meta.env.BASE_URL;
-// Secciones que van dentro del desplegable en el Header (todas excepto comparativas)
+// Menú móvil: colecciones del catálogo excepto comparativas.
 const coleccionesDesplegable = LISTA_COLECCIONES.filter(
   (c) => c !== "comparativas",
 ).map((coleccion) => ({
   href: `${base}${coleccion}`,
   texto: CATALOGO[coleccion].nombre,
 }));
+
+// Desplegable de escritorio: «Inicio» primero y sin «Glosario».
+const desplegableEscritorio = [
+  { href: base, texto: "Inicio" },
+  ...LISTA_COLECCIONES.filter(
+    (c) => c !== "comparativas" && c !== "glosario",
+  ).map((coleccion) => ({
+    href: `${base}${coleccion}`,
+    texto: CATALOGO[coleccion].nombre,
+  })),
+];
+
+// En escritorio, Glosario va como primer enlace directo, fuera del desplegable.
+const hrefGlosario = `${base}glosario`;
 
 // Enlaces fuera del desplegable en el Header (solo Acerca de y TelegramBot, sin Comparativas)
 const enlacesHeaderFuera = [
@@ -167,11 +181,26 @@ const rutaActual = Astro.url.pathname;
             aria-label="Secciones principales"
             class="hidden md:flex flex-wrap items-center gap-1.5 text-sm font-medium"
           >
+            {/* Glosario: primer enlace del header, fuera del desplegable. */}
+            <a
+              href={hrefGlosario}
+              class={`px-3 py-1.5 rounded-lg text-sm transition-all no-underline ${
+                rutaActual.startsWith(hrefGlosario)
+                  ? "bg-[var(--color-bg)] text-[var(--color-text)] font-semibold border border-[var(--color-border)]"
+                  : "text-[var(--color-muted-text)] hover:text-[var(--color-text)] hover:bg-[var(--color-bg)]/50 border border-transparent"
+              }`}
+              aria-current={
+                rutaActual.startsWith(hrefGlosario) ? "page" : undefined
+              }
+            >
+              Glosario
+            </a>
+
             {/* Desplegable de Secciones */}
             {(() => {
-              const algunaSeccionActiva = coleccionesDesplegable.some(
-                ({ href }) => rutaActual.startsWith(href),
-              );
+              const algunaSeccionActiva = desplegableEscritorio
+                .slice(1)
+                .some(({ href }) => rutaActual.startsWith(href));
               return (
                 <details class="relative group">
                   <summary
@@ -199,20 +228,23 @@ const rutaActual = Astro.url.pathname;
                     </svg>
                   </summary>
 
-                  <div class="absolute left-0 top-full mt-1.5 w-48 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-lg p-1.5 z-50">
+                  <div class="absolute left-0 top-full mt-3.5 w-48 rounded-b-2xl border-x border-b border-[var(--color-border)] bg-[var(--color-surface)] shadow-lg py-1.5 -z-10">
                     <nav
                       aria-label="Secciones del catálogo"
-                      class="flex flex-col gap-0.5"
+                      class="flex flex-col"
                     >
-                      {coleccionesDesplegable.map(({ href, texto }) => {
-                        const activo = rutaActual.startsWith(href);
+                      {desplegableEscritorio.map(({ href, texto }) => {
+                        const activo =
+                          href === base
+                            ? rutaActual === base
+                            : rutaActual.startsWith(href);
                         return (
                           <a
                             href={href}
-                            class={`px-3 py-1.5 rounded-lg text-sm transition-all no-underline ${
+                            class={`block w-full px-3 py-1.5 text-sm transition-all no-underline ${
                               activo
-                                ? "bg-[var(--color-bg)] text-[var(--color-text)] font-semibold border border-[var(--color-border)]"
-                                : "text-[var(--color-muted-text)] hover:text-[var(--color-text)] hover:bg-[var(--color-bg)]/50 border border-transparent"
+                                ? "bg-[var(--color-bg)] text-[var(--color-text)] font-semibold"
+                                : "text-[var(--color-muted-text)] hover:text-[var(--color-text)] hover:bg-[var(--color-bg)]/50"
                             }`}
                             aria-current={activo ? "page" : undefined}
                           >
@@ -334,10 +366,14 @@ const rutaActual = Astro.url.pathname;
 
     <footer class="site-footer border-t border-[var(--color-border)] bg-[var(--color-surface)]/50 mt-auto">
       <div class="contenedor py-8 text-sm flex flex-col md:flex-row items-center justify-between gap-4">
-        <div class="flex items-center gap-2 text-[var(--color-muted-text)]">
-          <span class="w-2 h-2 rounded-full bg-[var(--color-accent)] inline-block"></span>
-          <span>
-            wiki-dev · Base de conocimiento estática para programadores junior.
+        <div class="flex flex-col md:flex-row items-center gap-2 text-center md:text-left text-[var(--color-muted-text)]">
+          <span class="w-2 h-2 rounded-full bg-[var(--color-accent)] inline-block shrink-0"></span>
+          <span class="flex flex-col items-center md:flex-row md:items-baseline gap-1 md:gap-2">
+            <span class="font-bold text-[var(--color-accent)]">wiki·dev</span>
+            <span>
+              <span class="block md:inline">© 2026</span>{" "}
+              <span class="block md:inline">kimografico.com</span>
+            </span>
           </span>
         </div>
         <div class="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-[var(--color-muted-text)]">
