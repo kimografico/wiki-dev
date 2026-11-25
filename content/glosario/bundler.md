@@ -1,4 +1,5 @@
 ---
+fecha: 2026-10-13
 titulo: Bundler
 resumen: Herramienta que reúne y transforma muchos archivos de código en unos pocos listos para el navegador.
 categoria: concepto

@@ -8,6 +8,7 @@ import {
 import { CATEGORIAS, ETIQUETAS } from "../lib/content/esquemas.ts";
 import { nombreCategoria, nombreEtiqueta } from "../lib/content/nombres.ts";
 import { CATALOGO, LISTA_COLECCIONES } from "../lib/content/catalogo.ts";
+import { ordenarPorFecha } from "../lib/content/orden.ts";
 import ListaEntradas from "../components/ListaEntradas.astro";
 import EnlaceEtiqueta from "../components/EnlaceEtiqueta.astro";
 import FlipText from "../components/FlipText.astro";
@@ -41,7 +42,8 @@ const entradasParaBusqueda = todas.map((e) => ({
 const resumen = await Promise.all(
   coleccionesInfo.map(async (coleccion) => ({
     ...coleccion,
-    entradas: await getPorColeccion(coleccion.clave),
+    // Más recientes primero: la portada muestra las últimas altas.
+    entradas: ordenarPorFecha(await getPorColeccion(coleccion.clave)),
   })),
 );
 
@@ -148,6 +150,7 @@ const etiquetasListadas = ETIQUETAS.filter(
               <EnlaceEtiqueta
                 href={`${base}categorias/${valor}`}
                 tipo="categoria"
+                valor={valor}
                 conteo={conteoCategorias.get(valor)}
               >
                 {nombreCategoria(valor)}
@@ -182,7 +185,7 @@ const etiquetasListadas = ETIQUETAS.filter(
       </div>
     </section>
 
-    <!-- Secciones de contenido reciente/destacado (solo colecciones con entradas) -->
+    <!-- Secciones por colección: las primeras entradas de cada una -->
     <div class="space-y-14">
       {resumen
         .filter((coleccion) => coleccion.entradas.length > 0)
@@ -215,7 +218,7 @@ const etiquetasListadas = ETIQUETAS.filter(
                 </p>
               </div>
 
-              {coleccion.entradas.length > 6 && (
+              {coleccion.entradas.length > 4 && (
                 <a
                   href={coleccion.url}
                   class="text-xs sm:text-sm font-semibold inline-flex items-center gap-1 no-underline transition-colors shrink-0"
@@ -229,7 +232,8 @@ const etiquetasListadas = ETIQUETAS.filter(
             </div>
 
             <ListaEntradas
-              entradas={coleccion.entradas.slice(0, 6)}
+              entradas={coleccion.entradas.slice(0, 4)}
+              columnas={4}
               vacio="Todavía no hay entradas."
             />
           </section>

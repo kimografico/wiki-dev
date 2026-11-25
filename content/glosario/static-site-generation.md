@@ -1,4 +1,5 @@
 ---
+fecha: 2026-10-13
 titulo: Generación de sitio estático
 resumen: Técnica que genera todas las páginas HTML durante el build, antes de publicar, en lugar de construirlas en cada petición.
 categoria: concepto

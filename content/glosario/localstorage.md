@@ -1,4 +1,5 @@
 ---
+fecha: 2026-10-13
 titulo: localStorage
 resumen: Almacén clave-valor del navegador que persiste entre visitas y que aquí solo guarda las preferencias del lector.
 categoria: concepto

@@ -1,4 +1,5 @@
 ---
+fecha: 2026-10-13
 titulo: Ember
 resumen: Framework opinionado con convenciones fuertes («convention over configuration») y un ciclo de desarrollo muy guiado.
 categoria: framework

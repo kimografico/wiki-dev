@@ -115,8 +115,9 @@ se expone con ese nombre en el paso) y fuerza una respuesta JSON.
 
 Antes de aceptar la propuesta, el script comprueba que la colección exista, que
 el slug sea kebab-case de hasta 64 caracteres y que el archivo no exista; luego
-escribe el `.md` y ejecuta el validador de contenido del repositorio. Si la
-propuesta no pasa estos controles, descarta el archivo cuando llegó a
+escribe el `.md` con la fecha de alta (`fecha: YYYY-MM-DD`) inyectada por el
+script, no por el modelo, y ejecuta el validador de contenido del repositorio.
+Si la propuesta no pasa estos controles, descarta el archivo cuando llegó a
 escribirlo, espera 30 segundos y reintenta con el otro modelo
 (`gemini-3.8-flash` y `gemini-3.6-flash` alternados), pasando el error anterior
 como contexto. Hay cuatro intentos como máximo. Si se agotan, deja el último

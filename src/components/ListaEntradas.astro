@@ -8,12 +8,15 @@ interface Props {
   entradas: Entrada[];
   vacio?: string;
   compacto?: boolean;
+  /** Columnas de la rejilla en pantallas grandes (3 por defecto). */
+  columnas?: 3 | 4;
 }
 
 const {
   entradas,
   vacio = "No hay entradas todavía.",
   compacto = false,
+  columnas = 3,
 } = Astro.props;
 ---
 
@@ -28,7 +31,9 @@ const {
         "lista-entradas list-none p-0 m-0",
         compacto
           ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3"
-          : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4",
+          : columnas === 4
+            ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
+            : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4",
       ]}
     >
       {entradas.map((entrada) => (

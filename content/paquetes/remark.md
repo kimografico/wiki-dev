@@ -1,4 +1,5 @@
 ---
+fecha: 2026-10-13
 titulo: remark
 resumen: Procesador de Markdown construido sobre el formato de sintaxis de mdast, extensible con plugins.
 categoria: herramienta

@@ -1,4 +1,5 @@
 ---
+fecha: 2026-10-13
 titulo: WCAG
 resumen: Estándar internacional de pautas de accesibilidad web; su nivel AA es el objetivo de contraste y navegación de este proyecto.
 categoria: concepto

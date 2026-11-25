@@ -14,6 +14,7 @@
  *          (sin variante: muted 4.3/4.7 · accent 4.4/4.9 · design 2.9/3.2 · cta 3.4/3.8)
  *  Oscuro: todos ≥ 4.7 con los valores base; las variantes -text son alias.
  *  Botón principal: --color-on-accent sobre --color-accent 4.9 (claro) / 5.3 (oscuro).
+ *  Secciones y categorías tienen tokens -text propios, verificados en ambos temas.
  * Verifica cualquier cambio con: node scripts/contrast.mjs <texto> <fondo>
  */
 
@@ -23,14 +24,6 @@
   /* --- Surfaces --- */
   --color-bg: #f4f4f2;
   --color-surface: #ffffff;
-  /* Fondo de las tarjetas aprendidas (RF-14): tinte azul (--color-dev) para
-     diferenciarlas de un vistazo. (Era transparente, pero el contraste con
-     --color-bg no se percibía: surface y bg casi coinciden.) */
-  --surface-soft: color-mix(
-    in srgb,
-    var(--color-dev) 15%,
-    var(--color-surface)
-  );
   --color-code-bg: var(
     --color-surface
   ); /* fondo de bloques de código (RF-13) */
@@ -56,6 +49,26 @@
   --color-dev-text: var(--color-dev);
   --color-design-text: #a85007;
   --color-cta-text: #047857;
+
+  /* --- Color de sección: una identidad por colección (F1) --- */
+  --color-glosario-text: #8a6a45; /* beige */
+  --color-tecnologias-text: #446b85; /* azul acero */
+  --color-paquetes-text: #8a6500; /* amarillo */
+  --color-patrones-text: var(--color-accent-text); /* rojo */
+  --color-ia-text: var(--color-dev-text); /* azul */
+  --color-testing-text: var(--color-cta-text); /* verde */
+  --color-comparativas-text: var(--color-design-text); /* naranja */
+
+  /* --- Color de categoría: el texto sigue a la categoría, no a la sección --- */
+  --color-cat-lenguaje-text: #2563eb;
+  --color-cat-framework-text: #6d28d9;
+  --color-cat-estilos-text: #be185d;
+  --color-cat-estado-text: #0e7490;
+  --color-cat-datos-api-text: #0f766e;
+  --color-cat-rendimiento-ux-text: #b45309;
+  --color-cat-herramienta-text: #3f6212;
+  --color-cat-despliegue-text: #b91c1c;
+  --color-cat-concepto-text: #8a5a2b;
 
   /* --- Misc --- */
   --color-highlight: transparent;
@@ -127,6 +140,24 @@
     --color-design-text: var(--color-design);
     --color-cta-text: var(--color-cta);
 
+    --color-glosario-text: #e3cba6;
+    --color-tecnologias-text: #9dbcd0;
+    --color-paquetes-text: #f5cf55;
+    --color-patrones-text: var(--color-accent-text);
+    --color-ia-text: var(--color-dev-text);
+    --color-testing-text: var(--color-cta-text);
+    --color-comparativas-text: var(--color-design-text);
+
+    --color-cat-lenguaje-text: #8ab4f8;
+    --color-cat-framework-text: #c4b5fd;
+    --color-cat-estilos-text: #f9a8d4;
+    --color-cat-estado-text: #67e8f9;
+    --color-cat-datos-api-text: #5eead4;
+    --color-cat-rendimiento-ux-text: #fcd34d;
+    --color-cat-herramienta-text: #a3e635;
+    --color-cat-despliegue-text: #fca5a5;
+    --color-cat-concepto-text: #e8c79a;
+
     --scrollbar-bg: #0a0a09;
     --shadow-pop: 0 6px 24px rgb(0 0 0 / 0.5);
   }
@@ -158,6 +189,24 @@
   --color-design-text: var(--color-design);
   --color-cta-text: var(--color-cta);
 
+  --color-glosario-text: #e3cba6;
+  --color-tecnologias-text: #9dbcd0;
+  --color-paquetes-text: #f5cf55;
+  --color-patrones-text: var(--color-accent-text);
+  --color-ia-text: var(--color-dev-text);
+  --color-testing-text: var(--color-cta-text);
+  --color-comparativas-text: var(--color-design-text);
+
+  --color-cat-lenguaje-text: #8ab4f8;
+  --color-cat-framework-text: #c4b5fd;
+  --color-cat-estilos-text: #f9a8d4;
+  --color-cat-estado-text: #67e8f9;
+  --color-cat-datos-api-text: #5eead4;
+  --color-cat-rendimiento-ux-text: #fcd34d;
+  --color-cat-herramienta-text: #a3e635;
+  --color-cat-despliegue-text: #fca5a5;
+  --color-cat-concepto-text: #e8c79a;
+
   --scrollbar-bg: #0a0a09;
   --shadow-pop: 0 6px 24px rgb(0 0 0 / 0.5);
 }
@@ -188,7 +237,7 @@ h4 {
 }
 @layer base {
   a {
-    color: var(--color-accent-text);
+    color: var(--color-dev-text);
     text-underline-offset: 0.2em;
   }
 }

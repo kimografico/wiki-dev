@@ -1,4 +1,5 @@
 ---
+fecha: 2026-10-13
 titulo: Integración continua
 resumen: Práctica de ejecutar automáticamente comprobaciones y build ante cada cambio, para detectar problemas antes de publicar.
 categoria: concepto

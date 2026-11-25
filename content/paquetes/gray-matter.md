@@ -1,4 +1,5 @@
 ---
+fecha: 2026-10-13
 titulo: gray-matter
 resumen: Librería que separa el frontmatter YAML del cuerpo Markdown en un solo paso.
 categoria: herramienta

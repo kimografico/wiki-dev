@@ -1,4 +1,5 @@
 ---
+fecha: 2026-11-23
 titulo: Patrón observer
 resumen: "Patrón de comportamiento en el que un sujeto mantiene una lista de dependientes y les avisa cuando cambia su estado."
 categoria: concepto

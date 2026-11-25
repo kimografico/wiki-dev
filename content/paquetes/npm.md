@@ -1,4 +1,5 @@
 ---
+fecha: 2026-10-13
 titulo: npm
 resumen: Gestor de paquetes de Node.js que instala dependencias y ejecuta los scripts definidos en package.json.
 categoria: herramienta

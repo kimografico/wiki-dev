@@ -106,8 +106,8 @@ export default function BuscadorRapido({ entradas }: Props) {
 
   return (
     <div className="buscador-rapido w-full my-6 text-left">
-      {/* Searchbar y filtros: centrados y con su ancho original */}
-      <div className="w-full max-w-3xl mx-auto relative">
+      {/* Searchbar y filtros: mismo ancho que el resto de la portada */}
+      <div className="w-full relative">
         <CampoBusqueda
           value={consulta}
           onChange={setConsulta}
@@ -118,10 +118,11 @@ export default function BuscadorRapido({ entradas }: Props) {
         />
 
         {/* Filtros de colección */}
-        <div className="flex flex-wrap items-center gap-2 mt-3 text-xs">
-          <span className="text-[var(--color-muted)] font-medium">
-            Filtrar por:
-          </span>
+        <div
+          className="flex flex-wrap items-center gap-2 mt-3 text-xs"
+          role="group"
+          aria-label="Filtrar por colección"
+        >
           {chips.map((col) => {
             const activo = filtroColeccion === col.clave;
             return (
@@ -156,7 +157,7 @@ export default function BuscadorRapido({ entradas }: Props) {
         </div>
       </div>
 
-      {/* Panel de resultados filtrados: fuera del div estrecho, ocupa el 100% del contenedor padre */}
+      {/* Panel de resultados filtrados: ocupa el ancho del contenedor */}
       {panelAbierto && (
         <div className="w-full mt-6 p-5 sm:p-6 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-lg transition-all animate-in fade-in duration-150">
           <div className="flex items-center justify-between pb-3 mb-4 border-b border-[var(--color-border)] text-xs">

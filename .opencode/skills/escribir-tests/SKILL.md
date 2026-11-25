@@ -1,6 +1,6 @@
 ---
 name: escribir-tests
-description: Escribe o ajusta los tests unitarios colocados (*.test.ts) de la lógica TypeScript (src/lib/** y scripts/**) con Vitest y cobertura >= 90%. Úsala solo a petición explícita del autor, al cierre de un trabajo ya validado funcionalmente.
+description: Escribe o ajusta los tests unitarios colocados (*.test.ts) de la lógica TypeScript (src/lib/** y scripts/**) con Vitest y cobertura >= 90% obligatoria (objetivo 95%). Úsala solo a petición explícita del autor, al cierre de un trabajo ya validado funcionalmente.
 ---
 
 # escribir-tests
@@ -27,5 +27,5 @@ Cierra una fase o un cambio de lógica escribiendo los tests que falten, **solo 
 
 - Un test por comportamiento observable; nombres en español, en imperativo.
 - No mocks de más: solo se sustituye lo externo (Astro, reloj, almacenamiento, fs).
-- Al terminar: `npm run test:coverage` debe pasar con **cobertura >= 90 %** en las cuatro métricas, y `npm run check|lint|format:check` deben quedar limpios.
+- Al terminar: `npm run test:coverage` debe pasar con **cobertura >= 90 % obligatoria** en las cuatro métricas (el **objetivo de calidad es 95 %**), y `npm run check|lint|format:check` deben quedar limpios.
 - Nunca uses `--no-verify`.

@@ -1,4 +1,5 @@
 ---
+fecha: 2026-11-23
 titulo: Zustand
 resumen: "Gestor de estado minimalista para React sin providers ni boilerplate, con un almacén fuera de los componentes."
 categoria: estado

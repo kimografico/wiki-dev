@@ -1,4 +1,5 @@
 ---
+fecha: 2026-10-13
 titulo: Pagefind
 resumen: Buscador estático que indexa un sitio ya construido y añade búsqueda sin ningún servidor.
 categoria: herramienta

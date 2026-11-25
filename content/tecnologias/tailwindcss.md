@@ -1,4 +1,5 @@
 ---
+fecha: 2026-10-13
 titulo: Tailwind CSS
 resumen: Framework de CSS que aporta utilidades de clase para componer estilos directamente en el marcado.
 categoria: estilos

@@ -1,4 +1,5 @@
 ---
+fecha: 2026-10-13
 titulo: Hidratación
 resumen: Proceso de añadir interactividad a un HTML estático cargando JavaScript que «reactiva» los componentes en el navegador.
 categoria: concepto

@@ -1,4 +1,5 @@
 ---
+fecha: 2026-10-13
 titulo: Prettier
 resumen: Formateador de código opinado que reescribe el estilo (comillas, saltos, indentación) de forma uniforme.
 categoria: herramienta

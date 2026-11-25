@@ -29,6 +29,7 @@ export interface Entrada {
   coleccion: Coleccion;
   titulo: string;
   resumen: string;
+  fecha?: Date;
   categoria: string;
   tags: string[];
   alias: string[];
@@ -46,6 +47,7 @@ function normalizar(
   const data = entry.data as {
     titulo: string;
     resumen: string;
+    fecha?: Date;
     categoria: string;
     tags: string[];
     alias: string[];
@@ -59,6 +61,7 @@ function normalizar(
     coleccion,
     titulo: data.titulo,
     resumen: data.resumen,
+    fecha: data.fecha,
     categoria: data.categoria,
     tags: data.tags,
     alias: data.alias,

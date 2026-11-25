@@ -1,4 +1,5 @@
 ---
+fecha: 2026-10-13
 titulo: Astro frente a Next.js
 resumen: Comparativa entre generar HTML estático con islas (Astro) y un framework React con render en servidor (Next.js).
 categoria: framework

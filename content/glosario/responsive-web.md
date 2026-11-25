@@ -1,4 +1,5 @@
 ---
+fecha: 2026-10-13
 titulo: Diseño responsive
 resumen: Enfoque de maquetación que adapta la interfaz al tamaño de pantalla, de móvil hacia arriba, sin scroll horizontal.
 categoria: concepto

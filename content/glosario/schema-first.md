@@ -1,4 +1,5 @@
 ---
+fecha: 2026-10-13
 titulo: Schema-first
 resumen: Enfoque en el que el esquema de los datos se define antes que el contenido, de modo que lo que no cumple el esquema no se publica.
 categoria: concepto

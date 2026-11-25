@@ -1,4 +1,5 @@
 ---
+fecha: 2026-11-23
 titulo: Playwright
 resumen: Herramienta de automatización del navegador para pruebas de extremo a extremo en Chromium, Firefox y WebKit.
 categoria: herramienta

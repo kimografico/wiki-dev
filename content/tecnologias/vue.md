@@ -1,4 +1,5 @@
 ---
+fecha: 2026-10-13
 titulo: Vue
 resumen: Framework progresivo de componentes con plantillas declarativas, adoptable desde una página suelta hasta una app completa.
 categoria: framework

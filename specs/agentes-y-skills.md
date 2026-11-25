@@ -240,7 +240,7 @@ specs/plantillas/               # editable por wiki-dev; leída por anadir-entra
   1. Elegir la colección con este criterio: *paquete* si es una dependencia o un CLI de un ecosistema (`mermaid`, `eslint`, `vite`, `npm`); *tecnología* si es un lenguaje, un framework de aplicación, una plataforma o un servicio (React, Astro, Git, GitHub Pages); *glosario* si es un concepto; *comparativa* si contrasta 2 o más entradas; *patrón* si es la solución reutilizable a un problema recurrente con estructura y ejemplo (`patrones`); *IA* si es un modelo, agente, prompt o técnica de inteligencia artificial (`ia`); *testing* si es una herramienta, técnica o concepto de pruebas (`testing`).
   2. Leer la plantilla correspondiente de `specs/plantillas/`.
   3. Generar el slug (kebab-case, sin acentos, singular, nombre canónico) y comprobar que **no existe** como slug ni como alias en ninguna colección.
-  4. Rellenar el frontmatter: campos comunes (`titulo`, `resumen`, `categoria`, `tags` del catálogo, `alias` si procede) y los de la colección (`npm` en paquetes, etc.).
+  4. Rellenar el frontmatter: campos comunes (`titulo`, `resumen`, `fecha` de alta en `YYYY-MM-DD`, `categoria`, `tags` del catálogo, `alias` si procede) y los de la colección (`npm` en paquetes, etc.). Si la entrada la crea el bot, la fecha la inyecta el script.
   5. Crear las secciones obligatorias del tipo (`spec.md` §7.4), **sin** `## Relacionados`.
   6. Usar `autoenlace: false` solo si el título es una palabra común que no debe enlazarse sola.
 - **Salida:** archivo en `content/<coleccion>/<slug>.md`.
@@ -292,7 +292,7 @@ specs/plantillas/               # editable por wiki-dev; leída por anadir-entra
 - **Objetivo:** cerrar la cobertura de la lógica TypeScript al final de una fase o cambio, **solo a petición del autor** (§11 de `spec.md`).
 - **Ubicación:** tests **colocados** junto al módulo, `*.test.ts` bajo `src/**` y `scripts/**` (lo que impone `vitest.config.ts`); no hay carpeta `tests/` aparte.
 - **Patrones de prueba:** `vi.hoisted` + `vi.mock("astro:content", …)` para la capa de contenido; directorio temporal (`mkdtemp`) para `indice-menciones.ts` y `validate-content.ts`; `indice` construido a mano + árbol mdast para `remark-menciones.ts`; `vi.stubGlobal` para `localStorage`/`matchMedia`/`document` en `tema.ts`.
-- **Salida:** tests verdes y `npm run test:coverage` con cobertura >= 90 % (líneas, funciones, ramas y sentencias) sobre `src/lib/**` y `scripts/**`.
+- **Salida:** tests verdes y `npm run test:coverage` con cobertura >= 90 % obligatoria (objetivo de calidad 95 %) (líneas, funciones, ramas y sentencias) sobre `src/lib/**` y `scripts/**`.
 
 ### 5.11 Ponytail (`ponytail`, `ponytail-review`, `ponytail-audit`, `ponytail-debt`, `ponytail-gain`, `ponytail-help`)
 

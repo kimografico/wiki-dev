@@ -1,4 +1,5 @@
 ---
+fecha: 2026-10-13
 titulo: Lit
 resumen: Librería ligera para crear componentes web estándar (custom elements) que funcionan en cualquier framework o sin ninguno.
 categoria: framework

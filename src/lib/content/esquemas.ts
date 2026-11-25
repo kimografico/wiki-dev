@@ -53,6 +53,10 @@ export const etiquetas = z.enum(ETIQUETAS);
 export const base = z.object({
   titulo: z.string().min(1),
   resumen: z.string().max(200),
+  // Fecha de alta (ISO `YYYY-MM-DD`). La inyecta `scripts/add-concept.ts` al
+  // crear la entrada con el bot; las entradas anteriores se rellenaron desde
+  // el historial de git. Es opcional para no romper contenido sin fecha.
+  fecha: z.coerce.date().optional(),
   categoria: categorias,
   tags: z.array(etiquetas).default([]),
   alias: z.array(z.string()).default([]),

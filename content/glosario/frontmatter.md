@@ -1,4 +1,5 @@
 ---
+fecha: 2026-10-13
 titulo: Frontmatter
 resumen: Bloque de datos con formato YAML al inicio de un archivo Markdown, delimitado por tres guiones, que describe la entrada.
 categoria: concepto

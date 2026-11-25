@@ -1,4 +1,5 @@
 ---
+fecha: 2026-10-13
 titulo: Storybook
 resumen: Entorno aislado y muy extendido para desarrollar, documentar y probar componentes de interfaz.
 categoria: herramienta

@@ -122,7 +122,7 @@ const rutaActual = Astro.url.pathname;
               .map(
                 (s) =>
                   `[data-slug="${s}"] .icono-aprendida{display:inline-flex}` +
-                  `.entrada-item[data-slug="${s}"]>a{background:var(--surface-soft)}`,
+                  `.entrada-item[data-slug="${s}"]>a{background:var(--color-bg)}`,
               )
               .join("");
           }

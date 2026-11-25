@@ -1,4 +1,5 @@
 ---
+fecha: 2026-11-23
 titulo: "LLM"
 resumen: "Modelo de lenguaje a gran escala basado en redes neuronales profundas para procesar, razonar y generar lenguaje natural."
 categoria: concepto

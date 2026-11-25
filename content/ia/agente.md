@@ -1,4 +1,5 @@
 ---
+fecha: 2026-11-23
 titulo: "Agente"
 resumen: "Entidad de software autónoma que percibe su entorno mediante herramientas o datos y ejecuta acciones para alcanzar un objetivo específico."
 categoria: "concepto"

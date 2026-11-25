@@ -1,4 +1,5 @@
 ---
+fecha: 2026-11-22
 titulo: "Harness"
 resumen: "Entorno de pruebas o marco de ejecución estructurado que proporciona el contexto y los recursos necesarios para probar un componente de software."
 categoria: "concepto"

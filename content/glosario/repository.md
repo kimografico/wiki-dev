@@ -1,4 +1,5 @@
 ---
+fecha: 2026-10-13
 titulo: Repository (patrón)
 resumen: Patrón que centraliza el acceso a los datos en un único módulo, de modo que el resto del código no consulta la fuente directamente.
 categoria: concepto

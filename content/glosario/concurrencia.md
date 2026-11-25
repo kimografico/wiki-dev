@@ -1,4 +1,5 @@
 ---
+fecha: 2026-11-24
 titulo: "Concurrencia"
 resumen: "Capacidad de un sistema para gestionar y ejecutar múltiples tareas en periodos de tiempo superpuestos no necesariamente simultáneos."
 categoria: "concepto"

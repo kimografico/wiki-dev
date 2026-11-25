@@ -1,4 +1,5 @@
 ---
+fecha: 2026-10-13
 titulo: unified
 resumen: Ecosistema para procesar texto con plugins; encadena analizadores y transformadores sobre un árbol de sintaxis.
 categoria: herramienta

@@ -1,4 +1,5 @@
 ---
+fecha: 2026-10-13
 titulo: Husky
 resumen: Gestor de hooks de git que permite ejecutar comprobaciones automáticamente antes de cada commit o push.
 categoria: herramienta

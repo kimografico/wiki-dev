@@ -1,4 +1,5 @@
 ---
+fecha: 2026-11-23
 titulo: Vitest
 resumen: Ejecutor de tests integrado con Vite, rápido y compatible con la API de Jest.
 categoria: herramienta

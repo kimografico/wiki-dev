@@ -1,4 +1,5 @@
 ---
+fecha: 2026-10-13
 titulo: GitHub Pages
 resumen: Servicio de GitHub que publica archivos estáticos de un repositorio; aquí es el destino del despliegue.
 categoria: despliegue

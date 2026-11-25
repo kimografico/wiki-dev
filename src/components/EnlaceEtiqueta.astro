@@ -3,14 +3,23 @@ interface Props {
   href: string;
   tipo?: "categoria" | "tag";
   conteo?: number;
+  /** Valor de la categoría, para teñir el texto con su color (global.css). */
+  valor?: string;
 }
 
-const { href, tipo = "tag", conteo } = Astro.props;
+const { href, tipo = "tag", conteo, valor } = Astro.props;
+const colorCategoria = tipo === "categoria" && valor ? valor : undefined;
 ---
 
 <a
   href={href}
-  class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border bg-[var(--color-surface)] text-[var(--color-muted-text)] border-[var(--color-border)] text-sm no-underline transition-colors hover:text-[var(--color-text)] hover:border-[var(--color-accent)]/60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus)]"
+  class:list={[
+    "inline-flex items-center gap-2 px-3 py-1.5 rounded-full border bg-[var(--color-surface)] border-[var(--color-border)] text-sm no-underline transition-colors hover:border-[var(--color-accent)]/60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus)]",
+    colorCategoria
+      ? "color-categoria"
+      : "text-[var(--color-muted-text)] hover:text-[var(--color-text)]",
+  ]}
+  data-categoria={colorCategoria}
 >
   {tipo === "tag" && <span class="font-mono">#</span>}
   <span>

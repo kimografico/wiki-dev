@@ -1,4 +1,5 @@
 ---
+fecha: 2026-10-13
 titulo: React frente a Vue y Angular
 resumen: Comparativa entre los tres frameworks de interfaz más extendidos, centrada en filosofía, curva de aprendizaje y control.
 categoria: framework

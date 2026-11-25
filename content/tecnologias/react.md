@@ -1,4 +1,5 @@
 ---
+fecha: 2026-10-13
 titulo: React
 resumen: Biblioteca para construir interfaces a partir de componentes y estado, que aquí se usa solo dentro de islas concretas.
 categoria: framework

@@ -1,4 +1,5 @@
 ---
+fecha: 2026-10-13
 titulo: Zod
 resumen: Librería de validación y definición de esquemas que comprueba datos en tiempo de ejecución y deduce sus tipos.
 categoria: datos-api

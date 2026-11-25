@@ -16,7 +16,8 @@ crear entradas.
 ## Flujo de trabajo
 
 - **Husky** gestiona los hooks de git: `pre-commit` pasa lint-staged y la validación de
-  contenido; `pre-push` exige cobertura ≥ 90 % (RNF-10).
+  contenido; `pre-push` exige cobertura ≥ 90 % (RNF-10), con un objetivo de calidad del
+  95 %.
 - **CI** (`.github/workflows/ci.yml`) verifica tipos, lint, formato, validación y build en
   cada push y PR.
 - **Deploy** (`.github/workflows/deploy.yml`) publica en GitHub Pages al hacer push a
@@ -50,18 +51,18 @@ de iniciar Astro; en ese caso el catálogo queda en
 
 ## Scripts
 
-| Script                  | Qué hace                                       |
-| ----------------------- | ---------------------------------------------- |
-| `npm run dev`           | Servidor de desarrollo de Astro                |
-| `npm run build`         | Build estático en `dist/`                      |
-| `npm run preview`       | Sirve el resultado del build                   |
-| `npm run check`         | `astro check`: tipos y esquemas                |
-| `npm run lint`          | ESLint                                         |
-| `npm run format`        | Prettier (escribe)                             |
-| `npm run format:check`  | Prettier (solo comprueba)                      |
-| `npm run test`          | Vitest                                         |
-| `npm run test:coverage` | Vitest con umbral de cobertura ≥ 90 % (RNF-10) |
-| `npm run astro`         | CLI de Astro                                   |
+| Script                  | Qué hace                                            |
+| ----------------------- | --------------------------------------------------- |
+| `npm run dev`           | Servidor de desarrollo de Astro                     |
+| `npm run build`         | Build estático en `dist/`                           |
+| `npm run preview`       | Sirve el resultado del build                        |
+| `npm run check`         | `astro check`: tipos y esquemas                     |
+| `npm run lint`          | ESLint                                              |
+| `npm run format`        | Prettier (escribe)                                  |
+| `npm run format:check`  | Prettier (solo comprueba)                           |
+| `npm run test`          | Vitest                                              |
+| `npm run test:coverage` | Vitest con cobertura ≥ 90 % (objetivo 95 %, RNF-10) |
+| `npm run astro`         | CLI de Astro                                        |
 
 > F1 añade `npm run validate` (validación del contenido, RF-10).
 
@@ -105,45 +106,46 @@ El flujo y las reglas completas están en `specs/agentes-y-skills.md`.
 
 Formato: **definición breve** + para qué se usa aquí.
 
-| Término              | Definición breve                                                | Para qué se usa aquí                                                   |
-| -------------------- | --------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| Astro                | Framework para sitios estáticos con «islas».                    | Framework base: rutas, content collections y SSG.                      |
-| React                | Librería de UI basada en componentes.                           | Solo para las islas interactivas (buscador, preferencias).             |
-| Vite                 | Bundler y servidor de desarrollo.                               | Motor bajo Astro y referencia didáctica (React + Vite).                |
-| TypeScript           | JavaScript con tipos.                                           | Lenguaje del código, en modo estricto.                                 |
-| Tailwind             | Framework de utilidades CSS.                                    | Estilos y tokens de tema.                                              |
-| Zod                  | Validación de esquemas en TypeScript.                           | Valida el frontmatter de cada entrada.                                 |
-| Markdown             | Formato de texto ligero.                                        | Formato de todas las entradas (sin MDX).                               |
-| frontmatter          | Cabecera YAML entre `---` al inicio de un `.md`.                | Datos de la entrada (título, categoría…).                              |
-| content collection   | Conjunto de archivos validados por un esquema en Astro.         | Glosario, tecnologías, paquetes, comparativas, patrones, IA y testing. |
-| slug                 | Identificador de la entrada (nombre del archivo, kebab-case).   | Único en toda la wiki; clave de relaciones y menciones.                |
-| SSG                  | Generación estática del sitio en build.                         | Todo el sitio se pre-renderiza a HTML.                                 |
-| hidratación          | Añadir JavaScript a HTML estático.                              | Solo en las islas.                                                     |
-| isla                 | Componente interactivo hidratado dentro de una página estática. | Buscador y controles de preferencias.                                  |
-| directiva `client:*` | Controla cuándo se hidrata un componente.                       | `client:load` / `client:idle` en las islas.                            |
-| Pagefind             | Buscador estático ejecutado tras el build.                      | Página `/buscar` (F2).                                                 |
-| unified              | Ecosistema de procesado de Markdown/HTML.                       | El pipeline de Markdown del proyecto.                                  |
-| remark               | Conjunto de plugins de unified para Markdown.                   | Plugin de menciones enlazadas (F1).                                    |
-| rehype               | Conjunto de plugins de unified para HTML.                       | Contenedor con scroll propio de las tablas (RNF-08).                   |
-| Mermaid              | Diagramas generados desde texto.                                | Bloques ` ```mermaid ` vía `astro-mermaid` (F2).                       |
-| Astrobook            | Visor de componentes para desarrollo.                           | Ver componentes sin Storybook (F1).                                    |
-| Lighthouse           | Auditoría de rendimiento, accesibilidad y SEO.                  | `npm run lighthouse` a demanda.                                        |
-| lint                 | Análisis estático de estilo y errores.                          | ESLint en pre-commit y CI.                                             |
-| ESLint               | Linter de JavaScript, TypeScript y Astro.                       | El «lint» del proyecto.                                                |
-| Prettier             | Formateador de código.                                          | Formato en pre-commit y CI.                                            |
-| Vitest               | Framework de tests.                                             | Tests de `lib/` y `scripts/` con cobertura ≥ 90 %.                     |
-| cobertura            | Porcentaje de código ejecutado por los tests.                   | Umbral del 90 % exigido en pre-push (RNF-10).                          |
-| Husky                | Herramienta que gestiona hooks de git.                          | Hooks `pre-commit` y `pre-push`.                                       |
-| hook de git          | Script que git ejecuta ante un evento.                          | `pre-commit` (lint-staged y validación) y `pre-push` (cobertura).      |
-| CI                   | Integración continua.                                           | GitHub Actions en cada push y PR.                                      |
-| GitHub Pages         | Alojamiento estático de GitHub.                                 | Despliegue del sitio (proyecto, bajo `/<repo>/`).                      |
-| localStorage         | Almacén de datos del navegador.                                 | Preferencias (tema, aprendidas, «solo pendientes»), prefijo `wiki:`.   |
-| SDD                  | Desarrollo guiado por especificación.                           | `specs/` es la fuente de verdad del proyecto.                          |
-| agente               | Rol de opencode con instrucciones y permisos.                   | `wiki-curator`, `content-researcher`, `content-reviewer` y `wiki-dev`. |
-| skill                | Capacidad reutilizable que un agente puede cargar.              | Tareas concretas (`resolver-duda`, `ponytail`…).                       |
-| opencode             | Herramienta de agentes que ejecuta el proyecto.                 | Ejecuta agentes y skills para crear contenido y código.                |
-| ponytail             | Modo «senior perezoso» (DietrichGebert/ponytail, MIT).          | Escribir la implementación más pequeña que cumpla la SDD.              |
-| YAGNI                | «You Aren't Gonna Need It»: no construyas lo que no necesitas.  | Primer peldaño del modo ponytail.                                      |
-| `shortcut:`          | Comentario `shortcut: <límite>, <cuándo revisar>`.              | Marca un atajo aceptado con su límite conocido.                        |
-| repository (patrón)  | Capa única que encapsula el acceso a los datos.                 | `src/lib/content/` es el único que lee las entradas.                   |
-| facade               | Fachada que ofrece una API simple sobre algo complejo.          | `src/lib/content/`, junto con repository.                              |
+| Término              | Definición breve                                                | Para qué se usa aquí                                                            |
+| -------------------- | --------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| Astro                | Framework para sitios estáticos con «islas».                    | Framework base: rutas, content collections y SSG.                               |
+| React                | Librería de UI basada en componentes.                           | Solo para las islas interactivas (buscador, preferencias).                      |
+| Vite                 | Bundler y servidor de desarrollo.                               | Motor bajo Astro y referencia didáctica (React + Vite).                         |
+| TypeScript           | JavaScript con tipos.                                           | Lenguaje del código, en modo estricto.                                          |
+| Tailwind             | Framework de utilidades CSS.                                    | Estilos y tokens de tema.                                                       |
+| Zod                  | Validación de esquemas en TypeScript.                           | Valida el frontmatter de cada entrada.                                          |
+| Markdown             | Formato de texto ligero.                                        | Formato de todas las entradas (sin MDX).                                        |
+| frontmatter          | Cabecera YAML entre `---` al inicio de un `.md`.                | Datos de la entrada (título, categoría…).                                       |
+| content collection   | Conjunto de archivos validados por un esquema en Astro.         | Glosario, tecnologías, paquetes, comparativas, patrones, IA y testing.          |
+| slug                 | Identificador de la entrada (nombre del archivo, kebab-case).   | Único en toda la wiki; clave de relaciones y menciones.                         |
+| SSG                  | Generación estática del sitio en build.                         | Todo el sitio se pre-renderiza a HTML.                                          |
+| hidratación          | Añadir JavaScript a HTML estático.                              | Solo en las islas.                                                              |
+| isla                 | Componente interactivo hidratado dentro de una página estática. | Buscador y controles de preferencias.                                           |
+| directiva `client:*` | Controla cuándo se hidrata un componente.                       | `client:load` / `client:idle` en las islas.                                     |
+| Pagefind             | Buscador estático ejecutado tras el build.                      | Página `/buscar` (F2).                                                          |
+| unified              | Ecosistema de procesado de Markdown/HTML.                       | El pipeline de Markdown del proyecto.                                           |
+| remark               | Conjunto de plugins de unified para Markdown.                   | Plugin de menciones enlazadas (F1).                                             |
+| rehype               | Conjunto de plugins de unified para HTML.                       | Contenedor con scroll propio de las tablas (RNF-08).                            |
+| Mermaid              | Diagramas generados desde texto.                                | Bloques ` ```mermaid ` vía `astro-mermaid` (F2).                                |
+| Astrobook            | Visor de componentes para desarrollo.                           | Ver componentes sin Storybook (F1).                                             |
+| Lighthouse           | Auditoría de rendimiento, accesibilidad y SEO.                  | `npm run lighthouse` a demanda.                                                 |
+| lint                 | Análisis estático de estilo y errores.                          | ESLint en pre-commit y CI.                                                      |
+| ESLint               | Linter de JavaScript, TypeScript y Astro.                       | El «lint» del proyecto.                                                         |
+| Prettier             | Formateador de código.                                          | Formato en pre-commit y CI.                                                     |
+| Vitest               | Framework de tests.                                             | Tests de `lib/` y `scripts/` con cobertura ≥ 90 %.                              |
+| cobertura            | Porcentaje de código ejecutado por los tests.                   | Umbral obligatorio del 90 % en pre-push; objetivo de calidad, 95 %.             |
+| Husky                | Herramienta que gestiona hooks de git.                          | Hooks `pre-commit` y `pre-push`.                                                |
+| hook de git          | Script que git ejecuta ante un evento.                          | `pre-commit` (lint-staged y validación) y `pre-push` (cobertura).               |
+| CI                   | Integración continua.                                           | GitHub Actions en cada push y PR.                                               |
+| GitHub Pages         | Alojamiento estático de GitHub.                                 | Despliegue del sitio (proyecto, bajo `/<repo>/`).                               |
+| localStorage         | Almacén de datos del navegador.                                 | Preferencias (tema, aprendidas, «solo pendientes»), prefijo `wiki:`.            |
+| SDD                  | Desarrollo guiado por especificación.                           | `specs/` es la fuente de verdad del proyecto.                                   |
+| agente               | Rol de opencode con instrucciones y permisos.                   | `wiki-curator`, `content-researcher`, `content-reviewer` y `wiki-dev`.          |
+| skill                | Capacidad reutilizable que un agente puede cargar.              | Tareas concretas (`resolver-duda`, `ponytail`…).                                |
+| opencode             | Herramienta de agentes que ejecuta el proyecto.                 | Ejecuta agentes y skills para crear contenido y código.                         |
+| ponytail             | Modo «senior perezoso» (DietrichGebert/ponytail, MIT).          | Escribir la implementación más pequeña que cumpla la SDD.                       |
+| YAGNI                | «You Aren't Gonna Need It»: no construyas lo que no necesitas.  | Primer peldaño del modo ponytail.                                               |
+| `shortcut:`          | Comentario `shortcut: <límite>, <cuándo revisar>`.              | Marca un atajo aceptado con su límite conocido.                                 |
+| repository (patrón)  | Capa única que encapsula el acceso a los datos.                 | `src/lib/content/` es el único que lee las entradas.                            |
+| facade               | Fachada que ofrece una API simple sobre algo complejo.          | `src/lib/content/`, junto con repository.                                       |
+| token de color       | Variable CSS semántica con un valor seguro para texto.          | Secciones (`--color-glosario-text`) y categorías (`--color-cat-concepto-text`). |

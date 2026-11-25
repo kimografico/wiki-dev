@@ -1,4 +1,5 @@
 ---
+fecha: 2026-10-13
 titulo: Slug
 resumen: Identificador legible de una entrada, en minúsculas y con guiones, que suele coincidir con el nombre de su archivo.
 categoria: concepto

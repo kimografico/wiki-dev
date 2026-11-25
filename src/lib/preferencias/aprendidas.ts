@@ -91,8 +91,8 @@ export function guardarSoloPendientes(valor: boolean): void {
 
 /**
  * Reglas CSS que aplican las preferencias en los listados (RF-14):
- * - filtro «todo»: muestra el icono en las entradas aprendidas y deja su
- *   tarjeta con el fondo algo más transparente (`--surface-soft`);
+ * - filtro «todo»: muestra el icono en las entradas aprendidas y les da el
+ *   fondo de la página (`--color-bg`) para que pasen desapercibidas;
  * - filtro «solo pendientes»: oculta sus elementos de listado y muestra el
  *   aviso `.vacio-filtro` cuando la lista no queda con ningún elemento
  *   visible (los demás enlaces —relacionados, menciones— no se ocultan).
@@ -117,7 +117,7 @@ export function cssPreferencias(
     .map(
       (valor) =>
         `[data-slug="${valor}"] .icono-aprendida{display:inline-flex}` +
-        `.entrada-item[data-slug="${valor}"]>a{background:var(--surface-soft)}`,
+        `.entrada-item[data-slug="${valor}"]>a{background:var(--color-bg)}`,
     )
     .join("");
 }

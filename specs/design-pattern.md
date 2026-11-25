@@ -502,7 +502,7 @@ Toda skill o agente que añada contenido o código debe cumplir:
 3. Todo uso de una característica específica de Astro lleva un comentario con su equivalencia en React + Vite (formato `ASTRO: ... / REACT+VITE: ...`).
 4. No añadir dependencias sin justificarlas en el commit.
 5. No editar archivos de sistema (`.github/`, `.husky/`, `.opencode/`): si hace falta un cambio ahí, indicarlo al autor, que lo hará con `builder`.
-6. Los tests se escriben o ejecutan solo a petición del autor, al cierre de un trabajo ya validado funcionalmente. El hook `pre-push` exige una cobertura ≥ 90 %. Ningún agente usa `--no-verify`.
+6. Los tests se escriben o ejecutan solo a petición del autor, al cierre de un trabajo ya validado funcionalmente. El hook `pre-push` exige una cobertura ≥ 90 % (objetivo de calidad 95 %). Ningún agente usa `--no-verify`.
 
 ---
 

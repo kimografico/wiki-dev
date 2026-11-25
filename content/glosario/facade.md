@@ -1,4 +1,5 @@
 ---
+fecha: 2026-10-13
 titulo: Facade
 resumen: Patrón que ofrece una interfaz simple sobre un conjunto complejo de módulos, ocultando los detalles a quien la usa.
 categoria: concepto

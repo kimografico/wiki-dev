@@ -1,4 +1,5 @@
 ---
+fecha: 2026-10-13
 titulo: Next.js
 resumen: Framework sobre React que añade enrutado por archivos, renderizado en servidor y generación estática.
 categoria: framework

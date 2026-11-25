@@ -1,4 +1,5 @@
 ---
+fecha: 2026-10-13
 titulo: Node.js
 resumen: Entorno de ejecución de JavaScript fuera del navegador; aquí sirve para ejecutar herramientas y el build del sitio.
 categoria: herramienta

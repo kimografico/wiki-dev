@@ -1,4 +1,5 @@
 ---
+fecha: 2026-10-13
 titulo: Accesibilidad web
 resumen: Conjunto de prácticas que hacen que una web pueda usarla cualquier persona, incluidas las que usan teclado o lector de pantalla.
 categoria: concepto

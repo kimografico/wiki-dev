@@ -1,4 +1,5 @@
 ---
+fecha: 2026-10-13
 titulo: Arquitectura de islas
 resumen: Patrón que renderiza toda la página como HTML estático y aísla en «islas» solo los componentes que necesitan JavaScript.
 categoria: concepto

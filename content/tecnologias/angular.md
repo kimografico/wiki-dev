@@ -1,4 +1,5 @@
 ---
+fecha: 2026-10-13
 titulo: Angular
 resumen: Framework completo, con TypeScript de serie, que trae enrutado, formularios y herramientas bajo un mismo enfoque opinionado.
 categoria: framework

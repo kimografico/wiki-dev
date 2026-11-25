@@ -1,4 +1,5 @@
 ---
+fecha: 2026-10-13
 titulo: Markdown
 resumen: Lenguaje de marcado ligero, basado en texto plano, que se convierte en HTML y que aquí se usa sin extensiones MDX.
 categoria: concepto

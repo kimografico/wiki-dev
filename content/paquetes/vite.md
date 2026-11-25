@@ -1,4 +1,5 @@
 ---
+fecha: 2026-10-13
 titulo: Vite
 resumen: Servidor de desarrollo y empaquetador que sirve los módulos al instante y prepara el build optimizado.
 categoria: herramienta

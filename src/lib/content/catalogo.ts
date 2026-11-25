@@ -30,7 +30,7 @@ export const CATALOGO: Record<Coleccion, ColeccionCatalogo> = {
     nombre: "Glosario",
     descripcion: "Términos, patrones y conceptos clave explicados sin rodeos.",
     icono: "Aa",
-    colorText: "var(--color-accent-text)",
+    colorText: "var(--color-glosario-text)",
     plantilla: "glosario.md",
   },
   tecnologias: {
@@ -38,14 +38,14 @@ export const CATALOGO: Record<Coleccion, ColeccionCatalogo> = {
     descripcion:
       "Lenguajes, frameworks de aplicación, plataformas y servicios.",
     icono: "</>",
-    colorText: "var(--color-dev-text)",
+    colorText: "var(--color-tecnologias-text)",
     plantilla: "tecnologia.md",
   },
   paquetes: {
     nombre: "Paquetes",
     descripcion: "Dependencias, linters, utilidades y CLI del ecosistema web.",
     icono: "{ }",
-    colorText: "var(--color-design-text)",
+    colorText: "var(--color-paquetes-text)",
     plantilla: "paquete.md",
   },
   comparativas: {
@@ -53,7 +53,7 @@ export const CATALOGO: Record<Coleccion, ColeccionCatalogo> = {
     descripcion:
       "Astro frente a Next.js: contexto, criterios y cuándo elegir cada una.",
     icono: "≠",
-    colorText: "var(--color-design-text)",
+    colorText: "var(--color-comparativas-text)",
     plantilla: "comparativa.md",
   },
   patrones: {
@@ -61,7 +61,7 @@ export const CATALOGO: Record<Coleccion, ColeccionCatalogo> = {
     descripcion:
       "Problemas recurrentes con su solución, estructura y ejemplos.",
     icono: "◇",
-    colorText: "var(--color-accent-text)",
+    colorText: "var(--color-patrones-text)",
     plantilla: "patron.md",
   },
   ia: {
@@ -69,7 +69,7 @@ export const CATALOGO: Record<Coleccion, ColeccionCatalogo> = {
     descripcion:
       "Modelos, agentes y herramientas de inteligencia artificial con ejemplos.",
     icono: "AI",
-    colorText: "var(--color-dev-text)",
+    colorText: "var(--color-ia-text)",
     plantilla: "ia.md",
   },
   testing: {
@@ -77,7 +77,7 @@ export const CATALOGO: Record<Coleccion, ColeccionCatalogo> = {
     descripcion:
       "Herramientas y prácticas de pruebas: unitarias, integración y E2E.",
     icono: "✓",
-    colorText: "var(--color-design-text)",
+    colorText: "var(--color-testing-text)",
     plantilla: "testing.md",
   },
 };

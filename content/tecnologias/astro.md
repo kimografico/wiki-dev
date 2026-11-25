@@ -1,4 +1,5 @@
 ---
+fecha: 2026-10-13
 titulo: Astro
 resumen: Framework web que genera HTML estático por defecto y solo hidrata las «islas» que declaran interactividad.
 categoria: framework

@@ -8,8 +8,9 @@ export default defineConfig({
     include: ["src/**/*.test.ts", "scripts/**/*.test.ts"],
     coverage: {
       provider: "v8",
-      // RNF-10: cobertura >= 90% sobre la lógica TypeScript (lib/ y scripts/);
-      // se excluyen .astro, páginas, stories y configuración.
+      // RNF-10: cobertura >= 90% obligatoria (objetivo de calidad 95%) sobre
+      // la lógica TypeScript (lib/ y scripts/); se excluyen .astro, páginas,
+      // stories y configuración.
       include: ["src/lib/**", "scripts/**"],
       exclude: ["**/*.test.ts", "**/*.stories.*"],
       reporter: ["text", "html"],

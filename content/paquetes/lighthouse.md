@@ -1,4 +1,5 @@
 ---
+fecha: 2026-10-13
 titulo: Lighthouse
 resumen: Herramienta de auditoría que puntúa rendimiento, accesibilidad, buenas prácticas y SEO de una página.
 categoria: herramienta

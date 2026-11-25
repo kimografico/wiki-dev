@@ -42,6 +42,7 @@ const datos: Record<string, ReturnType<typeof entrada>[]> = {
   glosario: [entrada("hidratacion"), entrada("slug")],
   tecnologias: [
     entrada("astro", {
+      fecha: new Date("2026-10-13"),
       relacionados: ["hidratacion", "react", "fantasma"],
       categoria: "framework",
       tags: ["frontend"],
@@ -76,6 +77,12 @@ describe("getTodasLasEntradas / getPorColeccion", () => {
     const [astro] = await getPorColeccion("tecnologias");
     expect(astro?.alternativas).toEqual([]);
     expect(astro?.entidades).toEqual([]);
+  });
+
+  it("propaga la fecha de alta cuando existe", async () => {
+    const [astro, react] = await getPorColeccion("tecnologias");
+    expect(astro?.fecha).toEqual(new Date("2026-10-13"));
+    expect(react?.fecha).toBeUndefined();
   });
 });
 

@@ -1,4 +1,5 @@
 ---
+fecha: 2026-10-13
 titulo: ESLint
 resumen: Analizador estático de JavaScript y TypeScript que señala errores y prácticas dudosas según reglas configurables.
 categoria: herramienta

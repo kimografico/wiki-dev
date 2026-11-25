@@ -252,7 +252,7 @@ describe("cssPreferencias", () => {
       '[data-slug="closure"] .icono-aprendida{display:inline-flex}',
     );
     expect(css).toContain(
-      '.entrada-item[data-slug="closure"]>a{background:var(--surface-soft)}',
+      '.entrada-item[data-slug="closure"]>a{background:var(--color-bg)}',
     );
   });
 

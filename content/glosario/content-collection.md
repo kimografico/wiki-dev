@@ -1,4 +1,5 @@
 ---
+fecha: 2026-10-13
 titulo: Content collection
 resumen: Conjunto de archivos de contenido que un framework carga y valida con un esquema, agrupados por tipo (glosario, paquetes…).
 categoria: concepto

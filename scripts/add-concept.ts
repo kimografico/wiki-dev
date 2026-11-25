@@ -196,6 +196,7 @@ Las plantillas de arriba son solo estructura: sus valores de ejemplo (categoria,
 ## Reglas del frontmatter
 - titulo: título de la entrada.
 - resumen: máximo 200 caracteres, descripción concisa.
+- fecha: NO la escribas. El script añade la fecha de alta (YYYY-MM-DD).
 - categoria y tags: los que hayas elegido en la sección anterior.
 - alias: array de sinónimos (puede ser []).
 - relacionados: array con máximo 4 slugs de los existentes (puede ser []).
@@ -241,6 +242,37 @@ function categoriaDe(contenido: string): string {
   const frontmatter = /^---\r?\n([\s\S]*?)\r?\n---/.exec(contenido)?.[1] ?? "";
   const valor = /^categoria:\s*(.+)$/m.exec(frontmatter)?.[1] ?? "";
   return valor.trim().replace(/^["']|["']$/g, "");
+}
+
+/** Fecha local en formato ISO corto (`YYYY-MM-DD`). */
+function formatearFecha(fecha: Date): string {
+  const ano = fecha.getFullYear();
+  const mes = String(fecha.getMonth() + 1).padStart(2, "0");
+  const dia = String(fecha.getDate()).padStart(2, "0");
+  return `${ano}-${mes}-${dia}`;
+}
+
+/**
+ * Inyecta `fecha: YYYY-MM-DD` como primer campo del frontmatter.
+ *
+ * La fecha la pone el script, no el modelo: así es la fecha real de alta y no
+ * una inventada. Si el modelo ya hubiera escrito una, se sustituye. Los
+ * frontmatter que no son YAML (p. ej. `---json`) se dejan intactos.
+ */
+export function conFechaDeAlta(contenido: string, fecha = new Date()): string {
+  const coincidencia = /^---\r?\n([\s\S]*?)\r?\n---/.exec(contenido);
+  if (!coincidencia) return contenido;
+  const eol = coincidencia[0].includes("\r\n") ? "\r\n" : "\n";
+  const campos = coincidencia[1]!
+    .split(/\r?\n/)
+    .filter((linea) => !/^fecha\s*:/.test(linea));
+  const bloque = [
+    "---",
+    `fecha: ${formatearFecha(fecha)}`,
+    ...campos,
+    "---",
+  ].join(eol);
+  return contenido.replace(coincidencia[0], () => bloque);
 }
 
 /** Genera, valida y escribe la entrada bajo `raiz` (repo; por defecto "."). */
@@ -297,7 +329,9 @@ export async function main(raiz = "."): Promise<void> {
       // No existe: es el caso esperado.
     }
     await mkdir(join(contentDir, salida.coleccion), { recursive: true });
-    await writeFile(ruta, salida.contenido, "utf8");
+    // La fecha la pone el script, no el modelo.
+    const contenido = conFechaDeAlta(salida.contenido);
+    await writeFile(ruta, contenido, "utf8");
 
     const { errores } = await validarContenido(contentDir);
     const mios = errores.filter((e) => e.includes(ruta));
@@ -305,7 +339,7 @@ export async function main(raiz = "."): Promise<void> {
       if (process.env.GITHUB_OUTPUT) {
         await appendFile(
           process.env.GITHUB_OUTPUT,
-          `ruta=${ruta}\ncoleccion=${salida.coleccion}\nslug=${salida.slug}\ncategoria=${categoriaDe(salida.contenido)}\n`,
+          `ruta=${ruta}\ncoleccion=${salida.coleccion}\nslug=${salida.slug}\ncategoria=${categoriaDe(contenido)}\n`,
         );
       }
       console.log(`Entrada generada y validada: ${ruta}`);

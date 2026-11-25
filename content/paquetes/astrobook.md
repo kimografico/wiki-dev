@@ -1,4 +1,5 @@
 ---
+fecha: 2026-10-13
 titulo: Astrobook
 resumen: Visor de componentes para Astro, en desarrollo, que muestra cada componente aislado con sus variantes (stories).
 categoria: herramienta

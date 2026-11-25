@@ -50,6 +50,16 @@ describe("esquema común", () => {
     expect(r.autoenlace).toBe(true);
   });
 
+  it("convierte la fecha de alta y la deja opcional", () => {
+    expect(esquemaGlosario.parse(comunes).fecha).toBeUndefined();
+    const r = esquemaGlosario.parse({ ...comunes, fecha: "2026-11-25" });
+    expect(r.fecha).toBeInstanceOf(Date);
+    expect(r.fecha?.toISOString().slice(0, 10)).toBe("2026-11-25");
+    expect(
+      esquemaGlosario.safeParse({ ...comunes, fecha: "no-es-fecha" }).success,
+    ).toBe(false);
+  });
+
   it("exige un título no vacío", () => {
     expect(esquemaGlosario.safeParse({ ...comunes, titulo: "" }).success).toBe(
       false,

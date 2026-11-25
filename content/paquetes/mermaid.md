@@ -1,4 +1,5 @@
 ---
+fecha: 2026-10-13
 titulo: Mermaid
 resumen: Generador de diagramas a partir de texto, integrable en Markdown para representar flujos y relaciones.
 categoria: herramienta

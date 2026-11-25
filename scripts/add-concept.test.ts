@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   comprobar,
+  conFechaDeAlta,
   construirSystem,
   guardarError,
   llamarGemini,
@@ -233,6 +234,49 @@ describe("comprobar", () => {
   });
 });
 
+describe("conFechaDeAlta", () => {
+  const fecha = new Date(2026, 10, 25, 12, 0, 0);
+
+  it("añade la fecha como primer campo del frontmatter", () => {
+    const resultado = conFechaDeAlta(CONTENIDO_VALIDO, fecha);
+
+    expect(resultado).toBe(
+      CONTENIDO_VALIDO.replace("---\n", "---\nfecha: 2026-11-25\n"),
+    );
+  });
+
+  it("sustituye una fecha que hubiera escrito el modelo", () => {
+    const conFechaInventada = CONTENIDO_VALIDO.replace(
+      "titulo: Closure",
+      "fecha: 1999-01-01\ntitulo: Closure",
+    );
+
+    const resultado = conFechaDeAlta(conFechaInventada, fecha);
+
+    expect(resultado).toContain("fecha: 2026-11-25\n");
+    expect(resultado).not.toContain("1999-01-01");
+    expect(resultado.match(/^fecha:/gm)).toHaveLength(1);
+  });
+
+  it("respeta los saltos de línea CRLF", () => {
+    const crlf = CONTENIDO_VALIDO.replace(/\n/g, "\r\n");
+
+    const resultado = conFechaDeAlta(crlf, fecha);
+
+    expect(resultado.startsWith("---\r\nfecha: 2026-11-25\r\n")).toBe(true);
+    expect(resultado).not.toContain("\n\n");
+  });
+
+  it("deja intacto un contenido sin frontmatter YAML", () => {
+    expect(conFechaDeAlta(CONTENIDO_FRONTMATTER_JSON, fecha)).toBe(
+      CONTENIDO_FRONTMATTER_JSON,
+    );
+    expect(conFechaDeAlta("## Sin frontmatter\n", fecha)).toBe(
+      "## Sin frontmatter\n",
+    );
+  });
+});
+
 describe("llamarGemini", () => {
   it("devuelve el texto de la primera parte que no sea pensamiento", async () => {
     stubFetch([
@@ -387,7 +431,7 @@ describe("main", () => {
     await main(raiz);
 
     const ruta = join(raiz, "content", "glosario", "closure.md");
-    expect(await readFile(ruta, "utf8")).toBe(CONTENIDO_VALIDO);
+    expect(await readFile(ruta, "utf8")).toBe(conFechaDeAlta(CONTENIDO_VALIDO));
     const output = await readFile(salida, "utf8");
     expect(output).toContain(`ruta=${ruta}`);
     expect(output).toContain("coleccion=glosario");
@@ -422,7 +466,7 @@ describe("main", () => {
     );
     expect(
       await readFile(join(raiz, "content", "glosario", "closure.md"), "utf8"),
-    ).toBe(CONTENIDO_VALIDO);
+    ).toBe(conFechaDeAlta(CONTENIDO_VALIDO));
   });
 
   it("reintenta cuando la API falla en el primer intento", async () => {
@@ -499,7 +543,7 @@ describe("main", () => {
         join(raiz, "content", "glosario", "closure-avanzado.md"),
         "utf8",
       ),
-    ).toBe(CONTENIDO_VALIDO);
+    ).toBe(conFechaDeAlta(CONTENIDO_VALIDO));
   });
 
   it("agota los 4 intentos alternando modelos, lanza y no deja contenido", async () => {
@@ -602,7 +646,7 @@ describe("main", () => {
 
     expect(
       await readFile(join(raiz, "content", "glosario", "closure.md"), "utf8"),
-    ).toBe(CONTENIDO_VALIDO);
+    ).toBe(conFechaDeAlta(CONTENIDO_VALIDO));
   });
 
   it("reintenta cuando la API falla con algo que no es un Error", async () => {

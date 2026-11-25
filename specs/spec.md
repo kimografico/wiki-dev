@@ -190,7 +190,7 @@ Página `/acerca-de` que presenta el proyecto como muestra de trabajo. Es una p�
 | RNF-07 | Portabilidad | La capa de contenido (`content/`, esquemas, `lib/content`, `lib/preferencias`, `lib/markdown`, scripts) es independiente del framework; el plugin de menciones es un plugin estándar de remark |
 | RNF-08 | Responsive | Lectura cómoda desde 360 px; bloques de código con scroll horizontal |
 | RNF-09 | Privacidad | Las preferencias del lector nunca salen de su navegador; no se envían a ningún servidor |
-| RNF-10 | Cobertura | Cobertura de tests ≥ 90 % (líneas, funciones, ramas y sentencias) sobre la lógica TypeScript (`src/lib/**`, `scripts/**`); se excluyen `.astro`, páginas, stories y configuración. Se exige en el hook pre-push, no en CI |
+| RNF-10 | Cobertura | Cobertura de tests ≥ 90 % obligatoria (líneas, funciones, ramas y sentencias) sobre la lógica TypeScript (`src/lib/**`, `scripts/**`), con **objetivo de calidad del 95 %**; se excluyen `.astro`, páginas, stories y configuración. Se exige en el hook pre-push, no en CI |
 
 ## 7. Modelo de contenido
 
@@ -202,6 +202,7 @@ Todos los archivos viven en `content/<coleccion>/<slug>.md`. El **slug** es el n
 |-------|------|-------------|-------|
 | `titulo` | string | Sí | Nombre visible |
 | `resumen` | string ≤ 200 | Sí | Definición corta; se usa en listados y SEO |
+| `fecha` | fecha ISO (`YYYY-MM-DD`) | No | Fecha de alta. La inyecta `scripts/add-concept.ts` al crear la entrada con el bot; la portada ordena por ella (más reciente primero). Las entradas sin fecha van al final |
 | `categoria` | enum | Sí | Ver §7.2 |
 | `tags` | enum[] | No | Del catálogo de §7.5. Default `[]` |
 | `alias` | string[] | No | Siglas y nombres alternativos; únicos en toda la wiki |
@@ -209,7 +210,7 @@ Todos los archivos viven en `content/<coleccion>/<slug>.md`. El **slug** es el n
 | `fuentes` | url[] | No | Documentación oficial usada |
 | `autoenlace` | boolean | No | Default `true`. Con `false`, su título y alias no se enlazan automáticamente en otras entradas (RF-07) |
 
-No hay campos de nivel, estado, fechas ni dudas.
+No hay campos de nivel, estado ni dudas. `fecha` es solo la fecha de alta: no se usa como fecha de actualización.
 
 ### 7.2 Categorías (enum controlado)
 
@@ -330,7 +331,7 @@ GitHub Pages sirve un sitio de proyecto en `https://<usuario>.github.io/<repo>/`
 
 **Hooks locales (Husky)**
 - `pre-commit`: formato y lint de los archivos añadidos (`lint-staged`) y validación rápida de contenido.
-- `pre-push`: `npm run test:coverage`. Falla si la cobertura baja del 90 % (RNF-10), con el umbral definido en la configuración de Vitest.
+- `pre-push`: `npm run test:coverage`. Falla si la cobertura baja del 90 % (RNF-10), con el umbral definido en la configuración de Vitest; el objetivo de calidad es el 95 %.
 - La cobertura **no se repite en CI**. Saltarse el hook con `--no-verify` es una decisión consciente y exclusiva del autor; ningún agente lo usa.
 
 **CI (cada push y PR)**
@@ -380,7 +381,7 @@ README.md
   agent/ · skills/
 ```
 
-**Tests:** van **colocados** junto al módulo que prueban, con extensión `.test.ts` (`src/**/*.test.ts`, `scripts/**/*.test.ts`); no hay una carpeta `tests/` aparte. La cobertura mínima del 90 % (RNF-10) se mide sobre `src/lib/**` y `scripts/**`. Los escribe `wiki-dev` a petición del autor (skill `escribir-tests`, §11).
+**Tests:** van **colocados** junto al módulo que prueban, con extensión `.test.ts` (`src/**/*.test.ts`, `scripts/**/*.test.ts`); no hay una carpeta `tests/` aparte. La cobertura mínima **obligatoria** es el 90 % y el **objetivo** de calidad, el 95 % (RNF-10); se mide sobre `src/lib/**` y `scripts/**`. Los escribe `wiki-dev` a petición del autor (skill `escribir-tests`, §11).
 
 ## 14. README del proyecto
 
@@ -394,7 +395,7 @@ Regla: cuando un cambio introduzca una herramienta o concepto nuevo en el proyec
 
 | Fase | Contenido | Requisitos |
 |------|-----------|------------|
-| **F0 · Fundación** | Repositorio, Astro + TS + Tailwind, lint/format, Vitest con umbral del 90 %, estructura de carpetas, README inicial. El autor, con `builder`, configura Husky (pre-commit y pre-push), CI y el despliegue inicial en GitHub Pages | RNF-05, RNF-06, RNF-10, RF-11 |
+| **F0 · Fundación** | Repositorio, Astro + TS + Tailwind, lint/format, Vitest con umbral obligatorio del 90 % (objetivo 95 %), estructura de carpetas, README inicial. El autor, con `builder`, configura Husky (pre-commit y pre-push), CI y el despliegue inicial en GitHub Pages | RNF-05, RNF-06, RNF-10, RF-11 |
 | **F1 · Núcleo de contenido** | Tema claro/oscuro con la paleta aportada, procesador `unified()`, esquemas Zod (categorías y etiquetas), `lib/content`, layouts, páginas de glosario, tecnologías y paquetes, menciones enlazadas, `validate`, Astrobook para los primeros componentes | RF-13, RF-01, RF-02, RF-03, RF-07, RF-10, RF-12 |
 | **F2 · Descubrimiento** | Navegación, categorías, etiquetas, backlinks, comparativas, búsqueda con Pagefind, aprendidas y «solo pendientes», Mermaid, script de Lighthouse | RF-04, RF-06, RF-08, RF-14 |
 | **F3 · Agentes y skills** | `.opencode/` completo según `agentes-y-skills.md` (lo crea el autor con `builder`); flujo de la duda a la entrada | RF-09 |
@@ -440,6 +441,6 @@ F3 puede empezar en cuanto F1 deje los esquemas estables.
 - Si guarda algo en el navegador, documenta su clave y formato.
 
 **Al cierre, antes de hacer push**
-- Los tests están escritos o ajustados y el pre-push pasa con cobertura ≥ 90 %.
+- Los tests están escritos o ajustados y el pre-push pasa con cobertura ≥ 90 % (objetivo 95 %).
 - CI en verde (tipos, lint, formato, validación, build).
 - Los SDD y `design-pattern.md` siguen siendo coherentes con el resultado.
