@@ -8,6 +8,7 @@
 // El script inline de <head> (BaseLayout) aplica estas mismas reglas antes del
 // primer pintado: no puede importar este módulo, así que lleva una copia mínima
 // y el test de coherencia comprueba que ambas versiones coinciden.
+import { tieneAlmacen } from "./almacen.ts";
 
 export const CLAVE_APRENDIDAS = "wiki:aprendidas";
 export const CLAVE_SOLO_PENDIENTES = "wiki:solo-pendientes";
@@ -17,14 +18,6 @@ export const EVENTO_PREFERENCIAS = "wiki:preferencias";
 
 /** Slugs válidos dentro de las reglas CSS: evita inyectar CSS arbitrario. */
 const RE_SLUG = /^[a-z0-9-]+$/;
-
-function tieneAlmacen(): boolean {
-  try {
-    return typeof localStorage !== "undefined";
-  } catch {
-    return false;
-  }
-}
 
 /** false si el navegador no permite almacenar: los controles quedan desactivados. */
 export function hayAlmacenamiento(): boolean {

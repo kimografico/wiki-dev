@@ -14,23 +14,27 @@ const { titulo, descripcion = "Wiki de consulta para programadores junior." } =
   Astro.props;
 
 const base = import.meta.env.BASE_URL;
-// Menú móvil: colecciones del catálogo excepto comparativas.
-const coleccionesDesplegable = LISTA_COLECCIONES.filter(
-  (c) => c !== "comparativas",
+// Una sola lista de secciones: el menú móvil la usa entera y el de escritorio
+// la deriva quitando «Glosario» (que va como enlace directo) y anteponiendo
+// «Inicio». Así no pueden desincronizarse.
+const seccionesMenu = LISTA_COLECCIONES.filter(
+  (coleccion) => coleccion !== "comparativas",
 ).map((coleccion) => ({
+  coleccion,
   href: `${base}${coleccion}`,
   texto: CATALOGO[coleccion].nombre,
 }));
 
-// Desplegable de escritorio: «Inicio» primero y sin «Glosario».
+const coleccionesDesplegable = seccionesMenu.map(({ href, texto }) => ({
+  href,
+  texto,
+}));
+
 const desplegableEscritorio = [
   { href: base, texto: "Inicio" },
-  ...LISTA_COLECCIONES.filter(
-    (c) => c !== "comparativas" && c !== "glosario",
-  ).map((coleccion) => ({
-    href: `${base}${coleccion}`,
-    texto: CATALOGO[coleccion].nombre,
-  })),
+  ...seccionesMenu
+    .filter(({ coleccion }) => coleccion !== "glosario")
+    .map(({ href, texto }) => ({ href, texto })),
 ];
 
 // En escritorio, Glosario va como primer enlace directo, fuera del desplegable.

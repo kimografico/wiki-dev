@@ -3,18 +3,11 @@
 //
 // Claves de `localStorage` siempre con prefijo `wiki:` porque todos los sitios
 // de proyecto de un mismo usuario de GitHub Pages comparten origen (§12).
+import { tieneAlmacen } from "./almacen.ts";
 
 export type Tema = "light" | "dark";
 
 export const CLAVE_TEMA = "wiki:tema";
-
-function tieneAlmacen(): boolean {
-  try {
-    return typeof localStorage !== "undefined";
-  } catch {
-    return false;
-  }
-}
 
 /** Tema que el sistema operativo prefiere. */
 export function temaDelSistema(): Tema {
