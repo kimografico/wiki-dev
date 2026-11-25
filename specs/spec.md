@@ -173,7 +173,7 @@ Página `/acerca-de` que presenta el proyecto como muestra de trabajo. Es una p�
 - Stack utilizado, con cada tecnología o paquete enlazado a su entrada de la wiki cuando exista.
 - **Copyright y licencia**: autoría y licencia del código y del contenido, y autoría y licencia de los recursos de terceros (por ejemplo, el icono si procede de un set libre).
 - **Accesibilidad**: objetivo WCAG 2.1 AA, cómo se comprueba y cómo comunicar un problema.
-- **Rendimiento**: objetivos de Lighthouse y resumen de la última medición hecha con el CLI (actualizado a mano).
+- **Rendimiento**: objetivos de Lighthouse y resumen de la última medición hecha en Chrome DevTools (actualizado a mano).
 - **Privacidad**: sin cuentas, sin servidor; las preferencias solo se guardan en el navegador (RNF-09).
 - Enlace al repositorio.
 
@@ -181,7 +181,7 @@ Página `/acerca-de` que presenta el proyecto como muestra de trabajo. Es una p�
 
 | ID | Requisito | Criterio de aceptación |
 |----|-----------|------------------------|
-| RNF-01 | Rendimiento | Lighthouse ≥ 95 en rendimiento, accesibilidad, buenas prácticas y SEO en páginas de contenido, comprobado **a demanda** con `npm run lighthouse` (no en CI) |
+| RNF-01 | Rendimiento | Lighthouse ≥ 95 en rendimiento, accesibilidad, buenas prácticas y SEO en páginas de contenido, comprobado **a demanda** con Lighthouse en Chrome DevTools (no en CI) |
 | RNF-02 | JavaScript mínimo | Las páginas de contenido no envían JS salvo el de las islas declaradas (búsqueda, preferencias), el script inline de `<head>` (< 2 KB) y el de `astro-mermaid`, que debe cargar Mermaid solo en las páginas con diagramas |
 | RNF-03 | Accesibilidad | WCAG 2.1 AA en ambos temas: contraste, navegación por teclado, jerarquía de encabezados, controles con rol y estado accesibles |
 | RNF-04 | Escalabilidad | Build correcto con 1000 entradas sintéticas en tiempo razonable (objetivo: < 2 min), incluido el plugin de menciones |
@@ -280,11 +280,11 @@ Fijar versiones exactas al inicializar el proyecto y verificar la sintaxis de im
 | `pagefind` | Índice de búsqueda estático | MiniSearch / Fuse |
 | `gray-matter` | Leer frontmatter fuera de Astro (plugin de menciones, `validate`) | Igual |
 | `typescript`, `@astrojs/check` | Tipos | `tsc` |
+| `@types/node` | Tipos de Node en configs y scripts (antes llegaban en transitive de `lighthouse`) | Igual |
 | `eslint`, `prettier` (+ plugin Astro) | Lint y formato | Igual |
 | `vitest`, `@vitest/coverage-v8` | Tests y cobertura de `lib/` y scripts | Igual |
 | `husky`, `lint-staged` | Hooks de git | Igual |
 | `astrobook` | Visor de componentes, solo desarrollo | Storybook (las stories usan CSF3, portables) |
-| `lighthouse` | CLI para medir métricas a demanda, solo desarrollo | Igual |
 
 El plugin de menciones puede necesitar utilidades de unified (por ejemplo, para recorrer el árbol); se justifican en el commit.
 
@@ -341,7 +341,7 @@ GitHub Pages sirve un sitio de proyecto en `https://<usuario>.github.io/<repo>/`
 4. `astro build` + indexado Pagefind
 
 **A demanda (fuera de CI)**
-- `npm run lighthouse`: construye, sirve la vista previa y ejecuta el CLI de Lighthouse sobre páginas representativas. Necesita Chrome o Chromium instalado; no requiere Playwright. Sirve para comprobar RNF-01 cuando el autor quiera.
+- Lighthouse en Chrome DevTools sobre páginas representativas: sirve para comprobar RNF-01 cuando el autor quiera, sin añadir una dependencia ni un paso al pipeline.
 - Astrobook: visor de componentes en el servidor de desarrollo.
 
 **Archivos de sistema.** La configuración de Husky, de CI y de despliegue (`.husky/`, `.github/`) y las definiciones de agentes y skills (`.opencode/`) las edita el autor con el agente `builder` de opencode. Los agentes del proyecto no las tocan; si una tarea las necesita, indican qué cambio hace falta.
@@ -397,7 +397,7 @@ Regla: cuando un cambio introduzca una herramienta o concepto nuevo en el proyec
 |------|-----------|------------|
 | **F0 · Fundación** | Repositorio, Astro + TS + Tailwind, lint/format, Vitest con umbral obligatorio del 90 % (objetivo 95 %), estructura de carpetas, README inicial. El autor, con `builder`, configura Husky (pre-commit y pre-push), CI y el despliegue inicial en GitHub Pages | RNF-05, RNF-06, RNF-10, RF-11 |
 | **F1 · Núcleo de contenido** | Tema claro/oscuro con la paleta aportada, procesador `unified()`, esquemas Zod (categorías y etiquetas), `lib/content`, layouts, páginas de glosario, tecnologías y paquetes, menciones enlazadas, `validate`, Astrobook para los primeros componentes | RF-13, RF-01, RF-02, RF-03, RF-07, RF-10, RF-12 |
-| **F2 · Descubrimiento** | Navegación, categorías, etiquetas, backlinks, comparativas, búsqueda con Pagefind, aprendidas y «solo pendientes», Mermaid, script de Lighthouse | RF-04, RF-06, RF-08, RF-14 |
+| **F2 · Descubrimiento** | Navegación, categorías, etiquetas, backlinks, comparativas, búsqueda con Pagefind, aprendidas y «solo pendientes», Mermaid | RF-04, RF-06, RF-08, RF-14 |
 | **F3 · Agentes y skills** | `.opencode/` completo según `agentes-y-skills.md` (lo crea el autor con `builder`); flujo de la duda a la entrada | RF-09 |
 | **F4 · Contenido semilla** | Migrar el documento base (frameworks, estilos, estado, datos, UX, herramientas, despliegue) y las dudas ya resueltas en la fase de diseño (islas, hidratación, Zod, MDX vs MD, SSG, facade/repository) | O1, O3 |
 | **F5 · Pulido** | Página «Acerca de» con las métricas medidas, auditoría de accesibilidad, colección de patrones | RF-15, RF-05, RNF-01, RNF-03 |

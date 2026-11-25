@@ -213,7 +213,7 @@ Añadir una entrada corta en `specs/spec.md` o un ADR:
 
 > El contenido se genera en build y nunca se hidrata. Solo se hidrata el estado del lector, en componentes que no modifican DOM fuera de su propio subtree.
 
-Y añadir un presupuesto de JS al script de Lighthouse que ya existe (`npm run lighthouse`, RNF-01), para que RNF-02 deje de ser solo una intención.
+Y revisar a mano el presupuesto de JS con Lighthouse en Chrome DevTools (RNF-01), para que RNF-02 deje de ser solo una intención.
 
 ### ¿Y si echas de menos JSX?
 
