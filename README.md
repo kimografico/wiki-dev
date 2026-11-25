@@ -39,8 +39,11 @@ npm run preview  # sirve dist/
 ### Catálogo de componentes
 
 Con el servidor de desarrollo abierto, visita `http://localhost:3000/astrobook`.
-Astrobook solo se activa en desarrollo; las stories están junto a los componentes
-y muestran variantes y ejemplos con datos de muestra.
+Astrobook solo se activa en desarrollo y agrupa las stories por su carpeta real
+(`pages/`, `components/`, `features/`). Las de componentes muestran variantes con
+datos de muestra; las de páginas viven en `src/pages/_stories/` (el prefijo `_`
+hace que Astro no las trate como rutas) y renderizan páginas reales, incluidas
+las fichas.
 Para simular la base de GitHub Pages, define `ASTRO_BASE_URL=/wiki-dev/` antes
 de iniciar Astro; en ese caso el catálogo queda en
 `http://localhost:3000/wiki-dev/astrobook`.

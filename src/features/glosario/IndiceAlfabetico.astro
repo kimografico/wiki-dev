@@ -1,9 +1,11 @@
 ---
 // Índice del glosario: orden alfabético (locale `es`) con salto por letra (RF-01).
 import { getGlosarioPorLetra } from "../../lib/content/glosario.ts";
-import ListaEntradas from "../../components/ListaEntradas.astro";
+import { urlEntrada } from "../../lib/content/entradas.ts";
+import IconoAprendida from "../../components/IconoAprendida.astro";
 
 const grupos = await getGlosarioPorLetra();
+const base = import.meta.env.BASE_URL;
 ---
 
 {grupos.length === 0 ? (
@@ -37,17 +39,17 @@ const grupos = await getGlosarioPorLetra();
     </nav>
 
     <!-- Secciones agrupadas por letra -->
-    <div class="space-y-12">
+    <div class="space-y-2">
       {grupos.map((grupo) => (
         <section
           id={`letra-${grupo.letra}`}
           aria-labelledby={`titulo-letra-${grupo.letra}`}
-          class="space-y-4 pt-4 scroll-mt-36"
+          class="space-y-2 pt-4 scroll-mt-36"
         >
           <div class="flex items-center gap-3 pb-2 border-b border-[var(--color-border)]">
             <h2
               id={`titulo-letra-${grupo.letra}`}
-              class="text-2xl font-extrabold text-[var(--color-accent-text)] m-0 font-mono"
+              class="text-xl font-extrabold text-[var(--color-accent-text)] m-0 font-mono"
             >
               {grupo.letra}
             </h2>
@@ -56,7 +58,27 @@ const grupos = await getGlosarioPorLetra();
               {grupo.entradas.length === 1 ? "término" : "términos"}
             </span>
           </div>
-          <ListaEntradas entradas={grupo.entradas} />
+          <ul class="flex flex-col gap-0.5 list-none p-0 m-0">
+            {grupo.entradas.map((termino) => (
+              <li data-slug={termino.slug}>
+                <a
+                  href={urlEntrada(termino.coleccion, termino.slug, base)}
+                  class="inline-flex items-center gap-1.5 min-h-6 py-1 no-underline text-[var(--color-text)] hover:text-[var(--color-accent-text)] transition-colors"
+                >
+                  <span class="font-medium">{termino.titulo}</span>
+                  <!--
+                    Icono de aprendida (RF-14): oculto por defecto. El <style>
+                    del <head> lo muestra en los términos aprendidos y, con
+                    «solo pendientes», oculta este <li>.
+                  -->
+                  <span class="icono-aprendida text-[var(--color-dev-text)] shrink-0">
+                    <IconoAprendida class="w-3.5 h-3.5" />
+                    <span class="visually-hidden">Aprendida</span>
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
         </section>
       ))}
     </div>

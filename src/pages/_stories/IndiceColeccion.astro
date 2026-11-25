@@ -1,0 +1,30 @@
+---
+// Envoltorio de story: las siete páginas `index.astro` de colección usan
+// IndiceColeccion y solo aportan datos, textos y modo de lista. La story
+// escoge la página real en vez de duplicar esos datos.
+import Glosario from "../glosario/index.astro";
+import Tecnologias from "../tecnologias/index.astro";
+import Paquetes from "../paquetes/index.astro";
+import Comparativas from "../comparativas/index.astro";
+import Patrones from "../patrones/index.astro";
+import IA from "../ia/index.astro";
+import Testing from "../testing/index.astro";
+
+const paginas = {
+  glosario: Glosario,
+  tecnologias: Tecnologias,
+  paquetes: Paquetes,
+  comparativas: Comparativas,
+  patrones: Patrones,
+  ia: IA,
+  testing: Testing,
+};
+
+interface Props {
+  coleccion: keyof typeof paginas;
+}
+
+const Pagina = paginas[Astro.props.coleccion];
+---
+
+<Pagina />

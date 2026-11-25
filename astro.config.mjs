@@ -31,6 +31,9 @@ export default defineConfig({
       ? [
           astrobook({
             subpath: "/astrobook",
+            // Se escanea `src` para que el sidebar agrupe por carpeta real
+            // (pages/, components/, ...) en vez de colgar todo de stories/.
+            directory: "src",
             css: ["./src/styles/global.css"],
             title: "Componentes de wiki-dev",
           }),

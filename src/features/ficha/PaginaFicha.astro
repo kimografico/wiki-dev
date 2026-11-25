@@ -1,0 +1,27 @@
+---
+// Página de ficha compartida por todas las colecciones: carga la entrada por
+// slug y la pinta con FichaLayout (cabecera, contenido, relacionados y
+// menciones). Las rutas `[slug].astro` solo resuelven los slugs estáticos.
+import FichaLayout from "../../layouts/FichaLayout.astro";
+import { getPaginaEntrada } from "../../lib/content/entradas.ts";
+
+interface Props {
+  slug: string;
+}
+
+const { slug } = Astro.props;
+const pagina = await getPaginaEntrada(slug);
+if (!pagina) throw new Error(`Entrada no encontrada: ${slug}`);
+const { Content, entrada } = pagina;
+---
+
+<FichaLayout
+  titulo={entrada.titulo}
+  resumen={entrada.resumen}
+  categoria={entrada.categoria}
+  tags={entrada.tags}
+  slug={entrada.slug}
+  coleccion={entrada.coleccion}
+>
+  <Content />
+</FichaLayout>

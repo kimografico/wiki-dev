@@ -1,0 +1,14 @@
+---
+// Envoltorio de story: reproduce una ficha real. Las rutas `[slug].astro` de
+// las siete colecciones solo resuelven slugs y delegan en PaginaFicha, así
+// que una story por colección cubre todas las fichas.
+import PaginaFicha from "../../features/ficha/PaginaFicha.astro";
+
+interface Props {
+  slug: string;
+}
+
+const { slug } = Astro.props;
+---
+
+<PaginaFicha slug={slug} />

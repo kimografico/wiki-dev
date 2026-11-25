@@ -1,0 +1,134 @@
+---
+// Índice de una colección: migas, cabecera con contador y cuerpo configurable
+// (lista plana, grupos o slot, como el índice alfabético del glosario).
+// Las páginas `index.astro` solo aportan los datos y el modo de cuerpo.
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ListaEntradas from "../../components/ListaEntradas.astro";
+import { CATALOGO } from "../../lib/content/catalogo.ts";
+import type { Coleccion } from "../../lib/content/esquemas.ts";
+import type { Entrada } from "../../lib/content/entradas.ts";
+
+export interface GrupoColeccion {
+  id: string;
+  titulo: string;
+  entradas: Entrada[];
+}
+
+interface Props {
+  coleccion: Coleccion;
+  /** H1 visible; el nombre corto del catálogo se usa en migas y `<title>`. */
+  encabezado: string;
+  /** Texto para `<meta name="description">`. */
+  descripcion: string;
+  /** Texto visible bajo el H1. */
+  resumen: string;
+  contador: number;
+  etiquetaContador: string;
+  entradas?: Entrada[];
+  grupos?: GrupoColeccion[];
+  vacio?: string;
+  /** Color de la etiqueta «Colección»; por defecto, el del catálogo. */
+  color?: string;
+}
+
+const {
+  coleccion,
+  encabezado,
+  descripcion,
+  resumen,
+  contador,
+  etiquetaContador,
+  entradas,
+  grupos,
+  vacio = "No hay entradas todavía.",
+  color,
+} = Astro.props;
+
+const base = import.meta.env.BASE_URL;
+const { nombre, colorText: colorCatalogo } = CATALOGO[coleccion];
+const colorText = color ?? colorCatalogo;
+const conSlot = Astro.slots.has("default");
+---
+
+<BaseLayout titulo={nombre} descripcion={descripcion}>
+  <div class="space-y-8">
+    <nav
+      aria-label="Ruta de navegación"
+      class="text-xs sm:text-sm text-[var(--color-muted-text)]"
+    >
+      <ol class="flex items-center gap-1.5 list-none p-0 m-0">
+        <li>
+          <a
+            href={base}
+            class="no-underline text-[var(--color-muted-text)] hover:text-[var(--color-text)] transition-colors"
+          >
+            Inicio
+          </a>
+        </li>
+        <li aria-hidden="true" class="text-[var(--color-border-strong)]">
+          /
+        </li>
+        <li aria-current="page" class="font-medium text-[var(--color-text)]">
+          {nombre}
+        </li>
+      </ol>
+    </nav>
+
+    <!-- Header sin recuadro -->
+    <header class="pb-6 border-b border-[var(--color-border)]">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2 mb-2">
+            <span
+              class="text-xs font-mono uppercase tracking-wider font-semibold"
+              style={`color: ${colorText}`}
+            >
+              Colección {nombre}
+            </span>
+          </div>
+          <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-[var(--color-text)] m-0 mb-2">
+            {encabezado}
+          </h1>
+          <p class="text-base text-[var(--color-muted-text)] m-0 max-w-2xl">
+            {resumen}
+          </p>
+        </div>
+
+        <div class="sm:text-right shrink-0">
+          <span class="text-2xl sm:text-3xl font-extrabold font-mono text-[var(--color-text)] block">
+            {contador}
+          </span>
+          <span class="text-xs text-[var(--color-muted)] font-mono">
+            {etiquetaContador}
+          </span>
+        </div>
+      </div>
+    </header>
+
+    {conSlot ? (
+      <slot />
+    ) : grupos && grupos.length > 0 ? (
+      <div class="space-y-12">
+        {grupos.map((grupo) => (
+          <section aria-labelledby={`subseccion-${grupo.id}`} class="space-y-4">
+            <div class="flex items-center gap-3 pb-2 border-b border-[var(--color-border)]">
+              <h2
+                id={`subseccion-${grupo.id}`}
+                class="text-xl sm:text-2xl font-bold tracking-tight text-[var(--color-text)] m-0"
+              >
+                {grupo.titulo}
+              </h2>
+              <span class="text-xs font-mono px-2 py-0.5 rounded-full bg-[var(--color-bg)] text-[var(--color-muted-text)] border border-[var(--color-border)]/60">
+                {grupo.entradas.length}
+              </span>
+            </div>
+
+            <ListaEntradas entradas={grupo.entradas} />
+          </section>
+        ))}
+      </div>
+    ) : (
+      <ListaEntradas entradas={entradas ?? []} vacio={vacio} />
+    )}
+  </div>
+</BaseLayout>

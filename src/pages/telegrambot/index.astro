@@ -1,13 +1,5 @@
 ---
-import TelegramBotMarkdownLayout from "../../layouts/TelegramBotMarkdownLayout.astro";
-import { getPaginaTelegramBot } from "../../lib/content/entradas.ts";
-
-const pagina = await getPaginaTelegramBot("funcional");
-if (!pagina)
-  throw new Error("No se encontró el contenido funcional de TelegramBot");
-const { Content, ...frontmatter } = pagina;
+import PaginaTelegramBot from "../../features/telegrambot/PaginaTelegramBot.astro";
 ---
 
-<TelegramBotMarkdownLayout frontmatter={frontmatter}>
-  <Content />
-</TelegramBotMarkdownLayout>
+<PaginaTelegramBot variante="funcional" />

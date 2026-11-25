@@ -1,0 +1,20 @@
+---
+// Página de TelegramBot compartida por las variantes funcional y técnica.
+import TelegramBotMarkdownLayout from "../../layouts/TelegramBotMarkdownLayout.astro";
+import { getPaginaTelegramBot } from "../../lib/content/entradas.ts";
+
+interface Props {
+  variante: "funcional" | "tecnico";
+}
+
+const { variante } = Astro.props;
+const pagina = await getPaginaTelegramBot(variante);
+if (!pagina) {
+  throw new Error(`No se encontró el contenido ${variante} de TelegramBot`);
+}
+const { Content, ...frontmatter } = pagina;
+---
+
+<TelegramBotMarkdownLayout frontmatter={frontmatter}>
+  <Content />
+</TelegramBotMarkdownLayout>

@@ -1,8 +1,7 @@
 ---
 // Índice por etiqueta (RF-06): entradas de todas las colecciones que lleven
 // esta etiqueta. Las etiquetas son transversales (§7.5).
-import BaseLayout from "../../layouts/BaseLayout.astro";
-import ListaEntradas from "../../components/ListaEntradas.astro";
+import IndiceTransversal from "../../features/transversales/IndiceTransversal.astro";
 import { getPorEtiqueta } from "../../lib/content/entradas.ts";
 import { ETIQUETAS } from "../../lib/content/esquemas.ts";
 import { nombreEtiqueta } from "../../lib/content/nombres.ts";
@@ -11,96 +10,21 @@ export async function getStaticPaths() {
   return ETIQUETAS.map((etiqueta) => ({ params: { etiqueta } }));
 }
 
-const etiqueta = Astro.params.etiqueta ?? "";
+// `etiqueta` llega por la ruta en producción y como prop en las stories.
+interface Props {
+  etiqueta?: string;
+}
+
+const etiqueta = Astro.props.etiqueta ?? Astro.params.etiqueta ?? "";
 const entradas = (await getPorEtiqueta(etiqueta)).sort((a, b) =>
   a.titulo.localeCompare(b.titulo, "es"),
 );
-const base = import.meta.env.BASE_URL;
-const nombre = nombreEtiqueta(etiqueta);
 ---
 
-<BaseLayout
-  titulo={`Etiqueta: ${nombre}`}
-  descripcion={`Entradas etiquetadas con ${nombre} en la wiki.`}
->
-  <div class="space-y-8">
-    <nav
-      aria-label="Ruta de navegación"
-      class="text-xs sm:text-sm text-[var(--color-muted-text)]"
-    >
-      <ol class="flex items-center gap-1.5 list-none p-0 m-0">
-        <li>
-          <a
-            href={base}
-            class="no-underline text-[var(--color-muted-text)] hover:text-[var(--color-text)] transition-colors"
-          >
-            Inicio
-          </a>
-        </li>
-        <li aria-hidden="true" class="text-[var(--color-border-strong)]">
-          /
-        </li>
-        <li aria-current="page" class="font-medium text-[var(--color-text)]">
-          #{nombre}
-        </li>
-      </ol>
-    </nav>
-
-    <header class="pb-6 border-b border-[var(--color-border)]">
-      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-        <div>
-          <div class="flex items-center gap-2 mb-2">
-            <span class="text-xs font-mono uppercase tracking-wider font-semibold text-[var(--color-accent-text)]">
-              Etiqueta
-            </span>
-          </div>
-          <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-[var(--color-text)] m-0 mb-2">
-            #{nombre}
-          </h1>
-          <p class="text-base text-[var(--color-muted-text)] m-0 max-w-2xl">
-            Todas las entradas de la wiki que llevan esta etiqueta.
-          </p>
-        </div>
-
-        <div class="sm:text-right shrink-0">
-          <span class="text-2xl sm:text-3xl font-extrabold font-mono text-[var(--color-text)] block">
-            {entradas.length}
-          </span>
-          <span class="text-xs text-[var(--color-muted)] font-mono">
-            entradas
-          </span>
-        </div>
-      </div>
-    </header>
-
-    <!-- Salto entre etiquetas -->
-    <nav aria-label="Todas las etiquetas">
-      <ul class="flex flex-wrap gap-1.5 list-none p-0 m-0 text-sm">
-        {ETIQUETAS.map((valor) => {
-          const activa = valor === etiqueta;
-          return (
-            <li>
-              <a
-                href={`${base}etiquetas/${valor}`}
-                aria-current={activa ? "page" : undefined}
-                class:list={[
-                  "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs sm:text-sm no-underline transition-colors",
-                  activa
-                    ? "bg-[var(--color-accent)] text-[var(--color-on-accent)] border-[var(--color-accent)] font-semibold"
-                    : "bg-[var(--color-surface)] text-[var(--color-muted-text)] border-[var(--color-border)] hover:text-[var(--color-text)] hover:border-[var(--color-accent)]/60",
-                ]}
-              >
-                #{nombreEtiqueta(valor)}
-              </a>
-            </li>
-          );
-        })}
-      </ul>
-    </nav>
-
-    <ListaEntradas
-      entradas={entradas}
-      vacio={`No hay entradas con la etiqueta «${nombre}» todavía.`}
-    />
-  </div>
-</BaseLayout>
+<IndiceTransversal
+  tipo="etiqueta"
+  valor={etiqueta}
+  nombre={nombreEtiqueta(etiqueta)}
+  entradas={entradas}
+  valores={ETIQUETAS}
+/>

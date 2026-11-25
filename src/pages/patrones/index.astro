@@ -1,79 +1,21 @@
 ---
 // Índice de patrones: problemas recurrentes con su solución, estructura y
 // ejemplos (§7.4).
-import BaseLayout from "../../layouts/BaseLayout.astro";
-import ListaEntradas from "../../components/ListaEntradas.astro";
+import IndiceColeccion from "../../features/colecciones/IndiceColeccion.astro";
 import { getPorColeccion } from "../../lib/content/entradas.ts";
-import { CATALOGO } from "../../lib/content/catalogo.ts";
 
 const patrones = (await getPorColeccion("patrones")).sort((a, b) =>
   a.titulo.localeCompare(b.titulo, "es"),
 );
-const base = import.meta.env.BASE_URL;
-const colorText = CATALOGO.patrones.colorText;
 ---
 
-<BaseLayout
-  titulo="Patrones"
+<IndiceColeccion
+  coleccion="patrones"
+  encabezado="Patrones"
   descripcion="Patrones y soluciones a problemas recurrentes de diseño con estructura y ejemplos."
->
-  <div class="space-y-8">
-    <nav
-      aria-label="Ruta de navegación"
-      class="text-xs sm:text-sm text-[var(--color-muted-text)]"
-    >
-      <ol class="flex items-center gap-1.5 list-none p-0 m-0">
-        <li>
-          <a
-            href={base}
-            class="no-underline text-[var(--color-muted-text)] hover:text-[var(--color-text)] transition-colors"
-          >
-            Inicio
-          </a>
-        </li>
-        <li aria-hidden="true" class="text-[var(--color-border-strong)]">
-          /
-        </li>
-        <li aria-current="page" class="font-medium text-[var(--color-text)]">
-          Patrones
-        </li>
-      </ol>
-    </nav>
-
-    <header class="pb-6 border-b border-[var(--color-border)]">
-      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-        <div>
-          <div class="flex items-center gap-2 mb-2">
-            <span
-              class="text-xs font-mono uppercase tracking-wider font-semibold"
-              style={`color: ${colorText}`}
-            >
-              Colección Patrones
-            </span>
-          </div>
-          <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-[var(--color-text)] m-0 mb-2">
-            Patrones
-          </h1>
-          <p class="text-base text-[var(--color-muted-text)] m-0 max-w-2xl">
-            Problemas recurrentes con su solución, la estructura que la
-            implementa, un ejemplo y cuándo merece la pena usarla.
-          </p>
-        </div>
-
-        <div class="sm:text-right shrink-0">
-          <span class="text-2xl sm:text-3xl font-extrabold font-mono text-[var(--color-text)] block">
-            {patrones.length}
-          </span>
-          <span class="text-xs text-[var(--color-muted)] font-mono">
-            patrones
-          </span>
-        </div>
-      </div>
-    </header>
-
-    <ListaEntradas
-      entradas={patrones}
-      vacio="Todavía no hay patrones publicados."
-    />
-  </div>
-</BaseLayout>
+  resumen="Problemas recurrentes con su solución, la estructura que la implementa, un ejemplo y cuándo merece la pena usarla."
+  contador={patrones.length}
+  etiquetaContador="patrones"
+  entradas={patrones}
+  vacio="Todavía no hay patrones publicados."
+/>

@@ -1,0 +1,19 @@
+---
+// Envoltorio de story: `[categoria].astro` y `[etiqueta].astro` comparten
+// IndiceTransversal y aceptan el valor como prop para poder previsualizarlas.
+import PaginaCategoria from "../categorias/[categoria].astro";
+import PaginaEtiqueta from "../etiquetas/[etiqueta].astro";
+
+interface Props {
+  tipo: "categoria" | "etiqueta";
+  valor: string;
+}
+
+const { tipo, valor } = Astro.props;
+---
+
+{tipo === "categoria" ? (
+  <PaginaCategoria categoria={valor} />
+) : (
+  <PaginaEtiqueta etiqueta={valor} />
+)}

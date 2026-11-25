@@ -1,27 +1,15 @@
 ---
-import FichaLayout from "../../layouts/FichaLayout.astro";
-import { getTodosLosTerminos } from "../../lib/content/glosario.ts";
-import { getPaginaEntrada } from "../../lib/content/entradas.ts";
-
 // ASTRO: getStaticPaths genera una página por término en build.
 // REACT+VITE: generarías las rutas desde el contenido (React Router / SSG).
+import PaginaFicha from "../../features/ficha/PaginaFicha.astro";
+import { getTodosLosTerminos } from "../../lib/content/glosario.ts";
+
 export async function getStaticPaths() {
   const terminos = await getTodosLosTerminos();
   return terminos.map((termino) => ({ params: { slug: termino.slug } }));
 }
 
-const pagina = await getPaginaEntrada(Astro.params.slug ?? "");
-if (!pagina) throw new Error(`Término no encontrado: ${Astro.params.slug}`);
-const { Content, entrada } = pagina;
+const { slug } = Astro.params;
 ---
 
-<FichaLayout
-  titulo={entrada.titulo}
-  resumen={entrada.resumen}
-  categoria={entrada.categoria}
-  tags={entrada.tags}
-  slug={entrada.slug}
-  coleccion={entrada.coleccion}
->
-  <Content />
-</FichaLayout>
+<PaginaFicha slug={slug ?? ""} />

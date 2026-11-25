@@ -1,79 +1,21 @@
 ---
 // Índice de IA: modelos, agentes y técnicas de inteligencia artificial
 // (§7.4).
-import BaseLayout from "../../layouts/BaseLayout.astro";
-import ListaEntradas from "../../components/ListaEntradas.astro";
+import IndiceColeccion from "../../features/colecciones/IndiceColeccion.astro";
 import { getPorColeccion } from "../../lib/content/entradas.ts";
-import { CATALOGO } from "../../lib/content/catalogo.ts";
 
 const entradasIa = (await getPorColeccion("ia")).sort((a, b) =>
   a.titulo.localeCompare(b.titulo, "es"),
 );
-const base = import.meta.env.BASE_URL;
-const colorText = CATALOGO.ia.colorText;
 ---
 
-<BaseLayout
-  titulo="IA"
+<IndiceColeccion
+  coleccion="ia"
+  encabezado="Inteligencia artificial"
   descripcion="Modelos, agentes y técnicas de inteligencia artificial explicados con ejemplos."
->
-  <div class="space-y-8">
-    <nav
-      aria-label="Ruta de navegación"
-      class="text-xs sm:text-sm text-[var(--color-muted-text)]"
-    >
-      <ol class="flex items-center gap-1.5 list-none p-0 m-0">
-        <li>
-          <a
-            href={base}
-            class="no-underline text-[var(--color-muted-text)] hover:text-[var(--color-text)] transition-colors"
-          >
-            Inicio
-          </a>
-        </li>
-        <li aria-hidden="true" class="text-[var(--color-border-strong)]">
-          /
-        </li>
-        <li aria-current="page" class="font-medium text-[var(--color-text)]">
-          IA
-        </li>
-      </ol>
-    </nav>
-
-    <header class="pb-6 border-b border-[var(--color-border)]">
-      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-        <div>
-          <div class="flex items-center gap-2 mb-2">
-            <span
-              class="text-xs font-mono uppercase tracking-wider font-semibold"
-              style={`color: ${colorText}`}
-            >
-              Colección IA
-            </span>
-          </div>
-          <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-[var(--color-text)] m-0 mb-2">
-            Inteligencia artificial
-          </h1>
-          <p class="text-base text-[var(--color-muted-text)] m-0 max-w-2xl">
-            Modelos, agentes y técnicas de IA: qué son, para qué sirven, un
-            ejemplo práctico, sus limitaciones y alternativas.
-          </p>
-        </div>
-
-        <div class="sm:text-right shrink-0">
-          <span class="text-2xl sm:text-3xl font-extrabold font-mono text-[var(--color-text)] block">
-            {entradasIa.length}
-          </span>
-          <span class="text-xs text-[var(--color-muted)] font-mono">
-            entradas
-          </span>
-        </div>
-      </div>
-    </header>
-
-    <ListaEntradas
-      entradas={entradasIa}
-      vacio="Todavía no hay entradas de IA publicadas."
-    />
-  </div>
-</BaseLayout>
+  resumen="Modelos, agentes y técnicas de IA: qué son, para qué sirven, un ejemplo práctico, sus limitaciones y alternativas."
+  contador={entradasIa.length}
+  etiquetaContador="entradas"
+  entradas={entradasIa}
+  vacio="Todavía no hay entradas de IA publicadas."
+/>

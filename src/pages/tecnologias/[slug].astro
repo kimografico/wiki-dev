@@ -1,7 +1,6 @@
 ---
-import FichaLayout from "../../layouts/FichaLayout.astro";
+import PaginaFicha from "../../features/ficha/PaginaFicha.astro";
 import { getPorColeccion } from "../../lib/content/entradas.ts";
-import { getPaginaEntrada } from "../../lib/content/entradas.ts";
 
 export async function getStaticPaths() {
   const tecnologias = await getPorColeccion("tecnologias");
@@ -10,18 +9,7 @@ export async function getStaticPaths() {
   }));
 }
 
-const pagina = await getPaginaEntrada(Astro.params.slug ?? "");
-if (!pagina) throw new Error(`Tecnología no encontrada: ${Astro.params.slug}`);
-const { Content, entrada } = pagina;
+const { slug } = Astro.params;
 ---
 
-<FichaLayout
-  titulo={entrada.titulo}
-  resumen={entrada.resumen}
-  categoria={entrada.categoria}
-  tags={entrada.tags}
-  slug={entrada.slug}
-  coleccion={entrada.coleccion}
->
-  <Content />
-</FichaLayout>
+<PaginaFicha slug={slug ?? ""} />
