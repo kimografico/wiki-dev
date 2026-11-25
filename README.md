@@ -124,6 +124,7 @@ Formato: **definición breve** + para qué se usa aquí.
 | Pagefind             | Buscador estático ejecutado tras el build.                      | Página `/buscar` (F2).                                                 |
 | unified              | Ecosistema de procesado de Markdown/HTML.                       | El pipeline de Markdown del proyecto.                                  |
 | remark               | Conjunto de plugins de unified para Markdown.                   | Plugin de menciones enlazadas (F1).                                    |
+| rehype               | Conjunto de plugins de unified para HTML.                       | Contenedor con scroll propio de las tablas (RNF-08).                   |
 | Mermaid              | Diagramas generados desde texto.                                | Bloques ` ```mermaid ` vía `astro-mermaid` (F2).                       |
 | Astrobook            | Visor de componentes para desarrollo.                           | Ver componentes sin Storybook (F1).                                    |
 | Lighthouse           | Auditoría de rendimiento, accesibilidad y SEO.                  | `npm run lighthouse` a demanda.                                        |

@@ -6,6 +6,7 @@ import mermaid from "astro-mermaid";
 import astrobook from "astrobook";
 import { unified } from "@astrojs/markdown-remark";
 import { remarkMenciones } from "./src/lib/markdown/remark-menciones.ts";
+import { rehypeTablas } from "./src/lib/markdown/rehype-tablas.ts";
 
 // Sitio de proyecto en GitHub Pages: https://kimografico.github.io/wiki-dev/
 // Todo enlace y asset debe construirse con import.meta.env.BASE_URL.
@@ -48,6 +49,10 @@ export default defineConfig({
     processor: unified({
       // unified recibe aquí el par [plugin, opciones] (forma de unified `.use`).
       remarkPlugins: [[remarkMenciones, { base }]],
+      // ASTRO: rehype actúa sobre el HTML ya generado; aquí envuelve cada tabla
+      // en un contenedor con scroll propio (RNF-08). El plugin es unified puro.
+      // REACT+VITE: sería un plugin de rehype en el pipeline de MDX.
+      rehypePlugins: [rehypeTablas],
     }),
     shikiConfig: {
       themes: { light: "github-light", dark: "github-dark" },

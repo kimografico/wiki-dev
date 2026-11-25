@@ -169,22 +169,27 @@ pre {
 }
 
 /*
- * Ficha: el bloque de contenido ocupa todo el ancho en móvil. Hay que anular
- * el `max-width` de `.prose`/`.prose-wiki`, porque con márgenes negativos el
- * ancho se limitaba al del contenedor y dejaba hueco en el lado derecho.
- * Desde 640 px vuelve a ser un recuadro normal.
+ * Contenido de una entrada: en móvil ocupa todo el ancho del contenedor y hay
+ * que anular el `max-width` de `.prose`/`.prose-wiki`, porque con márgenes
+ * negativos el ancho se limitaba al del contenedor y dejaba hueco en el lado
+ * derecho. `--sangrado` es el padding interior; las tablas lo reutilizan para
+ * sangrar hasta el mismo borde. Desde 640 px vuelve a ser un recuadro normal.
  */
-.ficha-contenido {
+.contenido-ancho {
+  --sangrado: var(--space-4);
   max-width: none;
   margin-inline: calc(var(--space-4) * -1);
+  padding: var(--sangrado);
   border-radius: 0;
   border-inline-width: 0;
 }
 
 @media (min-width: 640px) {
-  .ficha-contenido {
+  .contenido-ancho {
+    --sangrado: var(--space-6);
     max-width: 100%;
     margin-inline: 0;
+    padding: var(--sangrado);
     border-radius: var(--radius-lg);
     border-inline-width: 1px;
   }
@@ -237,14 +242,45 @@ pre {
   color: var(--color-accent-text);
 }
 
+/*
+ * Tablas (RNF-08, WCAG 1.4.10): el scroll horizontal vive en el contenedor que
+ * añade `rehype-tablas.ts`, nunca en la página. La tabla sigue siendo una tabla
+ * real; solo se desplaza su marco cuando no cabe. El contenedor recibe foco
+ * (WCAG 2.1.1) y el foco global ya le pinta el contorno.
+ */
+.tabla-scroll {
+  max-width: 100%;
+  margin-block: var(--space-6);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+/* El contorno de foco no debe encoger el radio del marco. */
+.tabla-scroll:focus-visible {
+  border-radius: var(--radius-md);
+}
+
+/* En móvil la tabla sangra hasta el borde del recuadro: va tan justa que cada
+   píxel cuenta. `--sangrado` es el padding interior de la entrada. */
+@media (max-width: 639px) {
+  .contenido-ancho .tabla-scroll {
+    max-width: none;
+    margin-inline: calc(var(--sangrado) * -1);
+    border-radius: 0;
+    border-inline-width: 0;
+  }
+}
+
 .prose-wiki table {
   width: 100%;
   border-collapse: collapse;
-  margin-block: var(--space-6);
+  margin: 0;
   font-size: var(--text-sm);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  overflow: hidden;
+  /* Rompe identificadores largos solo si de verdad no caben en su celda. */
+  overflow-wrap: break-word;
 }
 
 .prose-wiki th {
@@ -267,6 +303,14 @@ pre {
 
 .prose-wiki tr:hover td {
   background: var(--color-bg);
+}
+
+/* En móvil, celdas más estrechas: menos contenido empujando el ancho mínimo. */
+@media (max-width: 639px) {
+  .prose-wiki th,
+  .prose-wiki td {
+    padding: var(--space-2) var(--space-3);
+  }
 }
 
 .prose-wiki blockquote {
