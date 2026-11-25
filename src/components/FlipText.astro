@@ -57,9 +57,9 @@ const wordData = words.map((word) => {
 
 <span
   class:list={["flip-text-wrapper", className]}
-  aria-label={text}
   style={`--flip-duration:${duration}s;--flip-iteration:${loop ? "infinite" : "1"};--flip-turn:${turn}`}
 >
+  <span class="visually-hidden">{text}</span>
   {wordData.map((chars, wi) => (
     <span class="word" aria-hidden="true">
       {chars.map(({ char, delay }) => (
