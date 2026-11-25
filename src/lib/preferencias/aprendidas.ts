@@ -93,9 +93,10 @@ export function guardarSoloPendientes(valor: boolean): void {
  * Reglas CSS que aplican las preferencias en los listados (RF-14):
  * - filtro «todo»: muestra el icono en las entradas aprendidas y les da el
  *   fondo de la página (`--color-bg`) para que pasen desapercibidas;
- * - filtro «solo pendientes»: oculta sus elementos de listado y muestra el
- *   aviso `.vacio-filtro` cuando la lista no queda con ningún elemento
- *   visible (los demás enlaces —relacionados, menciones— no se ocultan).
+ * - filtro «solo pendientes»: oculta sus elementos de listado, muestra el
+ *   aviso `.vacio-filtro` cuando no queda ninguno visible y, en la portada,
+ *   revela las cuatro primeras entradas pendientes para rellenar los huecos
+ *   (los demás enlaces —relacionados, menciones— no se ocultan).
  */
 export function cssPreferencias(
   aprendidas: readonly string[],
@@ -111,7 +112,10 @@ export function cssPreferencias(
       .map((valor) => `:not([data-slug="${valor}"])`)
       .join("");
     const aviso = `html[data-filtro="solo-pendientes"] .lista-bloque:not(:has(ul>li${sinAprendidas})) .vacio-filtro{display:block}`;
-    return ocultos + aviso;
+    const ocultosPortada =
+      'html[data-filtro="solo-pendientes"] .lista-portada>li{display:none}';
+    const relleno = `html[data-filtro="solo-pendientes"] .lista-portada>li:nth-child(-n+4 of ${sinAprendidas}){display:block}`;
+    return ocultos + aviso + ocultosPortada + relleno;
   }
   return validos
     .map(

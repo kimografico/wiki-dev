@@ -112,6 +112,18 @@
   display: grid;
 }
 
+/* Portada (RF-14): se renderizan todas las entradas por fecha, pero solo se
+   muestran cuatro. Con «solo pendientes», las reglas que inyecta el script
+   sustituyen este selector por el de las cuatro primeras que no estén
+   aprendidas, así que los huecos se rellenan sin parpadeo. */
+.lista-portada > li {
+  display: none;
+}
+
+.lista-portada > li:nth-child(-n + 4) {
+  display: block;
+}
+
 .entrada-item {
   height: 100%;
 }
@@ -161,6 +173,18 @@
   color: var(--color-muted-text);
   font-size: var(--text-sm);
   line-height: 1.55;
+}
+
+/* En la portada las tarjetas van a dos columnas en móvil: sin el resumen
+   y con menos padding caben mejor el título y la categoría. */
+@media (max-width: 639px) {
+  .entrada-item__resumen--oculto-movil {
+    display: none;
+  }
+
+  .entrada-item--movil-compacta a {
+    padding: var(--space-3);
+  }
 }
 
 /* ---- Bloques de código Shiki y diagramas Mermaid (RF-13) ---- */

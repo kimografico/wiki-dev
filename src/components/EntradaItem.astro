@@ -9,9 +9,10 @@ import IconoAprendida from "./IconoAprendida.astro";
 interface Props {
   entrada: Entrada;
   compacto?: boolean;
+  compactarMovil?: boolean;
 }
 
-const { entrada, compacto = false } = Astro.props;
+const { entrada, compacto = false, compactarMovil = false } = Astro.props;
 const base = import.meta.env.BASE_URL;
 const href = urlEntrada(entrada.coleccion, entrada.slug, base);
 
@@ -19,7 +20,13 @@ const href = urlEntrada(entrada.coleccion, entrada.slug, base);
 const categoria = entrada.categoria || entrada.coleccion;
 ---
 
-<li class="entrada-item group" data-slug={entrada.slug}>
+<li
+  class:list={[
+    "entrada-item group",
+    compactarMovil && "entrada-item--movil-compacta",
+  ]}
+  data-slug={entrada.slug}
+>
   <a
     href={href}
     class:list={[
@@ -35,7 +42,10 @@ const categoria = entrada.categoria || entrada.coleccion;
         ]}
       >
         <span
-          class="color-categoria font-mono uppercase tracking-wider font-semibold"
+          class:list={[
+            "color-categoria font-mono uppercase tracking-wider font-semibold",
+            compactarMovil && "max-sm:text-[10px]",
+          ]}
           data-categoria={categoria}
         >
           {categoria}
@@ -69,6 +79,7 @@ const categoria = entrada.categoria || entrada.coleccion;
           compacto
             ? "text-[11px] mt-1 line-clamp-2 leading-snug"
             : "text-xs md:text-sm mt-2 line-clamp-2",
+          compactarMovil && "entrada-item__resumen--oculto-movil",
         ]}
       >
         {entrada.resumen}

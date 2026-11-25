@@ -116,6 +116,9 @@ const rutaActual = Astro.url.pathname;
                 .map((s) => `:not([data-slug="${s}"])`)
                 .join("");
               css += `html[data-filtro="solo-pendientes"] .lista-bloque:not(:has(ul>li${sin})) .vacio-filtro{display:block}`;
+              css +=
+                'html[data-filtro="solo-pendientes"] .lista-portada>li{display:none}';
+              css += `html[data-filtro="solo-pendientes"] .lista-portada>li:nth-child(-n+4 of ${sin}){display:block}`;
             }
           } else {
             css = aprendidas

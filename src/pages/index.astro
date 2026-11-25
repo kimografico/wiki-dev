@@ -232,8 +232,9 @@ const etiquetasListadas = ETIQUETAS.filter(
             </div>
 
             <ListaEntradas
-              entradas={coleccion.entradas.slice(0, 4)}
+              entradas={coleccion.entradas}
               columnas={4}
+              compactarMovil
               vacio="Todavía no hay entradas."
             />
           </section>

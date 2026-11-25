@@ -10,6 +10,8 @@ interface Props {
   compacto?: boolean;
   /** Columnas de la rejilla en pantallas grandes (3 por defecto). */
   columnas?: 3 | 4;
+  /** Comprime las tarjetas en móvil: sin resumen, menos padding y etiqueta menor. */
+  compactarMovil?: boolean;
 }
 
 const {
@@ -17,6 +19,7 @@ const {
   vacio = "No hay entradas todavía.",
   compacto = false,
   columnas = 3,
+  compactarMovil = false,
 } = Astro.props;
 ---
 
@@ -29,15 +32,20 @@ const {
     <ul
       class:list={[
         "lista-entradas list-none p-0 m-0",
+        compactarMovil && "lista-portada",
         compacto
           ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3"
           : columnas === 4
-            ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
+            ? `grid grid-cols-2 lg:grid-cols-4 ${compactarMovil ? "gap-3 sm:gap-4" : "gap-4"}`
             : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4",
       ]}
     >
       {entradas.map((entrada) => (
-        <EntradaItem entrada={entrada} compacto={compacto} />
+        <EntradaItem
+          entrada={entrada}
+          compacto={compacto}
+          compactarMovil={compactarMovil}
+        />
       ))}
     </ul>
 
