@@ -19,7 +19,7 @@ Define las restricciones de las apps que se publican en App Store.
 
 ## Cuándo usarla
 
-Conviene conocerlo cuando una feature incluye una app móvil y su ASO.
+Conviene conocerlo cuando una feature incluye una app móvil que se publicará en App Store.
 
 ## Cuándo no
 

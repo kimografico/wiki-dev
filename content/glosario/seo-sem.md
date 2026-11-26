@@ -22,4 +22,4 @@ Un buen `title`, un resumen preciso y encabezados que describen el contenido.
 
 ## Se confunde con
 
-No es ASO: aquí el canal es el navegador; en ASO es la tienda de aplicaciones.
+No es optimización para tiendas de aplicaciones: aquí el canal es el navegador y el objetivo es el resultado de búsqueda web.
