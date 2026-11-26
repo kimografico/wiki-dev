@@ -40,3 +40,7 @@ export default async function Page({ params }) {
   return <h1>{slug}</h1>;
 }
 ```
+
+## Frente a Astro
+
+Next.js está pensado para aplicaciones con renderizado en servidor y rutas de API; Astro nace para contenido estático y envía JavaScript solo a las islas que lo necesitan. Para una wiki, Astro evita cargar el framework en cada ficha.

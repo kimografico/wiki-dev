@@ -3,7 +3,7 @@ fecha: 2026-10-13
 titulo: Prettier
 resumen: Formateador de código opinado que reescribe el estilo (comillas, saltos, indentación) de forma uniforme.
 categoria: herramienta
-tags: [frontend, terminal]
+tags: [frontend, terminal, nivel-0]
 alias: []
 relacionados: [eslint]
 alternativas: []
@@ -38,3 +38,7 @@ Biome integra formato y lint; dprint es otra opción rápida; aquí Prettier se 
 npm run format:check   # falla si algo no está formateado
 npm run format         # reescribe el proyecto
 ```
+
+## Formato del contenido
+
+Prettier se aplica también a los archivos Markdown de `content/`, incluido el frontmatter. Así, una entrada nueva no introduce diferencias de estilo en el diff y el hook de commit detecta cualquier desviación.

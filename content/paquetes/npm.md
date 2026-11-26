@@ -3,10 +3,10 @@ fecha: 2026-10-13
 titulo: npm
 resumen: Gestor de paquetes de Node.js que instala dependencias y ejecuta los scripts definidos en package.json.
 categoria: herramienta
-tags: [terminal]
+tags: [terminal, nivel-0]
 alias: []
 relacionados: [nodejs]
-alternativas: []
+alternativas: ["pnpm", "yarn"]
 web: https://www.npmjs.com
 npm: npm
 fuentes: [https://docs.npmjs.com/]
@@ -38,3 +38,7 @@ pnpm y Yarn hacen lo mismo con otras prioridades (velocidad, ahorro de disco); a
 npm ci          # instala exactamente lo que dice el lockfile
 npm run build   # ejecuta el script build
 ```
+
+## Gestores relacionados
+
+pnpm y Yarn resuelven el mismo problema con decisiones distintas sobre disco, lockfile y workspaces. En un repositorio conviene elegir uno y conservar un solo lockfile para que la instalación sea reproducible.

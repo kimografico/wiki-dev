@@ -3,7 +3,7 @@ fecha: 2026-10-13
 titulo: TypeScript
 resumen: Superconjunto de JavaScript que añade tipos estáticos y se comprueba antes de ejecutar.
 categoria: lenguaje
-tags: [frontend, backend]
+tags: [frontend, backend, nivel-0]
 alias: [TS]
 relacionados: [zod, bundler]
 alternativas: []

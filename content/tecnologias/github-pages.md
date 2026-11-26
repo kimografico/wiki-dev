@@ -38,3 +38,7 @@ Netlify, Vercel y Cloudflare Pages cubren hosting estático con funciones extra;
 - uses: withastro/action@v6
 - uses: actions/deploy-pages@v5
 ```
+
+## Despliegue de esta wiki
+
+El sitio es estático: el build genera HTML y el workflow lo publica después de pasar check, lint, formato y validación. No hay servidor de aplicación en GitHub Pages; por eso la búsqueda se indexa antes de publicar.

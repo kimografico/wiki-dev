@@ -28,3 +28,7 @@ En Astro, una directiva `client:*` decide cuándo se hidrata una isla:
 ## Se confunde con
 
 Con el renderizado en el cliente. La hidratación **reutiliza** el HTML ya existente; una SPA pura, en cambio, suele crear el DOM desde cero en el navegador.
+
+## Directivas client:*
+
+Las directivas deciden cuándo se envía JavaScript al navegador: `client:load` hidrata al cargar, `client:idle` espera a que el hilo esté libre y `client:visible` espera a que la isla entre en pantalla. Elegir bien la directiva evita enviar código que nadie usa.

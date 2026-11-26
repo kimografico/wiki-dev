@@ -39,3 +39,7 @@ const categoria = z.enum(["framework", "estilos"]);
 categoria.parse("framework"); // ok
 categoria.parse("moda"); // error
 ```
+
+## Esquemas de contenido
+
+Cada colección tiene un esquema Zod derivado de la base común. El validador lo aplica sin importar `astro:content`, de modo que `npm run validate` detecta un frontmatter inválido antes de que falle el build.

@@ -3,7 +3,7 @@ fecha: 2026-10-13
 titulo: Slug
 resumen: Identificador legible de una entrada, en minúsculas y con guiones, que suele coincidir con el nombre de su archivo.
 categoria: concepto
-tags: []
+tags: [nivel-0]
 relacionados: [content-collection]
 terminoEn: Slug
 ---
@@ -25,3 +25,7 @@ content/paquetes/gray-matter.md  ->  slug: gray-matter
 ## Se confunde con
 
 Con el título. El título es el nombre visible y puede cambiar; el slug es el identificador técnico y conviene mantenerlo estable.
+
+## Slugs y menciones
+
+Además de identificar la URL, el slug se usa en los campos de relación y en el índice de menciones. Por eso debe ser estable: cambiarlo rompe enlaces internos y deja de reconocer el título en el texto.

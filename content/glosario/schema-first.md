@@ -29,3 +29,7 @@ const esquema = z.object({
 ## Se confunde con
 
 Con el tipado de TypeScript. El tipo desaparece al ejecutar; un **esquema** como Zod comprueba los datos en tiempo de ejecución, que es donde llegan desde archivos o peticiones.
+
+## Esquemas de esta wiki
+
+Las reglas viven en `src/lib/content/esquemas.ts` y las reutilizan tanto Astro como `npm run validate`. Añadir una etiqueta o una categoría exige cambiar ese archivo y migrar las entradas afectadas, no parchear cada ficha.

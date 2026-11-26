@@ -6,7 +6,7 @@ categoria: herramienta
 tags: [tests, terminal]
 alias: []
 relacionados: [vite, integracion-continua]
-alternativas: []
+alternativas: ["jest"]
 web: https://vitest.dev
 npm: vitest
 fuentes: [https://vitest.dev/guide/]
@@ -48,3 +48,7 @@ test("recorta el resumen", () => {
   expect(normalizar(" hola ").resumen).toBe("hola");
 });
 ```
+
+## Cobertura obligatoria
+
+El umbral de cobertura está fijado en el 90 % y el objetivo de calidad en el 95 %. `npm run test:coverage` se ejecuta en el hook de pre-push; los agentes no lo lanzan tras cada cambio, sino al cerrar un trabajo validado.

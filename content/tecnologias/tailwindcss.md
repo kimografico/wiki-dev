@@ -6,7 +6,7 @@ categoria: estilos
 tags: [frontend]
 alias: [Tailwind]
 relacionados: []
-alternativas: []
+alternativas: ["bootstrap"]
 web: https://tailwindcss.com
 fuentes: [https://tailwindcss.com/docs]
 ---
@@ -38,3 +38,7 @@ CSS Modules, CSS-in-JS o CSS plano con buenas convenciones cubren necesidades si
 ```
 
 Los colores provienen de los tokens definidos como variables CSS.
+
+## Tokens de tema
+
+Los colores y escalas se definen como tokens en `src/styles`, y las utilidades se aplican sobre esos tokens. Así el modo claro y el oscuro comparten la misma estructura de clases.

@@ -24,6 +24,8 @@ const NOMBRES_ETIQUETA: Record<(typeof ETIQUETAS)[number], string> = {
   accesibilidad: "Accesibilidad",
   rendimiento: "Rendimiento",
   seguridad: "Seguridad",
+  "nivel-0": "Nivel-0",
+  bbva: "BBVA",
 };
 
 /** Nombre visible de una categoría; si el valor no existe, se muestra tal cual. */

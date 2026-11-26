@@ -115,6 +115,7 @@ const categorias = z.enum([
 const etiquetas = z.enum([
   'frontend', 'backend', 'tests', 'terminal',
   'accesibilidad', 'rendimiento', 'seguridad',
+  'nivel-0', 'bbva',
 ]);
 
 // Campos comunes a todas las colecciones.

@@ -39,3 +39,7 @@ remark().use(() => (tree) => {
   // recorrer y modificar el árbol mdast
 });
 ```
+
+## Plugins de esta wiki
+
+Además del procesamiento habitual de Markdown, el proyecto usa un plugin de menciones que convierte títulos y alias en enlaces la primera vez que aparecen en cada sección, y un plugin para tablas accesibles.

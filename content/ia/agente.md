@@ -71,3 +71,7 @@ runAgent("Obtener el estado de los pedidos del usuario");
 - **Bot de chat simple:** un bot tradicional sigue un árbol de decisión rígido con reglas fijas; es más barato y predecible cuando el flujo se conoce por completo.
 - **Flujos con reglas o BPM:** para procesos deterministas, un motor de reglas o un workflow explícito es auditable y no depende de un modelo probabilístico.
 - **Script programado:** si la secuencia de pasos siempre es la misma, un script directo evita el bucle de planificación.
+
+## Relación con prompt y skill
+
+Un prompt es la instrucción concreta; una skill es el procedimiento reutilizable que el agente carga cuando lo necesita. El agente es quien decide en qué orden usarlos y qué herramientas llama en cada paso.

@@ -3,7 +3,7 @@ fecha: 2026-10-13
 titulo: ESLint
 resumen: Analizador estático de JavaScript y TypeScript que señala errores y prácticas dudosas según reglas configurables.
 categoria: herramienta
-tags: [frontend, terminal]
+tags: [frontend, terminal, nivel-0]
 alias: []
 relacionados: [prettier]
 alternativas: []
@@ -38,3 +38,7 @@ Biome agrupa lint y formato en una sola herramienta más rápida; aquí se manti
 npm run lint        # revisa el proyecto
 eslint --fix .      # corrige lo que se puede
 ```
+
+## Reglas en este proyecto
+
+Las reglas se ejecutan en local con `npm run lint` y en CI antes del build. Prettier se encarga del formato, así que ESLint se reserva para errores y prácticas arriesgadas, no para discusiones de espacios.

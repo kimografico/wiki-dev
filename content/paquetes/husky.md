@@ -39,3 +39,7 @@ Los hooks se pueden saltar (`--no-verify`), así que no son una garantía fuerte
 npx lint-staged
 npm run --if-present validate
 ```
+
+## Hooks de este proyecto
+
+El hook `pre-commit` pasa lint-staged y la validación de contenido; el hook `pre-push` exige cobertura del 90 % con `npm run test:coverage`. Ningún agente salta estos hooks con `--no-verify`.

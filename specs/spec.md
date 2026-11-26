@@ -225,14 +225,14 @@ La categoría es temática y transversal a las colecciones. Añadir una categor�
 | `glosario` | `terminoEn` (opcional, término en inglés) |
 | `tecnologias` | `alternativas` (slug[]), `web` (url, opcional) |
 | `paquetes` | `alternativas` (slug[]), `web` (url, opcional), `npm` (string, nombre en npm, opcional) |
-| `comparativas` | `entidades` (slug[], mínimo 2, tecnologías o paquetes), `contexto` (string: la decisión que ayuda a tomar) |
+| `comparativas` | `entidades` (slug[], mínimo 2; puede referenciar cualquier colección: tecnologías, paquetes, glosario o IA), `contexto` (string: la decisión que ayuda a tomar) |
 | `patrones` | `familia` enum `creacional \| estructural \| comportamiento` |
 | `ia` | `alternativas` (slug[]), `web` (url, opcional) |
 | `testing` | `alternativas` (slug[]), `web` (url, opcional), `npm` (string, nombre en npm, opcional) |
 
 ### 7.4 Plantillas de cuerpo (secciones obligatorias)
 
-El validador comprueba que existan los encabezados `##` obligatorios; se permiten secciones adicionales (donde suele integrarse el enfoque de la duda). «Relacionados» y «Mencionado en» **no** se escriben: los genera el layout. Un bloque de código con lenguaje `mermaid` se renderiza como diagrama.
+El validador comprueba que existan los encabezados `##` obligatorios; se permiten secciones adicionales (donde suele integrarse el enfoque de la duda). «Relacionados» y «Mencionado en» **no** se escriben: los genera el layout. Un bloque de código con lenguaje `mermaid` se renderiza como diagrama. No hay subpáginas por entrada: una familia de subconceptos se documenta como secciones `##` adicionales dentro de la ficha paraguas (por ejemplo, los comandos Git en `tecnologias/git.md`).
 
 | Tipo | Secciones obligatorias |
 |------|------------------------|
@@ -248,9 +248,11 @@ Las plantillas con el frontmatter y las secciones vacías viven en `specs/planti
 
 ### 7.5 Etiquetas (catálogo controlado)
 
-`frontend · backend · tests · terminal · accesibilidad · rendimiento · seguridad`
+`frontend · backend · tests · terminal · accesibilidad · rendimiento · seguridad · nivel-0 · bbva`
 
 - La mayoría de las entradas serán `frontend`.
+- `nivel-0` marca términos que se dan por sentado para leer casi cualquier ficha (unidades básicas del lenguaje, herramientas de uso cotidiano y conceptos de entorno). No es un campo de nivel: el modelo sigue sin tener campos de nivel, estado ni dudas.
+- `bbva` identifica el código o los frameworks propios del BBVA, como `cells`.
 - Algo *fullstack* lleva **ambas** etiquetas, `frontend` y `backend`; no existe una etiqueta `fullstack`.
 - Las etiquetas alimentan `/etiquetas/[etiqueta]` y el filtro de búsqueda.
 - Añadir una etiqueta requiere editar el esquema (skill `evolucionar-esquema`); una etiqueta fuera del catálogo hace fallar `validate`.

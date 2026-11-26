@@ -43,3 +43,7 @@ class Saludo extends LitElement {
 }
 customElements.define("mi-saludo", Saludo);
 ```
+
+## Módulos y ciclo de vida
+
+Lit usa módulos ES nativos: no define un concepto propio de módulo como los NgModules de Angular. Su ciclo de vida incluye `constructor`, `connectedCallback`, `willUpdate`, `updated` y `disconnectedCallback`; conviene suscribirse en los callbacks de conexión y liberar recursos al desconectarse.

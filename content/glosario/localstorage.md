@@ -26,3 +26,7 @@ const tema = localStorage.getItem("wiki:tema");
 ## Se confunde con
 
 Con las *cookies*, que sí se envían al servidor en cada petición. `localStorage` se queda en el navegador; además, puede no estar disponible (modo privado), así que hay que prever ese caso.
+
+## Frente a SessionStorage
+
+Ambos viven en el navegador y guardan cadenas. La diferencia está en la duración: localStorage sobrevive al cierre del navegador y se comparte entre pestañas del mismo origen; SessionStorage muere con la pestaña. Ninguno debe guardar secretos.

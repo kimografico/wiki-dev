@@ -3,7 +3,7 @@ fecha: 2026-10-13
 titulo: Frontmatter
 resumen: Bloque de datos con formato YAML al inicio de un archivo Markdown, delimitado por tres guiones, que describe la entrada.
 categoria: concepto
-tags: []
+tags: [nivel-0]
 relacionados: [markdown, content-collection]
 terminoEn: Frontmatter
 ---
@@ -33,3 +33,7 @@ tags: [backend]
 ## Se confunde con
 
 Con el propio YAML. YAML es el formato; el frontmatter es **dónde** se usa: la cabecera de un documento Markdown.
+
+## Campos usados aquí
+
+Además de título y resumen, el frontmatter de cada ficha declara categoría, etiquetas, alias y relaciones. Las etiquetas nivel-0 y bbva se añadieron al catálogo para clasificar conceptos básicos y código propio del BBVA.

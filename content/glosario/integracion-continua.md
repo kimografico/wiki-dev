@@ -29,3 +29,7 @@ Es una red de seguridad barata: nadie recuerda ejecutar todo a mano en cada camb
 ## Se confunde con
 
 Con los *hooks* de git. Los hooks se ejecutan en tu máquina (por ejemplo, antes de hacer push); la CI se ejecuta en el servidor, con el código ya subido, y no se puede saltar.
+
+## Frente a entrega continua
+
+La integración continua comprueba cada cambio con tests, lint y build. La entrega continua se ocupa de que ese cambio validado esté listo para llegar a producción; cuando ambas se nombran juntas se habla de CI/CD.

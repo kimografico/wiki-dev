@@ -3,10 +3,10 @@ fecha: 2026-10-13
 titulo: Vite
 resumen: Servidor de desarrollo y empaquetador que sirve los módulos al instante y prepara el build optimizado.
 categoria: herramienta
-tags: [frontend, terminal]
+tags: [frontend, terminal, nivel-0]
 alias: []
 relacionados: [bundler, astro]
-alternativas: []
+alternativas: ["rollup", "webpack"]
 web: https://vite.dev
 npm: vite
 fuentes: [https://vite.dev/guide/]
@@ -38,3 +38,7 @@ Webpack y esbuild cubren el mismo terreno en distintos momentos de su historia; 
 npm run dev     # servidor de desarrollo con recarga
 npm run build   # build de producción
 ```
+
+## En el build de Astro
+
+Astro apoya su servidor de desarrollo y su build en Vite. Por eso muchas opciones de Vite se trasladan directamente al proyecto, y por eso herramientas como Vitest reutilizan la misma configuración.

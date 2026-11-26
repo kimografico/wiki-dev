@@ -38,3 +38,7 @@ Algolia DocSearch y un índice propio con Lunr cubren el mismo objetivo; aquí P
 npm run build
 npx pagefind --site dist
 ```
+
+## Búsqueda de esta wiki
+
+El índice se genera después del build sobre el HTML resultante. La interfaz usa su API JavaScript en lugar de la UI por defecto, para poder filtrar por categoría, etiqueta y estado de lectura.

@@ -3,7 +3,7 @@ fecha: 2026-10-13
 titulo: Markdown
 resumen: Lenguaje de marcado ligero, basado en texto plano, que se convierte en HTML y que aquí se usa sin extensiones MDX.
 categoria: concepto
-tags: []
+tags: [nivel-0]
 relacionados: [frontmatter, remark]
 terminoEn: Markdown
 ---
@@ -27,3 +27,7 @@ Un párrafo con un [enlace](https://astro.build).
 ## Se confunde con
 
 Con HTML. Markdown genera HTML, pero su sintaxis es mucho más breve y legible; para lo que Markdown no cubre, aquí no se usa MDX ni componentes dentro del texto.
+
+## Pipeline de esta wiki
+
+El Markdown se procesa con unified y remark, y el resultado se convierte en páginas estáticas. El frontmatter se lee por separado con gray-matter para validar el esquema y construir el índice de menciones.

@@ -39,3 +39,7 @@ import { unified } from "unified";
 
 const procesador = unified().use(remarkMenciones);
 ```
+
+## Pipeline de Markdown
+
+unified crea el procesador, remark interpreta Markdown y rehype transforma el árbol resultante antes de serializar HTML. En Astro el procesador se configura en `markdown.processor` para que los plugins se ejecuten de verdad.

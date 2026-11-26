@@ -27,3 +27,7 @@ const relacionados = await getRelacionados(slug);
 ## Se confunde con
 
 Con el patrón *repository*. El repository encapsula el **acceso a los datos**; el facade es una idea más general: cualquier fachada que simplifica algo complejo. Aquí suelen aparecer juntos.
+
+## En esta wiki
+
+La fachada aparece en la capa de contenido: las páginas y los componentes no importan `astro:content`, sino un módulo intermediario que expone solo lo que la wiki necesita.

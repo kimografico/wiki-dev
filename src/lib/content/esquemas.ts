@@ -44,6 +44,8 @@ export const ETIQUETAS = [
   "accesibilidad",
   "rendimiento",
   "seguridad",
+  "nivel-0",
+  "bbva",
 ] as const;
 
 export const categorias = z.enum(CATEGORIAS);

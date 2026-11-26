@@ -4,7 +4,7 @@ titulo: Generación de sitio estático
 resumen: Técnica que genera todas las páginas HTML durante el build, antes de publicar, en lugar de construirlas en cada petición.
 categoria: concepto
 tags: [rendimiento]
-alias: [SSG, Static Site Generation]
+alias: [SSG, Static Site Generation, "SSG"]
 relacionados: [astro, arquitectura-de-islas, hidratacion]
 terminoEn: Static Site Generation
 ---
@@ -28,3 +28,7 @@ El resultado de `dist/` se puede servir desde cualquier hosting de archivos, com
 ## Se confunde con
 
 Con una aplicación renderizada en el servidor (SSR) o en el cliente (SPA). El SSG pregenera **todo** en el build; SSR genera en cada petición y SPA construye en el navegador.
+
+## Frente a CSR y SSR
+
+La generación estática produce el HTML en build, una sola vez. CSR lo construye en el navegador y SSR lo construye en el servidor para cada petición. Para contenido que no depende del usuario, la generación estática es la opción más simple y rápida.

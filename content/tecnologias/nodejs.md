@@ -3,7 +3,7 @@ fecha: 2026-10-13
 titulo: Node.js
 resumen: Entorno de ejecución de JavaScript fuera del navegador; aquí sirve para ejecutar herramientas y el build del sitio.
 categoria: herramienta
-tags: [backend, terminal]
+tags: [backend, terminal, nivel-0]
 alias: [Node]
 relacionados: [npm]
 alternativas: []
@@ -37,3 +37,7 @@ Bun y Deno son runtimes modernos con objetivos parecidos; pero no es un campo do
 node --version   # versión del runtime
 node scripts/validate-content.ts
 ```
+
+## Versión del proyecto
+
+La versión mínima se documenta en los Requisitos del README y se comprueba antes de instalar dependencias. Los scripts de validación usan el TypeScript nativo de Node, por lo que no necesitan un transpilador adicional.
