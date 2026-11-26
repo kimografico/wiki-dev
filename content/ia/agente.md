@@ -5,7 +5,7 @@ resumen: "Entidad de software autónoma que percibe su entorno mediante herramie
 categoria: "concepto"
 tags: []
 alias: ["AI Agent", "Agente Autónomo", "Agente Inteligente"]
-relacionados: ["llm"]
+relacionados: ["llm", "mcp", "machine-learning", "skill", "prompt"]
 fuentes: ["https://en.wikipedia.org/wiki/Intelligent_agent"]
 autoenlace: true
 ---
@@ -67,7 +67,7 @@ runAgent("Obtener el estado de los pedidos del usuario");
 
 ## Alternativas
 
-- **[LLM (Large Language Model)](/ia/llm)**: el LLM es el «cerebro» del agente, pero por sí solo no ejecuta acciones ni guarda contexto de ejecución; combinarlos es el planteamiento habitual, no una opción excluyente.
+- **LLM**: el LLM es el «cerebro» del agente, pero por sí solo no ejecuta acciones ni guarda contexto de ejecución; combinarlos es el planteamiento habitual, no una opción excluyente.
 - **Bot de chat simple:** un bot tradicional sigue un árbol de decisión rígido con reglas fijas; es más barato y predecible cuando el flujo se conoce por completo.
 - **Flujos con reglas o BPM:** para procesos deterministas, un motor de reglas o un workflow explícito es auditable y no depende de un modelo probabilístico.
 - **Script programado:** si la secuencia de pasos siempre es la misma, un script directo evita el bucle de planificación.
@@ -75,3 +75,7 @@ runAgent("Obtener el estado de los pedidos del usuario");
 ## Relación con prompt y skill
 
 Un prompt es la instrucción concreta; una skill es el procedimiento reutilizable que el agente carga cuando lo necesita. El agente es quien decide en qué orden usarlos y qué herramientas llama en cada paso.
+
+## Relación con MCP
+
+MCP (*Model Context Protocol*) es un estándar abierto para conectar aplicaciones de IA con fuentes de datos y herramientas. Un agente puede usar servidores MCP como parte de sus herramientas sin una integración a medida para cada servicio. El agente decide cuándo llamarlas; el protocolo define cómo se ofrecen y se consumen. La decisión sigue siendo del agente, y los permisos, de la aplicación que lo ejecuta.

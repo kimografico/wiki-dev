@@ -5,7 +5,7 @@ resumen: Pieza de BBVA que obtiene y gestiona datos, normalmente de una API, y s
 categoria: datos-api
 tags: [bbva]
 alias: [DataManager, DM, gestor de datos]
-relacionados: [mud, api, componentizacion, gestion-de-estado]
+relacionados: [mud, api, componentizacion, gestion-de-estado, data-layer, adapter, repository]
 fuentes: []
 autoenlace: true
 ---
@@ -36,4 +36,9 @@ En una pantalla de pedidos, la lista no construye la petición ni interpreta la 
 
 - **Componente de interfaz**: un botón, una tarjeta o un formulario muestran datos y permiten interacción. El DM no hace ninguna de las dos cosas; por eso no se clasifica por su aspecto, sino por su responsabilidad de datos.
 - **Behavior**: es lógica reutilizable que se añade a otros componentes. Un behavior puede formar parte de un DM, pero no todo behavior gestiona datos de una API, así que no son sinónimos.
+- **Data Layer**: la capa de datos es la responsabilidad amplia; el DM es una pieza concreta que puede vivir dentro de ella, igual que un repositorio.
 - **Adapter**: en MuD los componentes y las features ya integran sus propios DMs y se evita el uso de adapters. Añadir una capa intermedia por encima del DM duplicaría esa responsabilidad.
+
+## Fuente interna
+
+> Esta entrada describe una pieza interna de BBVA documentada con fuente privada. No se aplica la exigencia de contraste con fuentes públicas: la existencia del paquete compartido, su papel y su integración en los componentes proceden de la descripción interna facilitada por el autor. Los métodos, eventos y formatos exactos dependen de la implementación de ese paquete y quedan por documentar.

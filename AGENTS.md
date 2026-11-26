@@ -40,3 +40,7 @@ se escribe en **español**.
    un archivo temporal fuera del repo cargado con `cf deploy --secrets-file`.
 7. Si un script necesita el schema, las plantillas o los enums, se leen
    del checkout; no se duplican en el código.
+8. Las entradas con etiqueta `bbva` describen sistemas internos cuya fuente
+   es privada: no se les exige contraste con fuentes públicas ni aviso de
+   información incompleta por ese motivo; basta con declarar el origen
+   interno en la propia entrada.

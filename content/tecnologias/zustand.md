@@ -5,7 +5,7 @@ resumen: "Gestor de estado minimalista para React sin providers ni boilerplate, 
 categoria: estado
 tags: [frontend]
 alias: []
-relacionados: [react]
+relacionados: [react, provider]
 fuentes: ["https://zustand.docs.pmnd.rs/"]
 autoenlace: true
 alternativas: []
@@ -15,7 +15,7 @@ npm: zustand
 
 ## Qué es
 
-Zustand es una librería de gestión de estado para React (y otros frameworks) que crea un almacén fuera del árbol de componentes y lo conecta con un hook (`useStore`). No necesita provider, contexto ni decoradores: la store se define con una función que devuelve el estado y sus acciones.
+Zustand es una librería de gestión de estado para React (y otros frameworks) que crea un almacén fuera del árbol de componentes y lo conecta con un hook (`useStore`). No necesita provider, contexto ni decoradores: la store se define con una función que devuelve el estado y sus acciones. Ese «provider» es el componente de contexto de React; no debe confundirse con el Provider de inyección de dependencias, que entrega una dependencia ya creada.
 
 ## Para qué sirve
 
@@ -31,7 +31,7 @@ Para estado local de un solo componente, `useState` sigue siendo más simple. Si
 
 ## Alternativas
 
-Redux Toolkit aporta estructura y herramientas para apps grandes; Jotai y Valfred (Valtio) abordan el estado de forma atómica o por proxies; el Context API de React sirve sin dependencias, aunque dispara re-renderizados más fácil.
+Redux Toolkit aporta estructura y herramientas para apps grandes; Jotai y Valtio abordan el estado de forma atómica o por proxies; el Context API de React sirve sin dependencias, aunque dispara re-renderizados más fácil.
 
 ## Ejemplo
 

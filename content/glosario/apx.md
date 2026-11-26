@@ -43,6 +43,8 @@ Una transferencia: la app envía una petición REST a ASO; esa capa comprueba el
 - **Data Manager**: un DM entrega datos a componentes de interfaz. APX es una capa backend de operaciones transaccionales, no una pieza de acceso a datos para la interfaz.
 - **APX en complejidad computacional**: clase de problemas de optimización que admiten algoritmos de aproximación. Comparte siglas, pero no describe una plataforma bancaria.
 
-## Información incompleta
+## Fuente interna
+
+> Esta entrada describe un sistema interno de BBVA documentado con fuente privada. No se aplica la exigencia de contraste con fuentes públicas: la expansión de la sigla, la posición de la capa y las tecnologías empleadas proceden de la descripción interna facilitada por el autor y no son verificables desde documentación pública. Quedan por documentar el framework propietario, las librerías de acceso a datos, los protocolos internos y los arquetipos de proyecto.
 
 > **Aviso: información incompleta.** Esta entrada recoge la descripción interna facilitada por el autor; en las fuentes públicas consultadas no se encontró documentación oficial que confirme la expansión de la sigla ni los detalles de la capa. Quedan por documentar el framework propietario, las librerías concretas de acceso a datos, los protocolos internos y los arquetipos de proyecto, además del significado exacto de «Host» en la terminología de BBVA.

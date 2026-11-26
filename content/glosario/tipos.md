@@ -4,8 +4,8 @@ resumen: "Clasificación de los valores de un lenguaje que determina qué operac
 categoria: lenguaje
 tags: ["nivel-0"]
 alias: []
-relacionados: []
-fuentes: []
+relacionados: [typescript, interfaz]
+fuentes: ["https://www.typescriptlang.org/docs/handbook/2/everyday-types.html"]
 autoenlace: true
 ---
 ## Definición
@@ -25,3 +25,18 @@ type Resultado = { ok: true; dato: string } | { ok: false; error: Error };
 ## Se confunde con
 
 No es una etiqueta: los tipos pertenecen al lenguaje; las etiquetas clasifican entradas de la wiki.
+
+## Uniones e intersecciones
+
+Una unión (`|`) dice «uno de estos tipos»; una intersección (`&`) dice «cumple ambos a la vez». La unión es la que más se usa para modelar estados:
+
+```ts
+type Carga = { estado: "ok"; datos: string[] } | { estado: "error"; error: Error };
+
+function mostrar(carga: Carga) {
+  if (carga.estado === "ok") return carga.datos.join(", ");
+  return carga.error.message; // aquí ya sabe que es error
+}
+```
+
+El campo literal que discrimina (`estado`) es lo que permite estrechar el tipo. Los genéricos y los tipos derivados (`Pick`, `Omit`) están en la ficha de TypeScript.

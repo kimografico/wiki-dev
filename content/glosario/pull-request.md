@@ -4,8 +4,9 @@ resumen: "Propuesta de cambios que se abre en una plataforma de Git para revisar
 categoria: concepto
 tags: ["terminal"]
 alias: ["PR"]
-relacionados: []
-fuentes: []
+relacionados: [evidencias, bugfix, hotfix, pullback]
+fuentes:
+  - "https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request"
 autoenlace: true
 ---
 ## Definición
@@ -14,7 +15,7 @@ Propuesta de cambios que se abre en una plataforma de Git para revisarla, discut
 
 ## Por qué importa
 
-Es la unidad de revisión y trazabilidad: cada decisión queda asociada a un diff y a su contexto.
+Es la unidad de revisión y trazabilidad: cada decisión queda asociada a un diff y a su contexto. Adjuntar Evidencias al PR permite que quien revisa compruebe el resultado sin reproducir el caso a ciegas.
 
 ## Ejemplo
 

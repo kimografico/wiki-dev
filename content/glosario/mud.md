@@ -5,7 +5,7 @@ resumen: "Modelo único de Desarrollo de BBVA: componentes importables que llega
 categoria: concepto
 tags: [bbva]
 alias: [Modelo único de Desarrollo, Modelo Único de Desarrollo]
-relacionados: [data-manager, componentizacion]
+relacionados: [data-manager, componentizacion, adapter]
 fuentes: []
 autoenlace: true
 ---
@@ -16,7 +16,7 @@ MuD (Modelo único de Desarrollo) es el modelo de desarrollo de BBVA para crear 
 
 ## Por qué importa
 
-Reduce la decisión de arquitectura en cada feature: al importar el componente se obtiene también la forma de acceder a los datos. En este modelo los componentes y las features integran sus propios DMs y se evita el uso de adapters, porque una capa intermedia añadida por el consumidor repetiría lo que el componente ya trae.
+Reduce la decisión de arquitectura en cada feature: al importar el componente se obtiene también la forma de acceder a los datos. En este modelo los componentes y las features integran sus propios DMs y se evita el uso de adapters, porque una capa intermedia añadida por el consumidor repetiría lo que el componente ya trae. El patrón Adapter sigue siendo válido cuando la interfaz ajena no coincide; lo que MuD descarta es añadir una capa extra sobre un componente que ya trae su DM.
 
 ## Ejemplo
 
@@ -28,6 +28,6 @@ Una feature importa un componente de `ng-channels` y lo coloca en su pantalla. E
 - **Un adapter**: MuD evita precisamente esa capa; los DMs ya viven dentro de los componentes y las features.
 - **Un patrón de diseño concreto**: aquí se describe un modelo de desarrollo, no una estructura de clases con una solución única documentada.
 
-## Información incompleta
+## Fuente interna
 
-> **Aviso: información incompleta.** Esta entrada recoge solo la descripción aproximada disponible. Falta por documentar el funcionamiento concreto de `ng-channels`, la estructura exacta de los componentes importables, los métodos y eventos de sus DMs y los casos en que los datos se obtienen de una API o de una base de datos. El detalle depende de la implementación interna y no está verificado aquí.
+> Esta entrada describe un modelo de desarrollo interno de BBVA documentado con fuente privada. No se aplica la exigencia de contraste con fuentes públicas: el funcionamiento de `ng-channels`, la estructura de los componentes importables y los métodos de sus DMs proceden de la descripción interna facilitada por el autor. Todavía faltan por documentar los métodos y eventos concretos y los casos en que los datos se obtienen de una API o de una base de datos.

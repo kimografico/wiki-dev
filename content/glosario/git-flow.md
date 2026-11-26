@@ -4,8 +4,9 @@ resumen: "Modelo de trabajo con Git que usa ramas largas para desarrollo y versi
 categoria: concepto
 tags: ["terminal"]
 alias: []
-relacionados: []
-fuentes: []
+relacionados: [bugfix, hotfix, pullback]
+fuentes:
+  - "https://nvie.com/posts/a-successful-git-branching-model/"
 autoenlace: true
 ---
 ## Definición
@@ -14,11 +15,11 @@ Modelo de trabajo con Git que usa ramas largas para desarrollo y versiones, y ra
 
 ## Por qué importa
 
-Aporta orden en equipos con releases espaciados, a costa de más ramas y más ceremonia.
+Aporta orden en equipos con releases espaciados, a costa de más ramas y más ceremonia. Es un modelo histórico y popular; en entrega continua suelen preferirse flujos más simples.
 
 ## Ejemplo
 
-Rama `main`, rama `develop`, `feature/nuevo-buscar` y `release/1.4`.
+Rama `main`, rama `develop`, `feature/nuevo-buscar` y `release/1.4`. Un defecto urgente se atiende con un Hotfix sobre `main` y después se devuelve a `develop` con un Pullback.
 
 ## Se confunde con
 

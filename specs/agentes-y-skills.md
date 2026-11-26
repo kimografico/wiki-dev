@@ -366,6 +366,8 @@ Sin commit; revisar con git diff
 - [ ] Ningún dato sensible al tiempo sin fuente; fuentes registradas en `fuentes`.
 - [ ] Español claro, sin relleno.
 
+> **Excepción BBVA:** las entradas con la etiqueta `bbva` describen sistemas internos cuya fuente es privada. No se les exige contraste con fuentes públicas ni aviso de «información incompleta» por ese motivo; basta con declarar el origen interno de la descripción en la propia entrada. Esta excepción no exime de registrar las fuentes públicas que sí se citen.
+
 ## 8. Seguridad y límites
 
 1. Ningún agente hace `commit` o `push` sin petición explícita, y ninguno usa `--no-verify`.
