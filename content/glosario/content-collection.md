@@ -5,26 +5,31 @@ resumen: Conjunto de archivos de contenido que un framework carga y valida con u
 categoria: concepto
 tags: [frontend]
 alias: [colección de contenido]
-relacionados: [frontmatter, schema-first, slug]
+relacionados: [frontmatter, schema-first, slug, markdown]
 terminoEn: Content collection
 ---
 
 ## Definición
 
-Una *content collection* es una carpeta de archivos de contenido (por ejemplo, Markdown) que el framework trata como datos: los carga, valida su frontmatter con un esquema y expone funciones para consultarlos.
+Una *content collection* es una carpeta de archivos de contenido —Markdown, MDX o JSON— que el framework trata como datos estructurados: los descubre, valida su frontmatter contra un esquema y los expone mediante funciones de consulta. No es un directorio que se lee en crudo: la colección define qué campos son obligatorios y con qué tipo se interpretan.
 
 ## Por qué importa
 
-Convierte archivos sueltos en datos tipados y consultables sin construir un CMS. Añadir contenido sigue siendo crear un archivo, pero el acceso pasa por una API ordenada.
+Permite mantener el contenido en archivos legibles y, aun así, obtener errores tempranos. Si una entrada olvida el `resumen` o escribe una categoría fuera del catálogo, el fallo aparece al construir el sitio y no después de publicarlo. En esta wiki las entradas viven en `content/<coleccion>/` y el esquema compartido hace que todas las fichas de una colección tengan la misma forma.
 
 ## Ejemplo
 
 ```ts
 import { getCollection } from "astro:content";
 
-const paquetes = await getCollection("paquetes");
+const glosario = await getCollection("glosario");
+const ordenadas = glosario.sort((a, b) =>
+  a.data.titulo.localeCompare(b.data.titulo),
+);
 ```
+
+La consulta devuelve objetos con `id`, `slug` y `data`; `data` ya viene validado y tipado.
 
 ## Se confunde con
 
-Con una base de datos. Una content collection vive en el repositorio y se lee en el build; no hay servidor ni consultas en tiempo de ejecución.
+Con un CMS. Un CMS ofrece interfaz de edición, base de datos y publicación desde el navegador; aquí el editor es el repositorio y el contenido se congela en el build. También se confunde con una simple lectura de archivos: sin esquema no hay garantía de que el frontmatter sea correcto.

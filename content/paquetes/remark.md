@@ -5,8 +5,8 @@ resumen: Procesador de Markdown construido sobre el formato de sintaxis de mdast
 categoria: herramienta
 tags: [frontend]
 alias: []
-relacionados: [unified, markdown]
-alternativas: [unified]
+relacionados: [unified, markdown, content-collection]
+alternativas: []
 web: https://remark.js.org
 npm: remark
 fuentes: [https://github.com/remarkjs/remark]
@@ -14,32 +14,59 @@ fuentes: [https://github.com/remarkjs/remark]
 
 ## Qué es
 
-remark es el procesador de Markdown del ecosistema unified. Convierte el texto en un árbol de sintaxis (mdast) que los plugins pueden recorrer y modificar: insertar enlaces, quitar nodos, cambiar el texto.
+remark es el procesador de Markdown del ecosistema unified. Convierte el texto en un árbol de sintaxis llamado mdast, donde cada párrafo, enlace o bloque de código es un nodo. Los plugins recorren ese árbol y lo modifican antes de volver a serializar Markdown o HTML. Conviene separarlo de Markdown: Markdown es el formato de texto; remark es el programa que lo entiende y permite transformarlo.
 
 ## Para qué sirve
 
-Aquí es la pieza sobre la que se construye el plugin de menciones (RF-07): este recorre el árbol del Markdown y convierte las menciones a otras entradas en enlaces internos.
+Sirve para automatizar cambios que con expresiones regulares salen mal. En esta wiki, el plugin de menciones recorre el mdast y convierte la primera aparición de un título o alias en un enlace interno, sin tocar el mismo texto dentro de bloques de código. También permite añadir clases a tablas para hacerlas accesibles o comprobar que los encabezados siguen un orden.
 
 ## Cuándo usarlo
 
-Cuando necesitas transformar Markdown de forma programática, más allá de lo que hace el conversor por defecto.
+Cuando el contenido se procesa en el build y necesita una transformación estructural: enlazar términos, insertar sumarios, quitar nodos o validar la forma del documento. Es una herramienta de pipelines, no de edición manual: se configura una vez y se ejecuta siempre igual.
 
 ## Cuándo no
 
-Para contenido estático sin transformaciones, remark sobra y añade complejidad al build.
+Para un archivo estático que solo se publica tal cual, añadir remark y sus plugins es complejidad innecesaria. Tampoco conviene usarlo para validar datos del frontmatter: eso corresponde a los esquemas de la colección, que comprueban campos y tipos antes de que el Markdown se procese.
 
-## Alternativas
+## Matices
 
-unified es el motor general del que remark forma parte; otros conversores (marked, markdown-it) no comparten el ecosistema de plugins de mdast.
+### remark frente a unified
+
+unified es el motor genérico que define el pipeline: analizador, transformadores y generador. remark es la capa que sabe de Markdown y produce mdast; rehype hace lo mismo para HTML. En Astro se fija un procesador unified y sobre él se montan los plugins de remark. Por eso en la configuración aparece unified, pero el código que recorre el documento trabaja con nodos mdast.
 
 ## Ejemplo
 
-```ts
-remark().use(() => (tree) => {
-  // recorrer y modificar el árbol mdast
-});
+```js
+import { remark } from "remark";
+
+function mencionarAstro() {
+  return (arbol) => {
+    const recorrer = (padre) => {
+      const nuevos = [];
+      for (const nodo of padre.children ?? []) {
+        if (nodo.type === "text" && nodo.value.includes("Astro")) {
+          const [antes, ...resto] = nodo.value.split("Astro");
+          if (antes) nuevos.push({ type: "text", value: antes });
+          nuevos.push({
+            type: "link",
+            url: "/tecnologias/astro/",
+            children: [{ type: "text", value: "Astro" }],
+          });
+          const despues = resto.join("Astro");
+          if (despues) nuevos.push({ type: "text", value: despues });
+        } else {
+          recorrer(nodo);
+          nuevos.push(nodo);
+        }
+      }
+      padre.children = nuevos;
+    };
+    recorrer(arbol);
+  };
+}
+
+const resultado = await remark().use(mencionarAstro).process("Astro genera HTML");
+console.log(String(resultado));
 ```
 
-## Plugins de esta wiki
-
-Además del procesamiento habitual de Markdown, el proyecto usa un plugin de menciones que convierte títulos y alias en enlaces la primera vez que aparecen en cada sección, y un plugin para tablas accesibles.
+La clave está en el nodo `link`: su `url` y sus `children` hacen que el serializador escriba `[Astro](/tecnologias/astro/)`. Si el marcado se metiera como texto en `nodo.value`, quedaría escapado y el lector vería los corchetes como caracteres normales. El plugin real de esta wiki aplica la misma idea con más precauciones: respeta `base`, omite encabezados, código y enlaces, y solo enlaza la primera mención de cada sección.

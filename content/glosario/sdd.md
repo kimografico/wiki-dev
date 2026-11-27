@@ -4,22 +4,27 @@ resumen: "Specification-Driven Development: forma de trabajar en la que la espec
 categoria: concepto
 tags: ["tests","backend"]
 alias: ["Specification-Driven Development"]
-relacionados: []
+relacionados: [documentacion, tdd, ddd, skill]
 fuentes: []
 autoenlace: true
 ---
+
 ## Definición
 
-Specification-Driven Development: forma de trabajar en la que la especificación es la fuente de verdad y el código se deriva de ella.
+SDD (Specification-Driven Development) es una forma de trabajar en la que la especificación manda: describe qué debe cumplir el sistema y el código se escribe para satisfacerla. Si surge una duda, se actualiza la especificación antes de improvisar una respuesta en el código.
 
 ## Por qué importa
 
-Reduce decisiones implícitas: ante una duda, se consulta la fuente de verdad y se actualiza antes que improvisar.
+Evita que las decisiones vivan solo en la memoria de quien escribió una entrada. En esta wiki, `specs/MANUAL.md` fija las normas vigentes, `src/lib/content/esquemas.ts` es la fuente de verdad del modelo de contenido y las skills capturan el flujo de trabajo. `specs/spec-construccion.md` explica decisiones pasadas, pero no manda: usarlo para decidir sería invertir la jerarquía. El orden también evita contradicciones: si el manual y una nota antigua difieren, se aplica el manual y se corrige la nota.
 
 ## Ejemplo
 
-Las normas vigentes de esta wiki viven en `specs/MANUAL.md`; `specs/spec-construccion.md` guarda el registro de cómo se construyó. Los cambios de esquema pasan por una skill.
+```text
+specs/MANUAL.md  -> norma vigente
+esquemas.ts      -> campos permitidos
+contenido/*.md   -> entradas que cumplen la norma
+```
 
 ## Se confunde con
 
-No es TDD: la spec describe qué construir; el test describe una expectativa ejecutable.
+Con TDD: la spec dice qué construir y cuándo una decisión es válida; un test comprueba una expectativa ejecutable. Tampoco es DDD: aquel enfoque organiza el dominio; SDD ordena cuál es la fuente de las decisiones.

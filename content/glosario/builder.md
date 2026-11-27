@@ -4,22 +4,28 @@ resumen: "Herramienta o configuración que ejecuta un build y decide qué entra 
 categoria: herramienta
 tags: ["frontend","terminal"]
 alias: []
-relacionados: []
+relacionados: [build, bundler, vite, webpack, rollup]
 fuentes: []
 autoenlace: true
 ---
 ## Definición
 
-Herramienta o configuración que ejecuta un build y decide qué entra en el resultado final.
+Un builder es la herramienta —o la configuración que la gobierna— que ejecuta un build y decide qué entra en el resultado final. En proyectos JavaScript suele combinar un empaquetador, transformadores y tareas de copia de recursos. La palabra también existe en patrones de diseño con otro sentido; aquí designa siempre la construcción del proyecto.
 
 ## Por qué importa
 
-Elegirlo bien determina tiempos de arranque, tamaño del bundle y qué errores aparecen antes de publicar.
+La elección afecta a tres cosas que se notan cada día: cuánto tarda en arrancar el entorno local, qué tamaño tiene el código enviado al navegador y en qué momento aparecen los errores. Cambiar de builder sin revisar la configuración puede dejar fuera estilos, romper alias de importación o producir un artefacto que falla en producción aunque el servidor de desarrollo responda bien. Por eso la configuración se versiona junto al código.
 
 ## Ejemplo
 
-Vite, Rollup y Webpack son builders habituales en proyectos JavaScript.
+```js
+// vite.config.js
+import { defineConfig } from "vite";
+export default defineConfig({ build: { outDir: "dist" } });
+```
+
+Esa configuración indica al builder dónde deja los archivos generados.
 
 ## Se confunde con
 
-No es el patrón de diseño creacional: aquí builder es la herramienta de build, no una clase que construye objetos.
+Con el patrón Builder de diseño creacional: aquél es una clase que construye objetos paso a paso; éste es un ejecutor de tareas. Tampoco es el empaquetador: agrupar módulos es una de las cosas que un builder puede hacer, además de compilar tipos o copiar recursos.

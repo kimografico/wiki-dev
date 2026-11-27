@@ -5,7 +5,7 @@ resumen: Servidor de desarrollo y empaquetador que sirve los módulos al instant
 categoria: herramienta
 tags: [frontend, terminal, nivel-0]
 alias: []
-relacionados: [bundler, astro]
+relacionados: [astro, bundler, vitest, rollup]
 alternativas: ["rollup", "webpack"]
 web: https://vite.dev
 npm: vite
@@ -14,23 +14,23 @@ fuentes: [https://vite.dev/guide/]
 
 ## Qué es
 
-Vite es una herramienta de desarrollo y build que incluye un servidor con recarga casi instantánea y un empaquetador para producción. Durante el desarrollo sirve los módulos nativos del navegador; al construir, agrupa y optimiza.
+Vite es una herramienta de desarrollo y construcción para frontend. En modo desarrollo sirve los módulos directamente al navegador y recarga solo la parte cambiada; al generar el sitio, empaqueta y optimiza los recursos. Conviene no reducirlo a «un empaquetador»: su valor está sobre todo en el servidor de desarrollo, que evita recompilar media aplicación cada vez que se guarda un archivo.
 
 ## Para qué sirve
 
-Acelera el ciclo de trabajo (guardar y ver el cambio al momento) y produce el sitio final minificado. Astro lo usa por debajo, así que aquí aparece a través de su configuración.
+Acelera el ciclo guardar-ver y produce el build de producción. Astro apoya en Vite su servidor local y su salida final, por lo que en este proyecto aparece de forma indirecta: se nota en la rapidez de `npm run dev` y en las opciones de configuración que se pueden trasladar. Vitest reutiliza la misma configuración, así que las pruebas y la aplicación comparten dependencias y aliases.
 
 ## Cuándo usarlo
 
-En cualquier proyecto frontend moderno que quiera un entorno de desarrollo rápido y un build sólido sin configurar un empaquetador a mano.
+En proyectos frontend que quieran arrancar rápido, ver los cambios al instante y generar un sitio optimizado sin escribir una configuración de empaquetado extensa. Encaja tanto en aplicaciones como en sitios estáticos gestionados por un marco de trabajo que ya lo integra.
 
 ## Cuándo no
 
-Si ya hay una cadena de build consolidada y funcionando, cambiarla solo por moda añade riesgo. En proyectos sin frontend no aplica.
+Si una cadena de build consolidada ya funciona y nadie va a mantener una migración, cambiarla solo por moda añade riesgo. En proyectos sin frontend, o donde el despliegue impone una configuración muy particular heredada de otra herramienta, conviene evaluar el coste antes de mover nada.
 
 ## Alternativas
 
-Webpack y esbuild cubren el mismo terreno en distintos momentos de su historia; aquí no se busca alternativa porque Astro ya integra Vite.
+Rollup es el motor de empaquetado muy usado para bibliotecas y da más control sobre los formatos de salida. Webpack domina en proyectos antiguos con loaders y plugins específicos. Vite gana en experiencia de desarrollo y en configuración inicial; frente a Rollup, añade el servidor que le falta, y frente a Webpack, evita gran parte del trabajo manual. Para una aplicación nueva, Vite suele ser el punto de partida; para una biblioteca, Rollup sigue siendo una opción más precisa; para un proyecto heredado, mantener Webpack puede ser lo sensato.
 
 ## Ejemplo
 
@@ -39,6 +39,15 @@ npm run dev     # servidor de desarrollo con recarga
 npm run build   # build de producción
 ```
 
-## En el build de Astro
+```js
+// astro.config.mjs: opciones de Vite trasladadas al proyecto
+import { defineConfig } from "astro/config";
 
-Astro apoya su servidor de desarrollo y su build en Vite. Por eso muchas opciones de Vite se trasladan directamente al proyecto, y por eso herramientas como Vitest reutilizan la misma configuración.
+export default defineConfig({
+  vite: { server: { port: 3000 } },
+});
+```
+
+## Matices
+
+Que Astro use Vite por debajo no obliga a configurarlo a mano. La mayoría de los proyectos se quedan con los valores por defecto y solo ajustan opciones concretas cuando una dependencia lo pide.

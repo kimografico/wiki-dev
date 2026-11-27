@@ -4,7 +4,7 @@ resumen: "Sistema de control de versiones distribuido que guarda el historial de
 categoria: herramienta
 tags: ["terminal","nivel-0"]
 alias: []
-relacionados: []
+relacionados: [github, gitlab, bitbucket, pull-request, git-hooks]
 fuentes: ["https://git-scm.com/doc"]
 autoenlace: true
 alternativas: []
@@ -12,31 +12,40 @@ web: "https://git-scm.com/"
 ---
 ## Qué es
 
-Sistema de control de versiones distribuido que guarda el historial de un proyecto como una sucesión de commits.
+Git es un sistema de control de versiones distribuido: guarda el historial de un proyecto como una sucesión de instantáneas, llamadas *commits*, y cada persona que clona el repositorio se lleva una copia completa de ese historial. No es un servicio web ni un editor: es un programa que se ejecuta en local y que entiende de archivos, ramas y diferencias. La unidad de trabajo es el commit, que registra qué cambió, quién lo cambió y por qué.
 
 ## Para qué sirve
 
-Permite trabajar en ramas aisladas, revisar cambios y recuperar cualquier estado anterior.
+Permite trabajar en ramas aisladas, revisar cambios antes de integrarlos y recuperar cualquier estado anterior. Resuelve dudas muy concretas: qué línea introdujo un fallo, en qué commit dejó de pasar una prueba o cómo deshacer un cambio que aún no se ha compartido. Como el historial viaja con el repositorio, esa información no depende de que un servidor esté disponible.
 
 ## Cuándo usarla
 
-Úsalo para cualquier proyecto de código, incluso personal, porque el historial es documentación.
+Úsalo para cualquier proyecto de código, incluso personal. El coste de iniciar un repositorio es bajo y el historial es documentación: explica decisiones que el código final ya no muestra. También es la base de las pull requests, de la integración continua y de la revisión entre compañeros.
 
 ## Cuándo no
 
-No es una plataforma de repositorios: Git funciona localmente; GitHub o GitLab son servicios que lo alojan.
+No es una plataforma de repositorios: Git funciona localmente; GitHub, GitLab o Bitbucket son servicios que alojan copias y añaden interfaz, permisos y revisiones. Tampoco sustituye a las copias de seguridad: un `push` sincroniza historial, pero no protege un trabajo que nadie más ha guardado.
 
-## Alternativas
+## Matices
 
-No hay una alternativa directa dentro del catálogo: la decisión depende del requisito concreto.
+| Capa | Qué aporta | Dónde vive |
+|------|------------|------------|
+| Git | Historial, ramas, commits | En cada copia local |
+| GitHub, GitLab o Bitbucket | Repositorio remoto, PRs, permisos | En el servicio |
+| Git Flow | Convención de ramas | En el acuerdo del equipo |
+
+La confusión habitual es llamar «Git» a la web donde se sube el código. El criterio para distinguirlos es sencillo: si escribes un comando en la terminal, es Git; si pulsas un botón en una interfaz, es la plataforma que lo aloja.
 
 ## Ejemplo
 
 ```bash
 git switch -c feature/buscar
-git add .
+git add content/tecnologias/git.md
 git commit -m 'añade búsqueda'
+git push -u origin feature/buscar
 ```
+
+La rama aísla el trabajo, `add` prepara solo ese archivo, `commit` guarda la instantánea y `push` la comparte con el resto del equipo.
 
 ## Comandos básicos
 

@@ -30,10 +30,6 @@ Controla layout, color, tipografía y adaptación a distintos tamaños de pantal
 
 No es un lenguaje de programación: no tiene lógica de negocio, aunque soporte variables y reglas.
 
-## Alternativas
-
-No hay una alternativa directa dentro del catálogo: la decisión depende del requisito concreto.
-
 ## Ejemplo
 
 ```css

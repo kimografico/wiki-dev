@@ -1,25 +1,32 @@
 ---
 titulo: "Utilidades"
-resumen: "Fragmentos de código importables de forma transversal que resuelven una tarea repetida en un proyecto."
+resumen: "Código propio y reutilizable que centraliza una tarea mecánica repetida, sin estado ni lógica de negocio."
 categoria: concepto
 tags: ["frontend"]
 alias: []
-relacionados: []
+relacionados: [funcion, modulos, libreria, utilidades-npm]
 fuentes: []
 autoenlace: true
 ---
 ## Definición
 
-Fragmentos de código importables de forma transversal que resuelven una tarea repetida en un proyecto.
+Una utilidad es una **Función** o un valor constante del propio proyecto, agrupado en un archivo compartido, que resuelve una tarea mecánica y repetida: formatear una fecha, normalizar un texto, comprobar un tipo. No guarda estado ni decide sobre el negocio: solo transforma lo que recibe. Se importa desde cualquier módulo sin depender de la interfaz ni del framework.
 
 ## Por qué importa
 
-Centralizan una decisión para que todos los módulos usen la misma versión de esa lógica.
+Centraliza una decisión. Una wiki que muestra la fecha de alta de cada entrada en tres sitios formatea el valor de tres maneras distintas si no hay utilidad; un cambio de formato obliga a tocar tres archivos. Con `formatearFecha`, se corrige una vez y las tres vistas lo heredan.
 
 ## Ejemplo
 
-Un archivo `src/lib/formatos.ts` con `formatearFecha` importado desde varias features.
+```ts
+// src/lib/formatos.ts
+export function formatearFecha(iso: string): string {
+  return new Date(iso).toLocaleDateString("es-ES");
+}
+```
+
+Desde una vista: `import { formatearFecha } from "../../lib/formatos";`. El archivo no importa React ni Astro, así que sirve igual en el servidor que en el navegador.
 
 ## Se confunde con
 
-No es una biblioteca externa: las utilidades suelen vivir dentro del proyecto y no se publican.
+Con una **Librería** o un **Paquete**: esos se instalan y se versionan desde fuera; las utilidades viven en el repositorio y cambian con él. Tampoco son **Utilidades npm**, que designa los comandos del gestor, no tu código. Si la función decide que un pedido es urgente, eso es dominio, no `utils`.

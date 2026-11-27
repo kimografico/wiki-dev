@@ -5,17 +5,16 @@ resumen: Herramienta que reúne y transforma muchos archivos de código en unos 
 categoria: concepto
 tags: [frontend, rendimiento]
 alias: [empaquetador]
-relacionados: [vite]
+relacionados: [build, vite, rollup, code-splitting]
 terminoEn: Bundler
 ---
-
 ## Definición
 
-Un *bundler* (o empaquetador) toma los muchos módulos de un proyecto, resuelve sus importaciones, los transforma (por ejemplo, TypeScript a JavaScript) y los agrupa en archivos optimizados para servir al navegador.
+Un *bundler* (o empaquetador) toma los módulos de un proyecto, resuelve sus importaciones, aplica transformaciones y los combina en archivos optimizados para el navegador. Como entrada tiene componentes, hojas de estilo e imágenes repartidos en carpetas; como salida, unos pocos ficheros en `dist/` que el servidor puede entregar sin conocer el código original. Para decidir el orden, construye un grafo de dependencias a partir de las importaciones.
 
 ## Por qué importa
 
-El navegador no entiende módulos Node ni TypeScript, y descargar cientos de archivos sueltos es lento. El bundler resuelve ambas cosas y además permite optimizaciones (minificar, dividir el código).
+El navegador no ejecuta TypeScript ni entiende las importaciones desnudas de Node, y descargar cientos de archivos sueltos multiplica las peticiones. El empaquetador resuelve ambas cosas a la vez. Además ofrece optimizaciones que no conviene hacer a mano: minificar nombres, eliminar ramas inalcanzables y separar fragmentos por ruta. Así una aplicación puede reducir notablemente el código inicial sin cambiar lo que hace.
 
 ## Ejemplo
 
@@ -25,4 +24,4 @@ vite build   # agrupa y optimiza el sitio en dist/
 
 ## Se confunde con
 
-Con el *servidor de desarrollo*. Muchos bundlers modernos, como Vite, incluyen ambos: un servidor con recarga en caliente para desarrollar y un modo `build` para empaquetar.
+Con el servidor de desarrollo: Vite ofrece recarga en caliente mientras escribes y, por separado, un modo `build` que genera el artefacto. También se confunde con el builder: empaquetar es una tarea dentro de la construcción, pero un builder puede además comprobar tipos, copiar recursos o preparar la publicación.

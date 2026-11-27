@@ -4,22 +4,29 @@ resumen: "Cambio en la estructura interna del código que no altera su comportam
 categoria: concepto
 tags: ["frontend"]
 alias: []
-relacionados: []
+relacionados: [code-review, tdd, deuda-tecnica, regresion]
 fuentes: []
 autoenlace: true
 ---
+
 ## Definición
 
-Cambio en la estructura interna del código que no altera su comportamiento observable.
+Refactorizar es reestructurar código sin cambiar su comportamiento observable: se renombra, se extrae una función o se simplifica una condición, pero las mismas entradas siguen produciendo las mismas salidas.
 
 ## Por qué importa
 
-Mantiene el sistema comprensible a medida que crece; los tests son la red que permite hacerlo sin miedo.
+Mantiene bajo el coste de cambio. Una función larga que mezcla validación y formato es difícil de corregir; dividirla permite tocar una parte sin alterar la otra. Los tests actúan como red: si siguen pasando, hay evidencia de que el comportamiento se conservó; sin ellos, «parece igual» no es comprobable. Conviene separar el refactor de los cambios funcionales en commits distintos: un diff que mezcla movimientos de código y cambios de lógica es mucho más difícil de juzgar, mientras que uno que solo mueve código permite centrar la revisión en la forma.
 
 ## Ejemplo
 
-Extraer una función repetida y ejecutar los tests para comprobar que nada cambió.
+```js
+const esValido = (valor) => valor != null && valor.length > 0;
+
+if (esValido(nombre)) {
+  guardar(nombre);
+}
+```
 
 ## Se confunde con
 
-No es añadir funcionalidad: si el comportamiento cambia, es un cambio de feature, no refactor.
+Con un bugfix: corregir un error cambia el comportamiento, porque el fallo deja de ocurrir; refactorizar busca que no cambie nada visible. Tampoco es reescribir el sistema desde cero: es un cambio incremental y verificable, no una migración completa.

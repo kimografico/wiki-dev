@@ -5,7 +5,7 @@ resumen: Formateador de código opinado que reescribe el estilo (comillas, salto
 categoria: herramienta
 tags: [frontend, terminal, nivel-0]
 alias: []
-relacionados: [eslint]
+relacionados: [eslint, astro, markdown]
 alternativas: []
 web: https://prettier.io
 npm: prettier
@@ -14,31 +14,32 @@ fuentes: [https://prettier.io/docs/]
 
 ## Qué es
 
-Prettier da formato al código con reglas fijas: no se discute cómo colocar las comillas o los saltos de línea, la herramienta decide por ti. Con el plugin de Astro, cubre también los archivos `.astro`.
+Prettier es un formateador opinado: decide comillas, indentación, longitud de línea y saltos, y reescribe el archivo para que todos sigan el mismo estilo. No interpreta el programa para buscar errores; solo transforma su presentación. Con el plugin correspondiente cubre también archivos `.astro`, además de JavaScript, TypeScript, CSS y Markdown.
 
 ## Para qué sirve
 
-Elimina discusiones de estilo y mantiene el repositorio uniforme. Aquí se ejecuta al guardar (`--write`) y se comprueba en la CI (`--check`).
+Elimina las discusiones de estilo del code review. En este repositorio se aplica con `npm run format` —equivalente a `prettier --write .`— cuando hace falta reescribir archivos, y `lint-staged` lo ejecuta sobre los archivos preparados al hacer commit; no se lanza automáticamente al guardar. La comprobación `npm run format:check` se ejecuta en la integración continua: si alguien dejó un archivo sin formatear, falla antes de mezclar el cambio. El contenido de la wiki también pasa por él, incluido el frontmatter, de modo que una entrada nueva no introduce diferencias de espaciado en el diff.
 
 ## Cuándo usarlo
 
-Cuando varias personas (o agentes) escriben en el mismo repositorio y se quiere un formato consistente sin pensarlo.
+Cuando varias personas o agentes escriben en el mismo repositorio y se quiere una puntuación uniforme sin debatirla. Aporta especialmente en proyectos con muchos lenguajes, porque una sola herramienta cubre JS, CSS y Markdown con la misma filosofía. En archivos Markdown, ordena tablas y listas sin que nadie tenga que contar espacios.
 
 ## Cuándo no
 
-Prettier no busca errores ni lógica: convive con ESLint, no lo reemplaza. Si el equipo ya tiene un estilo muy definido, hay que valorar el cambio.
+Si el equipo necesita reglas de estilo muy específicas, aceptar las decisiones de Prettier puede ser un cambio cultural. Tampoco sirve para detectar variables sin usar, importaciones incorrectas ni errores de lógica: para eso está ESLint. Y no conviene ejecutarlo sobre archivos generados o binarios, porque reescribe contenido que debe permanecer intacto.
 
-## Alternativas
+## Prettier frente a ESLint
 
-Biome integra formato y lint; dprint es otra opción rápida; aquí Prettier se queda por su soporte de Astro y su configuración mínima.
+La duda habitual es si uno sustituye al otro. No: ESLint analiza el código y puede avisar de problemas; Prettier solo cambia cómo se ve. Cuando ambos están instalados, la regla práctica es que ESLint no lleve reglas de formato que Prettier ya resuelve, para que no se peleen corrigiendo el mismo archivo. En este proyecto, `npm run lint` y `npm run format:check` son comprobaciones independientes y las dos deben pasar.
 
 ## Ejemplo
 
 ```bash
-npm run format:check   # falla si algo no está formateado
-npm run format         # reescribe el proyecto
+npm run format:check          # falla si algo no está formateado
+npm run format                # reescribe los archivos
+npx prettier --check content/paquetes/zod.md
 ```
 
-## Formato del contenido
+## Matices
 
-Prettier se aplica también a los archivos Markdown de `content/`, incluido el frontmatter. Así, una entrada nueva no introduce diferencias de estilo en el diff y el hook de commit detecta cualquier desviación.
+Formatear no cambia el significado, pero sí cambia el diff. Conviene ejecutar el formateador sobre el archivo que se está tocando y no sobre todo el repositorio en una tarea sin relación, para que el historial siga siendo legible.

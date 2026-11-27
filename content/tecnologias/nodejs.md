@@ -1,11 +1,11 @@
 ---
 fecha: 2026-10-13
 titulo: Node.js
-resumen: Entorno de ejecución de JavaScript fuera del navegador; aquí sirve para ejecutar herramientas y el build del sitio.
+resumen: "Entorno que ejecuta JavaScript fuera del navegador; base de las herramientas, los tests y el build del proyecto."
 categoria: herramienta
 tags: [backend, terminal, nivel-0]
 alias: [Node]
-relacionados: [npm]
+relacionados: [npm, typescript, vite]
 alternativas: []
 web: https://nodejs.org
 fuentes: [https://nodejs.org/en/learn]
@@ -13,31 +13,41 @@ fuentes: [https://nodejs.org/en/learn]
 
 ## Qué es
 
-Node.js ejecuta JavaScript fuera del navegador, sobre el motor V8. Con él, el mismo lenguaje se usa para herramientas de línea de comandos, servidores y scripts de automatización.
+Node.js es un entorno de ejecución que permite correr JavaScript fuera del navegador, sobre el motor V8. No es un lenguaje —el lenguaje es JavaScript—, ni un framework —no impone una estructura de aplicación—, ni un gestor de dependencias —eso es npm—. Lo que aporta es acceso a archivos, red, procesos y variables de entorno, además de un sistema de módulos para organizar el código. Gracias a eso, el mismo lenguaje sirve para escribir una página y para automatizar lo que ocurre alrededor de esa página.
 
 ## Para qué sirve
 
-Aquí es la plataforma que mueve el ecosistema: con Node se instalan dependencias, se compila el sitio, se ejecutan los tests y se lanzan los scripts de validación.
+En este proyecto es la plataforma que mueve el tooling: instalar dependencias, compilar el sitio, ejecutar los tests y lanzar los scripts que validan el contenido. Un caso concreto: `npm run validate` arranca un proceso Node que lee los archivos Markdown, aplica los esquemas y comprueba que los slugs existan. Ninguna de esas tareas podría hacerla el navegador por sí solo.
 
 ## Cuándo usarla
 
-Siempre que haya que ejecutar JavaScript en el terminal. Es la base del tooling de este proyecto, desde `npm run build` hasta el script de validación de contenido.
+Siempre que haya que ejecutar JavaScript en el terminal: scripts de automatización, herramientas de línea de comandos, servidores HTTP y suites de pruebas. La versión que exige el proyecto se documenta en los requisitos del README y conviene comprobarla antes de instalar nada.
 
 ## Cuándo no
 
-Para procesos donde se busca concurrencia intensiva y cómputo pesado, otros lenguajes pueden encajar mejor; y para el navegador no aplica, allí el runtime ya está en la página.
-
-## Alternativas
-
-Bun y Deno son runtimes modernos con objetivos parecidos; pero no es un campo donde este proyecto busque alternativas, ya que todo el ecosistema está en Node.
+Para cómputo intensivo o concurrencia muy alta, otros lenguajes y modelos de ejecución pueden encajar mejor; conviene medir antes de decidir. En el navegador no aplica: allí el motor ya está incluido en la página y Node no existe. Existen otros entornos modernos, como Bun o Deno, pero cambiar de runtime no es gratuito cuando el proyecto depende de las convenciones y las herramientas de Node: la compatibilidad debe verificarse caso por caso.
 
 ## Ejemplo
 
 ```bash
-node --version   # versión del runtime
-node scripts/validate-content.ts
+node --version
+node -e "console.log(process.platform)"
+npm run check
+npm run validate
 ```
 
-## Versión del proyecto
+La segunda línea muestra que `process` es propio de Node y no del navegador. Las dos últimas son scripts definidos en `package.json`; Node es quien los ejecuta, aunque el comando que escribas sea `npm`.
 
-La versión mínima se documenta en los Requisitos del README y se comprueba antes de instalar dependencias. Los scripts de validación usan el TypeScript nativo de Node, por lo que no necesitan un transpilador adicional.
+## Módulos y entorno
+
+El código se organiza en módulos: con `import` y `export` (ESM) o con `require` (CommonJS). El campo `type` de `package.json` decide cuál se usa por defecto; mezclarlos sin criterio es fuente de errores confusos. Los módulos del propio entorno se nombran con el prefijo `node:`, por ejemplo `node:fs` para archivos. Las credenciales se leen de variables de entorno, nunca se escriben en el código.
+
+## Matices: Node frente al navegador
+
+| Aspecto | Node.js | Navegador |
+| --- | --- | --- |
+| Objetos globales | `process`, acceso a archivos | `window`, `document`, DOM |
+| Módulos | Archivos del sistema con `import` o `require` | Módulos ES cargados por URL |
+| Duración | Proceso que termina o servidor que sigue vivo | Página que se abre y se cierra |
+
+
