@@ -1,4 +1,4 @@
-// Islas nativas del lector: tema, aprendidas, filtro y buscador.
+// Islas nativas del lector: tema, aprendidas, filtro, buscador y navegación.
 // ASTRO: un `<script>` de componente se empaqueta y Astro lo incluye una sola
 // vez por página, aunque varios componentes lo importen; aquí solo registra
 // custom elements que mejoran HTML ya renderizado en servidor (RF-12).
@@ -6,6 +6,7 @@
 
 import { CATALOGO } from "../lib/content/catalogo.ts";
 import type { Coleccion } from "../lib/content/esquemas.ts";
+import { vecinas, type FichaNav } from "../lib/content/navegacion.ts";
 import {
   EVENTO_PREFERENCIAS,
   alternarAprendida,
@@ -159,6 +160,78 @@ class WikiAprendida extends HTMLElement {
       : aprendida
         ? "Aprendida: pulsa para desmarcarla"
         : "Marcar como aprendida";
+  };
+}
+
+/**
+ * Par de botones de navegación entre fichas. El HTML de partida ya trae los
+ * vecinos inmediatos; esta isla solo los sustituye cuando las preferencias
+ * (aprendidas / solo pendientes) cambian, sin recargar la página (RF-14).
+ */
+class WikiNavegacion extends HTMLElement {
+  private control?: AbortController;
+  private secuencia: FichaNav[] = [];
+
+  connectedCallback() {
+    const crudo =
+      this.querySelector<HTMLScriptElement>("[data-secuencia]")?.textContent;
+    if (!crudo) return;
+    try {
+      const parseado: unknown = JSON.parse(crudo);
+      if (!Array.isArray(parseado)) return;
+      this.secuencia = parseado as FichaNav[];
+    } catch {
+      // Sin datos válidos se conserva el HTML renderizado en el build.
+      return;
+    }
+
+    this.control = new AbortController();
+    const { signal } = this.control;
+    window.addEventListener(EVENTO_PREFERENCIAS, this.sincronizar, { signal });
+    window.addEventListener("pageshow", this.alCambioPagina, { signal });
+    this.sincronizar();
+  }
+
+  disconnectedCallback() {
+    this.control?.abort();
+  }
+
+  private alCambioPagina = (evento: PageTransitionEvent) => {
+    if (evento.persisted) this.sincronizar();
+  };
+
+  private sincronizar = () => {
+    const nav = this.querySelector<HTMLElement>("[data-nav]");
+    if (!nav) return;
+
+    const resultado = vecinas(
+      this.secuencia,
+      this.getAttribute("slug") ?? "",
+      leerAprendidas(),
+      leerSoloPendientes(),
+    );
+
+    let visibles = 0;
+    this.querySelectorAll<HTMLAnchorElement>("[data-direccion]").forEach(
+      (enlace) => {
+        const direccion = enlace.dataset.direccion;
+        if (direccion !== "anterior" && direccion !== "siguiente") return;
+        const destino = resultado[direccion];
+        enlace.hidden = !destino;
+        if (!destino) return;
+
+        visibles++;
+        enlace.href = destino.url;
+        enlace.setAttribute(
+          "aria-label",
+          `${direccion === "anterior" ? "Anterior" : "Siguiente"}: ${destino.titulo}`,
+        );
+        const titulo = enlace.querySelector<HTMLElement>("[data-titulo]");
+        if (titulo) titulo.textContent = destino.titulo;
+      },
+    );
+
+    nav.hidden = visibles === 0;
   };
 }
 
@@ -336,7 +409,7 @@ class WikiBuscador extends HTMLElement {
   };
 }
 
-/** Registra las cuatro islas y el accordion global. Idempotente. */
+/** Registra las cinco islas y el accordion global. Idempotente. */
 export function registrarIslas(): void {
   if (registrado || typeof customElements === "undefined") return;
   registrado = true;
@@ -349,6 +422,8 @@ export function registrarIslas(): void {
     customElements.define("wiki-aprendida", WikiAprendida);
   if (!customElements.get("wiki-buscador"))
     customElements.define("wiki-buscador", WikiBuscador);
+  if (!customElements.get("wiki-navegacion"))
+    customElements.define("wiki-navegacion", WikiNavegacion);
 
   // «Mostrar todo» vive en los listados, fuera de la isla del filtro: se atiende
   // aquí, una sola vez, y se delega en la lógica compartida de preferencias.

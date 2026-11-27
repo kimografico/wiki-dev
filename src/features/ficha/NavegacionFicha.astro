@@ -1,0 +1,113 @@
+---
+// Par de botones «anterior / siguiente» al pie de una ficha. El HTML que
+// renderiza Astro ya es funcional (vecinos inmediatos); la isla `wiki-navegacion`
+// lo ajusta después según las preferencias del lector (RF-14).
+import type { Coleccion } from "../../lib/content/esquemas.ts";
+import { getPorColeccion, urlEntrada } from "../../lib/content/entradas.ts";
+import { vecinas, type FichaNav } from "../../lib/content/navegacion.ts";
+
+interface Props {
+  slug: string;
+  coleccion: Coleccion;
+}
+
+const { slug, coleccion } = Astro.props;
+const base = import.meta.env.BASE_URL;
+
+// ASTRO: `getPorColeccion` lee la content collection en build; la URL se
+// resuelve aquí con `BASE_URL` para que el cliente no necesite Astro.
+// REACT+VITE: sería `import.meta.glob` + parseo del frontmatter en build.
+const secuencia: FichaNav[] = (await getPorColeccion(coleccion))
+  .sort((a, b) => a.titulo.localeCompare(b.titulo, "es"))
+  .map((entrada) => ({
+    slug: entrada.slug,
+    titulo: entrada.titulo,
+    url: urlEntrada(entrada.coleccion, entrada.slug, base),
+  }));
+
+const iniciales = vecinas(secuencia, slug);
+
+// ASTRO: `set:html` vierte el JSON en un `<script type="application/json">`;
+// escapar `<` y `&` evita que el contenido se interprete como HTML.
+// REACT+VITE: la secuencia pasaría como prop serializada al componente cliente.
+const datos = JSON.stringify(secuencia)
+  .replace(/</g, "\\u003c")
+  .replace(/&/g, "\\u0026");
+
+const lados = [
+  ["anterior", iniciales.anterior, "←", "Anterior"],
+  ["siguiente", iniciales.siguiente, "→", "Siguiente"],
+] as const;
+---
+
+<wiki-navegacion slug={slug}>
+  {(iniciales.anterior || iniciales.siguiente) && (
+    <nav
+      aria-label="Navegación entre fichas"
+      class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-10"
+      data-nav
+    >
+      {lados.map(([direccion, destino, flecha, etiqueta]) =>
+        destino ? (
+          <a
+            href={destino.url}
+            data-direccion={direccion}
+            aria-label={`${etiqueta}: ${destino.titulo}`}
+            class:list={[
+              "inline-flex items-center gap-3 min-h-11 px-4 py-3 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] no-underline text-[var(--color-text)] transition-colors hover:border-[var(--color-accent)]/60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus)]",
+              direccion === "siguiente" &&
+                "sm:justify-end sm:text-right sm:col-start-2",
+            ]}
+          >
+            {direccion === "anterior" && (
+              <span
+                aria-hidden="true"
+                class="font-mono text-lg leading-none text-[var(--color-accent-text)]"
+              >
+                {flecha}
+              </span>
+            )}
+            <span class="flex flex-col min-w-0">
+              <span class="text-[11px] font-mono uppercase tracking-wider text-[var(--color-muted-text)]">
+                {etiqueta}
+              </span>
+              <span
+                class="text-sm sm:text-base font-medium truncate"
+                data-titulo
+              >
+                {destino.titulo}
+              </span>
+            </span>
+            {direccion === "siguiente" && (
+              <span
+                aria-hidden="true"
+                class="font-mono text-lg leading-none text-[var(--color-accent-text)]"
+              >
+                {flecha}
+              </span>
+            )}
+          </a>
+        ) : null,
+      )}
+    </nav>
+  )}
+  <script type="application/json" data-secuencia set:html={datos}></script>
+</wiki-navegacion>
+
+<style is:global>
+  /* ASTRO: estilo global porque la isla pone `hidden` en elementos ya
+     renderizados; una clase de Tailwind podría ganarle por orden de cascada.
+     REACT+VITE: sería un render condicional con `className`. */
+  wiki-navegacion [hidden] {
+    display: none !important;
+  }
+</style>
+
+<script>
+  // ASTRO: el script de componente se empaqueta una sola vez por página aunque
+  // lo importen varias islas; aquí solo registra el custom element.
+  // REACT+VITE: cada isla llamaría a `hydrateRoot` sobre su contenedor.
+  import { registrarIslas } from "../../scripts/islas.ts";
+
+  registrarIslas();
+</script>

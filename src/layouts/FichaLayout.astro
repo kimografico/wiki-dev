@@ -9,8 +9,10 @@ import EnlaceEtiqueta from "../components/EnlaceEtiqueta.astro";
 import Relacionados from "../components/Relacionados.astro";
 import MencionadoEn from "../components/MencionadoEn.astro";
 import BotonAprendida from "../features/preferencias/BotonAprendida.astro";
+import NavegacionFicha from "../features/ficha/NavegacionFicha.astro";
 import { getComparativasDe, urlEntrada } from "../lib/content/entradas.ts";
 import { CATALOGO } from "../lib/content/catalogo.ts";
+import type { Coleccion } from "../lib/content/esquemas.ts";
 
 interface Props {
   titulo: string;
@@ -18,7 +20,7 @@ interface Props {
   categoria: string;
   tags: string[];
   slug: string;
-  coleccion: string;
+  coleccion: Coleccion;
 }
 
 const { titulo, resumen, categoria, tags, slug, coleccion } = Astro.props;
@@ -152,6 +154,9 @@ const colorColeccion =
     <article class="prose prose-wiki contenido-ancho mb-12 border border-[var(--color-border)] bg-[var(--color-surface)]">
       <slot />
     </article>
+
+    <!-- Par de botones al pie del contenido, antes de Relacionados (RF-14). -->
+    <NavegacionFicha slug={slug} coleccion={coleccion} />
 
     <!-- Bloques generados al pie de la ficha: 2 columnas (Relacionados / Mencionado en) -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 pt-8 border-t border-[var(--color-border)]">
