@@ -5,9 +5,9 @@
 
 ## Por qué existe este documento
 
-`specs/spec.md` describe en RF-08 y §10 una búsqueda de texto completo con Pagefind: índice generado tras el build sobre el HTML, alias indexables, filtros y una isla que usa la API JavaScript para poder ocultar aprendidas. La dependencia `pagefind` quedó en `package.json` (§8.1) y el paso de indexado está comentado en `.github/workflows/deploy.yml` (líneas 30–32). Nunca se instrumentó el HTML con `data-pagefind-*`.
+El registro histórico de construcción (`specs/spec-construccion.md`, RF-08 y §10) describió una búsqueda de texto completo con Pagefind: índice generado tras el build sobre el HTML, alias indexables, filtros y una isla que usa la API JavaScript para poder ocultar aprendidas. La dependencia `pagefind` quedó en `package.json` (§8.1) y el paso de indexado está comentado en `.github/workflows/deploy.yml` (líneas 30–32). Nunca se instrumentó el HTML con `data-pagefind-*`.
 
-Tras la adopción de Astro + islas nativas, el buscador vigente es `buscador.json`: un endpoint prerenderizado de ~15 KB que la isla pide con `fetch` y filtra en cliente. Este documento congela la comparación para que, si el tema vuelve a surgir, no haya que reconstruir el análisis. **No modifica la spec ni reabre un trabajo**: deja constancia de una opción tecnológica en espera.
+Tras la adopción de Astro + islas nativas, el buscador vigente es `buscador.json`: un endpoint prerenderizado de ~15 KB que la isla pide con `fetch` y filtra en cliente. Este documento congela la comparación para que, si el tema vuelve a surgir, no haya que reconstruir el análisis. **No modifica las normas vigentes ni reabre un trabajo**: deja constancia de una opción tecnológica en espera.
 
 ## Qué aportaría Pagefind
 
@@ -41,7 +41,7 @@ Tras la adopción de Astro + islas nativas, el buscador vigente es `buscador.jso
 2. Instrumentar las plantillas: `data-pagefind-body` en el `<article>` de las fichas, alias como texto oculto y `data-pagefind-filter` para colección/categoría/etiquetas. Ojo: si aparece `data-pagefind-body`, las páginas sin ese atributo dejan de indexarse.
 3. Adaptar la isla a la API asíncrona: importar `${base}pagefind/pagefind.js`, ajustar `baseUrl`/`basePath` para `/wiki-dev/`, usar `debouncedSearch` + `result.data()`, `preload` y derivar el slug de la URL para ocultar aprendidas.
 4. Verificar el caso «zustnad» en el playground antes de darlo por bueno.
-5. Solo entonces revisar RF-08, §8.1, §10 y `specs/ANALISIS-ASTRO-VS-REACT.md` para reflejar la decisión.
+5. Solo entonces revisar `specs/MANUAL.md`, `package.json`, el workflow de deploy y `specs/ANALISIS-ASTRO-VS-REACT.md` para reflejar la decisión.
 
 **Criterio de reactivación:** tiene sentido si el corpus crece o si se quiere buscar dentro del contenido; no tiene sentido si se mantiene una búsqueda superficial sobre unas pocas decenas de entradas.
 

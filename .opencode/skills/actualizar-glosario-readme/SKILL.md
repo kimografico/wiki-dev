@@ -11,4 +11,4 @@ description: Mantiene el glosario del proyecto en el README cuando un cambio int
 2. Añade definición breve y "para qué se usa aquí" (mismo formato que las entradas de la wiki: definición + uso).
 3. Mantén el orden alfabético y el formato existente.
 
-Los términos semilla están en `specs/spec.md` §14.
+La lista vigente es el propio glosario del `README.md`: léelo y amplíalo allí, sin acudir a documentos históricos.

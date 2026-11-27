@@ -19,10 +19,12 @@ Revisas entradas frente al esquema, los enlaces, las secciones y el test de la d
 ## Comprobaciones
 
 - Ejecuta `npm run validate`: esquema, slugs únicos globalmente, referencias, enlaces internos, secciones obligatorias, ausencia de `## Relacionados`, alias únicos y etiquetas del catálogo.
-- Verifica la plantilla y las secciones obligatorias del tipo (`specs/spec.md` §7.4).
+- Verifica la plantilla y las secciones obligatorias del tipo (`specs/MANUAL.md`).
 - **Test de la duda:** una persona con esa duda, leyendo solo la entrada y sin ver la pregunta, ¿la resuelve? ¿Queda alguna parte sin tocar?
 - Prohibidos: formato pregunta/respuesta, alusiones a la conversación, `## Relacionados` escrito a mano.
 - Enlaces y referencias apuntan a slugs existentes.
+- Extensión: glosario ≥ 150 palabras, fichas ≥ 250 (objetivo 250–600); sin avisos nuevos de `validate`.
+- `Alternativas` solo si hay alternativa real; conceptos compuestos separados o en ficha paraguas con un `##` por concepto.
 - Fuentes presentes y datos sensibles al tiempo verificados.
 
 ## Salida

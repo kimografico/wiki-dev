@@ -1,7 +1,7 @@
 # SDD — Agentes y skills
 
 > **Estado:** Borrador v0.3 · **Fecha:** 2026-10-12
-> **Documentos relacionados:** [`spec.md`](./spec.md) · [`design-pattern.md`](./design-pattern.md)
+> **Documentos relacionados:** [`MANUAL.md`](./MANUAL.md) (normas vigentes) · [`design-pattern.md`](./design-pattern.md) · [`spec-construccion.md`](./spec-construccion.md) (histórico)
 
 Especificación de los agentes y skills de **opencode** que alimentan y mantienen la wiki. Ubicación: `.opencode/agent/`, `.opencode/skills/` y `.opencode/commands/`.
 
@@ -61,7 +61,7 @@ Fuera de alcance: despliegue automático, publicación, commits o pushes sin pet
 - **Entradas finales:** todo lo generado o modificado es definitivo. No existe estado editorial ni fechas en el modelo; el autor lo revisa en el `git diff`.
 - **La duda no se registra en el contenido.** Orienta la redacción, pero no queda guardada en la entrada.
 - **Slugs y alias únicos en toda la wiki**, no solo dentro de una colección.
-- **Menciones automáticas:** el sistema enlaza solo las menciones a otras entradas (RF-07 de `spec.md`). El agente no las enlaza a mano, pero sí escribe el nombre exacto (título o alias) de la entrada mencionada para que se enlacen.
+- **Menciones automáticas:** el sistema enlaza solo las menciones a otras entradas (regla de `MANUAL.md`). El agente no las enlaza a mano, pero sí escribe el nombre exacto (título o alias) de la entrada mencionada para que se enlacen.
 - **Sin tests durante el flujo.** Los agentes de contenido ejecutan `npm run validate`, nunca la suite de tests.
 
 ## 3. Principio rector: resolver sin responder
@@ -134,7 +134,7 @@ El agente `builder` de opencode no forma parte de esta especificación: lo usa e
 
 ### 4.4 `wiki-dev`
 
-- **Misión:** implementar tareas de `spec.md` (fases F0–F5) y cambios de código.
+- **Misión:** mantener el código según `MANUAL.md` y `design-pattern.md`, y aplicar cambios de código.
 - **Skills:** `equivalencia-react`, `evolucionar-esquema`, `actualizar-glosario-readme`, `diseno-ui`, `ponytail`.
 - **Permisos:**
   - Editar: `src/**`, `scripts/**`, `README.md`, `specs/**` (incluidas las plantillas) y la configuración del proyecto (`astro.config.*`, `tsconfig.json`, `package.json`, configuración de ESLint, Prettier y Vitest, `.gitignore`).
@@ -241,7 +241,7 @@ specs/plantillas/               # editable por wiki-dev; leída por anadir-entra
   2. Leer la plantilla correspondiente de `specs/plantillas/`.
   3. Generar el slug (kebab-case, sin acentos, singular, nombre canónico) y comprobar que **no existe** como slug ni como alias en ninguna colección.
   4. Rellenar el frontmatter: campos comunes (`titulo`, `resumen`, `fecha` de alta en `YYYY-MM-DD`, `categoria`, `tags` del catálogo, `alias` si procede) y los de la colección (`npm` en paquetes, etc.). Si la entrada la crea el bot, la fecha la inyecta el script.
-  5. Crear las secciones obligatorias del tipo (`spec.md` §7.4), **sin** `## Relacionados`.
+  5. Crear las secciones obligatorias del tipo (`MANUAL.md`), **sin** `## Relacionados` y sin `Alternativas` si no hay una alternativa real.
   6. Usar `autoenlace: false` solo si el título es una palabra común que no debe enlazarse sola.
 - **Salida:** archivo en `content/<coleccion>/<slug>.md`.
 
@@ -266,7 +266,7 @@ specs/plantillas/               # editable por wiki-dev; leída por anadir-entra
 
 ### 5.6 `validar-contenido`
 - **Objetivo:** garantizar la calidad objetiva.
-- **Comprobaciones:** `npm run validate` (esquema, slugs únicos globalmente, referencias, enlaces, secciones obligatorias, ausencia de `## Relacionados`, alias únicos, etiquetas del catálogo) + checklist de estilo (§7).
+- **Comprobaciones:** `npm run validate` (esquema, slugs únicos globalmente, referencias, enlaces, secciones obligatorias, ausencia de `## Relacionados`, alias únicos, etiquetas del catálogo y avisos de extensión) + checklist de estilo (§7).
 - **Salida:** informe de revisión (§6.2).
 
 ### 5.7 `equivalencia-react`
@@ -289,7 +289,7 @@ specs/plantillas/               # editable por wiki-dev; leída por anadir-entra
 - **Pasos:** detectar términos nuevos en el cambio de código → añadir definición breve y "para qué se usa aquí" → mantener orden alfabético y formato.
 
 ### 5.10 `escribir-tests`
-- **Objetivo:** cerrar la cobertura de la lógica TypeScript al final de una fase o cambio, **solo a petición del autor** (§11 de `spec.md`).
+- **Objetivo:** cerrar la cobertura de la lógica TypeScript al final de un cambio, **solo a petición del autor** (`MANUAL.md`).
 - **Ubicación:** tests **colocados** junto al módulo, `*.test.ts` bajo `src/**` y `scripts/**` (lo que impone `vitest.config.ts`); no hay carpeta `tests/` aparte.
 - **Patrones de prueba:** `vi.hoisted` + `vi.mock("astro:content", …)` para la capa de contenido; directorio temporal (`mkdtemp`) para `indice-menciones.ts` y `validate-content.ts`; `indice` construido a mano + árbol mdast para `remark-menciones.ts`; `vi.stubGlobal` para `localStorage`/`matchMedia`/`document` en `tema.ts`.
 - **Salida:** tests verdes y `npm run test:coverage` con cobertura >= 90 % obligatoria (objetivo de calidad 95 %) (líneas, funciones, ramas y sentencias) sobre `src/lib/**` y `scripts/**`.
@@ -301,8 +301,8 @@ Modo "senior perezoso" para el **código** del proyecto. Origen: `DietrichGebert
 - **Ámbito:** solo el código (`wiki-dev`). Los agentes de contenido tienen denegadas las skills `ponytail*` y no lo usan.
 - **Always-on:** `wiki-dev` lleva las reglas de modo perezoso en su archivo; niveles `lite/full/ultra` vía `/ponytail`, estándar `full`.
 - **Guarda SDD (regla de oro):** un **requisito especificado no se cuestiona**. La escalera de ponytail (YAGNI → reutilizar → stdlib → nativo → dependencia instalada → una línea → mínimo) se aplica **después** de satisfacer el requisito, para elegir la implementación más pequeña que lo cumple. `ultra` solo cuestiona opciones de implementación, nunca requisitos.
-- **Prohibido recortar:** comentarios de equivalencia `ASTRO:/REACT+VITE` (RF-12), accesibilidad AA (RNF-03), dependencias ya justificadas (spec §8.1), código didáctico deliberado y las guardas de seguridad/errores.
-- **Tests:** la spec §11 manda sobre el auto-cheque de ponytail: se cierran a petición del autor; el auto-cheque se cubre con `assert` o se anota para el cierre.
+- **Prohibido recortar:** comentarios de equivalencia `ASTRO:/REACT+VITE`, accesibilidad AA, dependencias ya justificadas en el repositorio, código didáctico deliberado y las guardas de seguridad/errores.
+- **Tests:** `MANUAL.md` manda sobre el auto-cheque de ponytail: se cierran a petición del autor; el auto-cheque se cubre con `assert` o se anota para el cierre.
 - **`/ponytail-review` y `/ponytail-audit`** revisan diffs y repo por sobre-ingeniería/calidad; su «lean» se aplica solo a la implementación no especificada.
 - **`shortcut:`** en un comentario: atajo aceptado con límite conocido y criterio de re-evaluación; `ponytail-debt` los inventaría.
 
@@ -357,6 +357,9 @@ Sin commit; revisar con git diff
 - [ ] Frontmatter completo y válido; categoría y etiquetas del catálogo.
 - [ ] Colección correcta (paquete frente a tecnología según el criterio de §5.2).
 - [ ] Secciones obligatorias del tipo presentes; sin `## Relacionados`.
+- [ ] Extensión: glosario 150–250 palabras; fichas 250–600 (mínimo 250; 600 es objetivo, no tope).
+- [ ] `Alternativas` solo si hay una alternativa real; si no, el apartado se omite.
+- [ ] Conceptos compuestos: entradas separadas o ficha paraguas con un `##` por concepto.
 - [ ] Resumen ≤ 200 caracteres y autosuficiente.
 - [ ] La confusión de la duda está tratada (sección de contraste, ejemplo o analogía).
 - [ ] No hay formato pregunta/respuesta ni alusiones a la conversación.

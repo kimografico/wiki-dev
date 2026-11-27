@@ -19,5 +19,3 @@ npm: ""
 ## Tipos de prueba
 
 ## Ejemplo
-
-## Alternativas

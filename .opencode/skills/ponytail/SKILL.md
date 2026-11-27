@@ -20,12 +20,12 @@ Active for the whole session until the user says "stop ponytail" or "normal mode
 
 ## Regla del proyecto: la SDD manda sobre la pereza
 
-Este proyecto es Spec-Driven: `specs/spec.md` y `specs/design-pattern.md` son **vinculantes**.
+En este proyecto son **vinculantes** `specs/MANUAL.md` y `specs/design-pattern.md`.
 
-- **Un requisito especificado no se cuestiona.** Si existe en la spec (un RF- o un RNF-), se implementa completo aunque parezca innecesario o sobre-ingeniería. La escalera de esta skill se aplica **después** de satisfacer el requisito, para elegir la implementación más pequeña que lo cumpla.
-- **Prohibido recortar:** comentarios de equivalencia `ASTRO: … / REACT+VITE` (RF-12), accesibilidad WCAG AA (RNF-03), dependencias ya justificadas en la spec §8.1, ni el código didáctico deliberado.
-- **Tests y cobertura:** la spec §11 manda: los tests se escriben o ajustan **al cierre, a petición del autor**, no tras cada cambio (cobertura ≥ 90 %, RNF-10). El auto-cheque de esta skill se cubre con un `assert` o se deja anotado para el cierre.
-- **`ultra`** puede cuestionar **opciones de implementación**, nunca un requisito de la spec.
+- **Una norma vigente no se cuestiona.** Si la pide `MANUAL.md` o `design-pattern.md`, se implementa completa aunque parezca innecesaria o sobre-ingeniería. La escalera de esta skill se aplica **después** de satisfacer la norma, para elegir la implementación más pequeña que la cumpla.
+- **Prohibido recortar:** comentarios de equivalencia `ASTRO: … / REACT+VITE`, accesibilidad WCAG AA, dependencias ya justificadas en el repositorio, ni el código didáctico deliberado.
+- **Tests y cobertura:** `MANUAL.md` manda: los tests se escriben o ajustan **al cierre, a petición del autor**, no tras cada cambio (cobertura ≥ 90 %). El auto-cheque de esta skill se cubre con un `assert` o se deja anotado para el cierre.
+- **`ultra`** puede cuestionar **opciones de implementación**, nunca una norma vigente.
 
 ## Before you write
 
@@ -38,7 +38,7 @@ Take the first option that fully works:
 1. Does it need to exist? Skip features, options and flexibility nobody asked for, and name them in one line. A vague request ("build me X") gets the smallest version that does the core job. Un requisito especificado SÍ existe: no se cuestiona (ver guarda arriba).
 2. Already in this codebase (a helper, component, service, pattern)? Use it the way the surrounding code does.
 3. Standard library or a platform feature? Use it, unless the project has its own. A house component beats a native widget.
-4. An installed dependency? Use it. Never add a dependency for a few lines, and **sin dependencias nuevas sin justificarlas en el commit** (spec §8).
+4. An installed dependency? Use it. Never add a dependency for a few lines, and **sin dependencias nuevas sin justificarlas en el commit** (`MANUAL.md`).
 5. Can it be one line a reader gets at a glance? One line.
 6. Otherwise: the minimum code that works.
 
@@ -49,7 +49,7 @@ Take the first option that fully works:
 - Bug fix: before you edit, grep every caller of the function you touch, then fix the root cause once in the shared code.
 - Code you move or merge keeps its error handling and validation.
 - Between options of equal size, take the one that is correct on edge cases.
-- Lazy code without its check is unfinished: new non-trivial logic (a branch, a loop, a parser, money or security, or a whole new script or app) leaves one small test or an assert-based self-check. Trivial changes need none. En este proyecto, coordínalo con la regla de cierre de la spec §11.
+- Lazy code without its check is unfinished: new non-trivial logic (a branch, a loop, a parser, money or security, or a whole new script or app) leaves one small test or an assert-based self-check. Trivial changes need none. En este proyecto, coordínalo con la regla de cierre de `MANUAL.md`.
 - A shortcut with a known limit gets a code comment in this form: `shortcut: <the limit>, <when to upgrade>`.
 
 Never cut: validation at trust boundaries, error handling that prevents data loss, security, accessibility, the calibration real hardware needs, anything the user asked for.
@@ -60,4 +60,4 @@ Never cut: validation at trust boundaries, error handling that prevents data los
 |-------|----------|
 | **lite** | Build what was asked. Name the smaller option in one line and let the user pick. |
 | **full** | The rules above. Default. |
-| **ultra** | Also question the request: before building, push back on any part the need does not justify. Nunca sobre requisitos de la spec. |
+| **ultra** | Also question the request: before building, push back on any part the need does not justify. Nunca sobre normas vigentes. |

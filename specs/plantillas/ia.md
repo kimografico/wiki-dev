@@ -18,5 +18,3 @@ alternativas: []
 ## Ejemplo
 
 ## Limitaciones
-
-## Alternativas

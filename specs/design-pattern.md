@@ -5,7 +5,7 @@
 
 Este documento recoge los patrones de diseño y arquitectura elegidos, **por qué** se eligieron para este proyecto y **cómo** se aplican. Cada patrón incluye su equivalencia en React + Vite, porque uno de los objetivos del proyecto es aprender conceptos extrapolables a otros frameworks.
 
-Documentos relacionados: [`spec.md`](./spec.md) · [`agentes-y-skills.md`](./agentes-y-skills.md)
+Documentos relacionados: [`MANUAL.md`](./MANUAL.md) (normas vigentes) · [`agentes-y-skills.md`](./agentes-y-skills.md) · [`spec-construccion.md`](./spec-construccion.md) (histórico)
 
 ---
 

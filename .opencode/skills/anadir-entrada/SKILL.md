@@ -20,8 +20,9 @@ Crea un archivo válido a partir de la plantilla del tipo.
 2. **Lee la plantilla** correspondiente de `specs/plantillas/`.
 3. **Genera el slug**: kebab-case, sin acentos, singular, nombre canónico (`zod`, `static-site-generation`). Comprueba que **no existe** como slug ni como alias en ninguna colección.
 4. **Rellena el frontmatter.** No copies los enums: léelos de `src/lib/content/esquemas.ts` (las colecciones también están en `src/lib/content/catalogo.ts`). Campos comunes: `titulo`, `resumen` (≤ 200), `fecha` de alta (`YYYY-MM-DD`; si la crea el bot, la inyecta el script), `categoria`, `tags`, `alias` si procede; y los de la colección (`npm`, `web`, `terminoEn`, `alternativas`, `entidades`, `contexto`, `familia`).
-5. **Crea las secciones obligatorias** del tipo (`specs/spec.md` §7.4), **sin** `## Relacionados`.
-6. Usa `autoenlace: false` solo si el título es una palabra común que no debe enlazarse sola.
+5. **Crea las secciones obligatorias** del tipo (`specs/MANUAL.md`), **sin** `## Relacionados`. `Alternativas` es condicional: omítela si no hay una alternativa real.
+6. **Extensión:** glosario 150–250 palabras; el resto 250–600 (mínimo 250; 600 es objetivo, no tope). Si la petición mezcla dos conceptos con entidad propia, haz dos entradas o una ficha paraguas con un `##` por concepto.
+7. Usa `autoenlace: false` solo si el título es una palabra común que no debe enlazarse sola.
 
 ## Salida
 

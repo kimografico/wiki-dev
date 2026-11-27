@@ -123,7 +123,7 @@ export const esquemasPorColeccion = {
   testing: esquemaTesting,
 } as const;
 
-/** Secciones `##` obligatorias del cuerpo por tipo (§7.4). */
+/** Secciones `##` obligatorias del cuerpo por tipo (MANUAL.md). */
 export const SECCIONES_OBLIGATORIAS: Record<Coleccion, readonly string[]> = {
   glosario: ["Definición", "Por qué importa", "Ejemplo", "Se confunde con"],
   tecnologias: [
@@ -131,7 +131,6 @@ export const SECCIONES_OBLIGATORIAS: Record<Coleccion, readonly string[]> = {
     "Para qué sirve",
     "Cuándo usarla",
     "Cuándo no",
-    "Alternativas",
     "Ejemplo",
   ],
   paquetes: [
@@ -139,7 +138,6 @@ export const SECCIONES_OBLIGATORIAS: Record<Coleccion, readonly string[]> = {
     "Para qué sirve",
     "Cuándo usarlo",
     "Cuándo no",
-    "Alternativas",
     "Ejemplo",
   ],
   comparativas: [
@@ -149,14 +147,8 @@ export const SECCIONES_OBLIGATORIAS: Record<Coleccion, readonly string[]> = {
     "Ejemplos",
   ],
   patrones: ["Problema", "Solución", "Estructura", "Ejemplo", "Cuándo usarlo"],
-  ia: ["Qué es", "Para qué sirve", "Ejemplo", "Limitaciones", "Alternativas"],
-  testing: [
-    "Qué es",
-    "Para qué sirve",
-    "Tipos de prueba",
-    "Ejemplo",
-    "Alternativas",
-  ],
+  ia: ["Qué es", "Para qué sirve", "Ejemplo", "Limitaciones"],
+  testing: ["Qué es", "Para qué sirve", "Tipos de prueba", "Ejemplo"],
 };
 
 /**
@@ -173,5 +165,5 @@ export const CAMPOS_RELACION: Record<Coleccion, readonly string[]> = {
   testing: ["relacionados", "alternativas"],
 };
 
-/** Nombres de sección reservados: los genera el layout, no se escriben (§7.4). */
+/** Nombres de sección reservados: los genera el layout, no se escriben (MANUAL.md). */
 export const SECCIONES_GENERADAS = ["Relacionados", "Mencionado en"] as const;

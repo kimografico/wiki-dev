@@ -22,4 +22,4 @@ El README de esta wiki con comandos, estructura y enlace a `specs/`.
 
 ## Se confunde con
 
-No es la spec: el README resume y orienta; la spec fija decisiones obligatorias.
+No es el manual de mantenimiento: el README resume y orienta; el manual fija las normas vigentes.

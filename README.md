@@ -7,10 +7,11 @@ crear entradas.
 
 - No hay backend ni base de datos: el sitio se genera en build (SSG) y se sirve desde
   GitHub Pages.
-- Una entrada nueva es un archivo `content/<coleccion>/<slug>.md`. El esquema (Zod) y el
-  build garantizan su calidad.
-- El proyecto se desarrolla guiado por especificación (SDD): la fuente de verdad está en
-  [`specs/`](./specs).
+- Una entrada nueva es un archivo `content/<coleccion>/<slug>.md`. El esquema (Zod) valida
+  su estructura y `npm run validate` avisa de la extensión; la calidad del texto se revisa
+  antes de publicar según [`specs/MANUAL.md`](./specs/MANUAL.md).
+- Las normas vigentes están en [`specs/MANUAL.md`](./specs/MANUAL.md); `specs/` conserva
+  también el registro histórico de la construcción.
 - Sitio publicado: <https://kimografico.github.io/wiki-dev/>
 
 ## Flujo de trabajo
@@ -82,7 +83,7 @@ worker/             webhook de Telegram
 .opencode/          agentes, skills y comandos
 ```
 
-Detalle completo en [`specs/spec.md` §13](./specs/spec.md).
+Normas de mantenimiento en [`specs/MANUAL.md`](./specs/MANUAL.md); detalle histórico de la estructura en [`specs/spec-construccion.md` §13](./specs/spec-construccion.md).
 
 ## Tests y cobertura
 

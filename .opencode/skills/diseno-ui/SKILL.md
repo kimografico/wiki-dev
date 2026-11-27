@@ -14,7 +14,7 @@ La wiki existe para que un junior entienda algo rápido. Por eso el orden de pri
 ## Proceso
 
 ### 0. Contexto
-Lee, si existen: `AGENTS.md`, `specs/spec.md`, `src/styles/tokens.css` y cualquier documento de dirección visual (`docs/design/`). Respeta lo que ya esté decidido: la palabra del autor manda sobre los valores por defecto de esta skill.
+Lee, si existen: `AGENTS.md`, `specs/MANUAL.md`, `src/styles/tokens.css` y cualquier documento de dirección visual (`docs/design/`). Respeta lo que ya esté decidido: la palabra del autor manda sobre los valores por defecto de esta skill.
 
 ### 1. Identidad visual (ya decidida: "Studio Edition")
 La wiki comparte identidad con el portfolio del autor (kimografico.com): grises piedra fríos, bermellón como acento y tinta profunda, con DM Sans y JetBrains Mono. **No propongas otra paleta ni otras familias.** Los valores y los nombres de variable están en `assets/tokens.css` (copiar a `src/styles/tokens.css`).

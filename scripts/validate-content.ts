@@ -3,7 +3,8 @@
 // Falla si hay: esquema inválido, slug duplicado (global), referencias a
 // entradas inexistentes, enlaces internos rotos, secciones obligatorias
 // ausentes, `## Relacionados`/`## Mencionado en` escritos en el cuerpo, alias en
-// conflicto o etiquetas fuera del catálogo.
+// conflicto o etiquetas fuera del catálogo. Avisa, sin fallar, de las entradas
+// por debajo del mínimo de palabras (MANUAL.md).
 //
 // Reutiliza los esquemas de `src/lib/content/esquemas.ts` (única fuente de
 // verdad) y lee el frontmatter con `gray-matter`, sin depender de Astro.
@@ -22,6 +23,22 @@ import {
   esquemasPorColeccion,
   type Coleccion,
 } from "../src/lib/content/esquemas.ts";
+
+/** Objetivo mínimo de palabras del cuerpo por colección (MANUAL.md). */
+const MIN_PALABRAS: Partial<Record<Coleccion, number>> = {
+  glosario: 150,
+  tecnologias: 250,
+  paquetes: 250,
+  comparativas: 250,
+  patrones: 250,
+  ia: 250,
+  testing: 250,
+};
+
+/** Palabras del cuerpo Markdown: cuenta también el código, no el frontmatter. */
+function contarPalabras(texto: string): number {
+  return (texto.match(/[\p{L}\p{N}]+(?:[-_][\p{L}\p{N}]+)*/gu) ?? []).length;
+}
 
 interface EntradaLeida {
   ruta: string;
@@ -61,6 +78,8 @@ function enlacesInternos(cuerpo: string): string[] {
 
 export interface ResultadoValidacion {
   errores: string[];
+  /** Entradas por debajo del mínimo de palabras: informan, no fallan. */
+  avisos: string[];
   entradas: EntradaLeida[];
 }
 
@@ -69,6 +88,7 @@ export async function validarContenido(
   raiz = "content",
 ): Promise<ResultadoValidacion> {
   const errores: string[] = [];
+  const avisos: string[] = [];
   const entradas: EntradaLeida[] = [];
 
   for (const coleccion of COLECCIONES) {
@@ -203,9 +223,17 @@ export async function validarContenido(
         );
       }
     }
+
+    const minimo = MIN_PALABRAS[entrada.coleccion];
+    if (minimo !== undefined) {
+      const palabras = contarPalabras(entrada.cuerpo);
+      if (palabras < minimo) {
+        avisos.push(`${entrada.ruta}: ${palabras} palabras; mínimo ${minimo}`);
+      }
+    }
   }
 
-  return { errores, entradas };
+  return { errores, avisos, entradas };
 }
 
 const esEjecucionDirecta =
@@ -214,11 +242,18 @@ const esEjecucionDirecta =
     new URL(`file://${process.argv[1].replace(/\\/g, "/")}`).href;
 
 if (esEjecucionDirecta) {
-  const { errores } = await validarContenido();
+  const { errores, avisos } = await validarContenido();
   if (errores.length > 0) {
     console.error(`Validación de contenido: ${errores.length} problema(s)\n`);
     for (const error of errores) console.error(`  ✗ ${error}`);
     process.exit(1);
   }
   console.log("Validación de contenido: todo correcto.");
+  if (avisos.length > 0) {
+    console.log(
+      `Avisos de profundidad: ${avisos.length} entrada(s) por debajo del mínimo (glosario 150, fichas 250). No bloquean la publicación.`,
+    );
+    for (const aviso of avisos.slice(0, 10)) console.log(`  · ${aviso}`);
+    if (avisos.length > 10) console.log(`  · ... y ${avisos.length - 10} más`);
+  }
 }

@@ -1,9 +1,14 @@
 # SDD — Wiki personal de programación
 
-> **Estado:** Borrador v0.4 · **Fecha:** 2026-10-12
-> **Documentos relacionados:** [`design-pattern.md`](./design-pattern.md) · [`agentes-y-skills.md`](./agentes-y-skills.md)
+> **Estado:** Cerrado · **Fecha original:** 2026-10-12 · **Archivado:** 2026-11-27
+> **Documentos vigentes:** [`MANUAL.md`](./MANUAL.md) · [`design-pattern.md`](./design-pattern.md) · [`agentes-y-skills.md`](./agentes-y-skills.md)
 
-Este documento es la especificación del proyecto (Spec-Driven Development): define **qué** se construye y **cómo se sabe que está bien**. Los patrones de arquitectura están en `design-pattern.md`; los agentes y skills que alimentan la wiki están en `agentes-y-skills.md`.
+Este documento es el **registro histórico de construcción** (Spec-Driven Development): describe qué se decidió construir y con qué criterios. La app ya está creada, así que **ya no es la fuente de verdad para mantenerla**: las normas vigentes están en [`MANUAL.md`](./MANUAL.md). Se conserva como log de decisiones; los requisitos RF/RNF y los números de sección se mantienen para poder rastrear el origen de cada pieza del proyecto.
+
+> **Correcciones al registro (2026-11-27):**
+> - §2 «metadatos de fecha» figuraba como no objetivo, pero `fecha` existe como campo opcional en el esquema (§7.1) y el bot la inyecta al crear entradas.
+> - RF-08, §10, §11 y §12 describen la búsqueda con Pagefind como implementada; en la práctica sigue pendiente (ver [`PAGEFIND-EN-ESPERA.md`](./PAGEFIND-EN-ESPERA.md)).
+> - §7.4 y las plantillas ya no exigen `Alternativas` cuando no hay una alternativa real: la norma vigente está en `MANUAL.md`.
 
 > **En una frase:** una wiki **estática** (HTML generado en build, sin servidor ni base de datos) cuyo contenido son archivos Markdown. **La página no tiene ninguna funcionalidad para crear o editar entradas**: las entradas se añaden **por código** (archivos `.md` en `content/`), normalmente mediante agentes. El código del proyecto solo se ocupa de presentar, enlazar y buscar ese contenido.
 
@@ -37,7 +42,7 @@ El proyecto es también una muestra de trabajo y un vehículo de aprendizaje: el
 - Comentarios de lectores o contenido colaborativo.
 - Contadores, estadísticas o sincronización del progreso de lectura.
 - Clasificación del contenido por niveles.
-- Estados editoriales y metadatos de fecha en las entradas.
+- Estados editoriales y metadatos de fecha en las entradas. **Corrección:** no hay estados editoriales, pero `fecha` de alta sí existe como campo opcional (§7.1).
 - MDX o componentes dentro del contenido: las entradas son Markdown plano.
 - Internacionalización (contenido solo en español; la estructura no debe impedirla).
 
@@ -118,7 +123,7 @@ Si el texto de una entrada menciona algo que tiene su propia entrada, esa menci�
 - Los enlaces respetan `base` (§9).
 - Las menciones a conceptos sin entrada no generan nada; quedan como pendientes en el informe del agente.
 
-### RF-08 · Búsqueda (M)
+### RF-08 · Búsqueda (M) — pendiente de implementar
 - Búsqueda de texto completo estática, sin backend.
 - Coincide por título, alias (p. ej. "SSG" ↔ "Static Site Generation"), resumen y cuerpo.
 - Filtros por tipo (colección), categoría y etiqueta.
@@ -244,6 +249,8 @@ El validador comprueba que existan los encabezados `##` obligatorios; se permite
 | IA | Qué es · Para qué sirve · Ejemplo · Limitaciones · Alternativas |
 | Testing | Qué es · Para qué sirve · Tipos de prueba · Ejemplo · Alternativas |
 
+> **Corrección (2026-11-27):** `Alternativas` dejó de ser obligatoria en tecnologías, paquetes, IA y testing. Si no hay una alternativa real, se omite el apartado. Norma vigente: [`MANUAL.md`](./MANUAL.md).
+
 Las plantillas con el frontmatter y las secciones vacías viven en `specs/plantillas/` (una por tipo), y las lee la skill `anadir-entrada`.
 
 ### 7.5 Etiquetas (catálogo controlado)
@@ -340,7 +347,7 @@ GitHub Pages sirve un sitio de proyecto en `https://<usuario>.github.io/<repo>/`
 1. `astro check` (tipos y esquemas)
 2. `eslint` y `prettier --check`
 3. `npm run validate` (RF-10)
-4. `astro build` + indexado Pagefind
+4. `astro build` + indexado Pagefind **(previsto; hoy no se ejecuta, ver `PAGEFIND-EN-ESPERA.md`)**
 
 **A demanda (fuera de CI)**
 - Lighthouse en Chrome DevTools sobre páginas representativas: sirve para comprobar RNF-01 cuando el autor quiera, sin añadir una dependencia ni un paso al pipeline.

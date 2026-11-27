@@ -18,7 +18,7 @@ tested and fixed later. This is a report the user asked for, so give it in full.
 
 ## Regla del proyecto: la SDD manda
 
-Este proyecto es Spec-Driven (`specs/spec.md` y `specs/design-pattern.md` son vinculantes). **No marques como sobre-ingeniería lo que la spec exige**: comentarios de equivalencia `ASTRO: … / REACT+VITE` (RF-12), islas declaradas, preferencias del lector (RF-14), `astro-mermaid`, Astrobook, cobertura de tests ≥ 90 % (RNF-10) ni dependencias ya justificadas en §8.1. Lo «lean» se aplica solo a la implementación **no especificada**, y «Lean: -N líneas, -M dependencias» se cuenta sobre eso. La spec se implementa completa: no propongas borrar un requisito, solo su implementación más cómoda.
+En este proyecto son vinculantes `specs/MANUAL.md` y `specs/design-pattern.md`. **No marques como sobre-ingeniería lo que exigen esas normas**: comentarios de equivalencia `ASTRO: … / REACT+VITE`, islas declaradas, preferencias del lector, `astro-mermaid`, Astrobook, cobertura de tests ≥ 90 % ni dependencias ya justificadas en el repositorio. Lo «lean» se aplica solo a la implementación no exigida, y «Lean: -N líneas, -M dependencias» se cuenta sobre eso. Las normas vigentes se implementan completas: no propongas borrar una, solo su implementación más cómoda.
 
 ## 1. Map first
 
@@ -47,7 +47,7 @@ Este proyecto es Spec-Driven (`specs/spec.md` y `specs/design-pattern.md` son vi
    per item, O(n^2) on big input, per-process state that must be shared.
 4. **Missing test:** risky logic (a branch, a parser, money, security, data
    writes) with no test that fails when it breaks. One good test, not coverage.
-   En este proyecto los tests se cierran a petición del autor (§11): infórmalo,
+   En este proyecto los tests se cierran a petición del autor (`MANUAL.md`): infórmalo,
    no lo impongas en el diff.
 5. **Speed:** big slowdowns are problems. Small wins (work repeated in a hot
    loop) are suggestions; some software counts every millisecond.

@@ -28,7 +28,7 @@ The level sticks for the session unless changed. `full` is the default.
 En este proyecto ponytail es **nativo de opencode**: cada skill vive en
 `.opencode/skills/` y se invoca como comando `/ponytail*` mediante los
 comandos de `.opencode/commands/` (que inyectan la skill correspondiente).
-Las referencias normativas son `specs/spec.md` y `specs/design-pattern.md`;
+Las referencias normativas son `specs/MANUAL.md` y `specs/design-pattern.md`;
 la guarda «la SDD manda» está dentro de cada skill aplicable y en el agente
 `wiki-dev`.
 

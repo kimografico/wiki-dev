@@ -149,11 +149,11 @@ flowchart LR
     D --> F["Listados con data-slug"]
 ```
 
-Está documentado y hay un test de coherencia entre el script inline y el módulo TS. Aun así, es frágil: cualquier cambio en el filtro exige tocar tres sitios. Es el síntoma más claro de que la lógica ha crecido más de lo que el modelo de «islas mínimas» preveía (RF-14 de `specs/spec.md` dice explícitamente _«las islas mínimas»_).
+Está documentado y hay un test de coherencia entre el script inline y el módulo TS. Aun así, es frágil: cualquier cambio en el filtro exige tocar tres sitios. Es el síntoma más claro de que la lógica ha crecido más de lo que el modelo de «islas mínimas» preveía (RF-14 de `specs/spec-construccion.md` dice explícitamente _«las islas mínimas»_).
 
-### 3.4. Pagefind está en la spec y en `package.json`, pero no en el código
+### 3.4. Pagefind estuvo previsto y quedó en `package.json`, pero no en el código
 
-`specs/spec.md` (RF-08 y §10) define búsqueda de texto completo con Pagefind, alias, cuerpo y tolerancia a erratas; el workflow de deploy lo tiene comentado. La implementación actual es un filtro en cliente sobre título/resumen/categoría/etiquetas: no busca en alias ni en el cuerpo, y «zustnad» no devuelve Zustand.
+El registro histórico de construcción (`specs/spec-construccion.md`, RF-08 y §10) definió búsqueda de texto completo con Pagefind, alias, cuerpo y tolerancia a erratas; el workflow de deploy lo tiene comentado. La implementación actual es un filtro en cliente sobre título/resumen/categoría/etiquetas: no busca en alias ni en el cuerpo, y «zustnad» no devuelve Zustand.
 
 Esto **no es un problema de Astro**: es una diferencia entre spec e implementación. Pero conviene resolverlo antes de decidir nada sobre frameworks, porque cambia el tamaño del buscador por completo: con Pagefind no haría falta enviar 53 entradas al cliente.
 
@@ -202,14 +202,14 @@ Los tres controles de preferencias (`InterruptorTema`, `InterruptorSoloPendiente
 
 Elige una de estas dos vías:
 
-- **Alineada con la spec:** ejecutar Pagefind tras el build y que la isla consulte su índice. Elimina las props de 16 KB y permite buscar en cuerpo y alias.
+- **Alineada con el diseño previsto:** ejecutar Pagefind tras el build y que la isla consulte su índice. Elimina las props de 16 KB y permite buscar en cuerpo y alias.
 - **Minimalista:** generar `buscador.json` en build y cargarlo con `fetch` cuando el usuario escriba. Sigue siendo un filtro, pero sin enviar los datos en el HTML de todas las formas.
 
 En ambos casos, quita la mutación de `#secciones-portada`: que la isla emita un evento y sea una pieza Astro la que oculte/muestre esa sección.
 
 ### Paso 3 — escribir la regla y protegerla
 
-Añadir una entrada corta en `specs/spec.md` o un ADR:
+Registrar la decisión en `specs/MANUAL.md` o en un ADR:
 
 > El contenido se genera en build y nunca se hidrata. Solo se hidrata el estado del lector, en componentes que no modifican DOM fuera de su propio subtree.
 
@@ -221,7 +221,7 @@ Y revisar a mano el presupuesto de JS con Lighthouse en Chrome DevTools (RNF-01)
 
 ### Cuándo sí cambiaría de opinión
 
-Migrar a React/Next.js tendría sentido si apareciera alguna de estas necesidades: cuentas o sesiones, datos en tiempo real, editor de contenido desde la web, rutas API propias o render por petición. Nada de eso está en la spec actual, y el Worker ya cubre la única integración externa.
+Migrar a React/Next.js tendría sentido si apareciera alguna de estas necesidades: cuentas o sesiones, datos en tiempo real, editor de contenido desde la web, rutas API propias o render por petición. Nada de eso está entre las normas vigentes, y el Worker ya cubre la única integración externa.
 
 ---
 

@@ -20,6 +20,4 @@ npm: ""
 
 ## Cuándo no
 
-## Alternativas
-
 ## Ejemplo

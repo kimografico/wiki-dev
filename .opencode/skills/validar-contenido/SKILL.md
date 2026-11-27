@@ -13,12 +13,13 @@ Ejecuta `npm run validate` y verifica:
 - Referencias existentes (`relacionados`, `alternativas`, `entidades`).
 - Enlaces internos no rotos.
 - Secciones obligatorias presentes y ausencia de `## Relacionados`.
+- Avisos de extensión: glosario ≥ 150 palabras, fichas ≥ 250 (objetivo 250–600).
 - Alias sin conflicto (con otro alias, slug o título).
 - Etiquetas y categorías del catálogo (`src/content.config.ts`).
 
 ## Checklist de estilo
 
-Revisa `specs/agentes-y-skills.md` §7: resumen ≤ 200, sin pregunta/respuesta, términos definidos al primer uso, ejemplos con lenguaje indicado, fuentes registradas y español claro.
+Revisa `specs/MANUAL.md` y el checklist de `specs/agentes-y-skills.md` §7: extensión, `Alternativas` condicional, conceptos compuestos, resumen ≤ 200, sin pregunta/respuesta, términos definidos al primer uso, ejemplos con lenguaje indicado, fuentes registradas y español claro.
 
 ## Salida
 

@@ -5,7 +5,7 @@ description: Escribe o ajusta los tests unitarios colocados (*.test.ts) de la l�
 
 # escribir-tests
 
-Cierra una fase o un cambio de lógica escribiendo los tests que falten, **solo cuando el autor lo pide** (spec.md §11). Nunca tras cada cambio.
+Cierra una fase o un cambio de lógica escribiendo los tests que falten, **solo cuando el autor lo pide** (`specs/MANUAL.md`). Nunca tras cada cambio.
 
 ## Dónde van
 

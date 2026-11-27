@@ -186,7 +186,8 @@ Las plantillas de arriba son solo estructura: sus valores de ejemplo (categoria,
 - comparativas: campos extra "entidades" (mínimo 2 slugs existentes) y "contexto" (obligatorio, texto).
 
 ## Reglas del cuerpo
-- Secciones obligatorias de la colección elegida, todas con contenido real (nada de secciones vacías).
+- Secciones obligatorias de la colección elegida, todas con contenido real (nada de secciones vacías). "Alternativas" es condicional: omítela si no hay una alternativa real, sin frases como "no hay una alternativa directa".
+- Extensión: glosario 150-250 palabras; el resto 250-600 (mínimo 250, 600 es objetivo). Si la petición mezcla dos conceptos con entidad propia, elige uno para esta entrada o usa una ficha paraguas con un apartado por concepto.
 - NO escribas "## Relacionados" ni "## Mencionado en": los genera el layout.
 - Ejemplos de código con fences (\`\`\`js, \`\`\`python, ...).
 - Español técnico y claro, tono de wiki de referencia.

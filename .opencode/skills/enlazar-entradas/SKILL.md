@@ -15,7 +15,7 @@ description: Mantiene el grafo de relaciones declaradas de la wiki (relacionados
 
 ## Alcance
 
-Las menciones dentro del texto se enlazan automáticamente (RF-07 de `specs/spec.md`) y **no** son parte de esta skill.
+Las menciones dentro del texto se enlazan automáticamente (regla de `specs/MANUAL.md`) y **no** son parte de esta skill.
 
 ## Salida
 

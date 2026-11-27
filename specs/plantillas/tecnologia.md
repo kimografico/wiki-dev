@@ -19,6 +19,4 @@ web: ""
 
 ## Cuándo no
 
-## Alternativas
-
 ## Ejemplo

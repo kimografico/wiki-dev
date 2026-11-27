@@ -14,11 +14,11 @@ Specification-Driven Development: forma de trabajar en la que la especificación
 
 ## Por qué importa
 
-Reduce decisiones implícitas: ante una duda, se consulta la spec y se actualiza antes que improvisar.
+Reduce decisiones implícitas: ante una duda, se consulta la fuente de verdad y se actualiza antes que improvisar.
 
 ## Ejemplo
 
-Las decisiones de esta wiki viven en `specs/spec.md` y los cambios de esquema pasan por una skill.
+Las normas vigentes de esta wiki viven en `specs/MANUAL.md`; `specs/spec-construccion.md` guarda el registro de cómo se construyó. Los cambios de esquema pasan por una skill.
 
 ## Se confunde con
 

@@ -9,6 +9,15 @@ El contenido vive en `content/<coleccion>/*.md` y su frontmatter se valida
 con los esquemas de `src/lib/content/esquemas.ts`. Todo el texto de la wiki
 se escribe en **español**.
 
+## Documentación
+
+- [`specs/MANUAL.md`](./specs/MANUAL.md) es la fuente de verdad para el
+  mantenimiento: normas de contenido, extensión de entradas, secciones y
+  publicación. Léelo antes de crear o ampliar entradas.
+- `specs/spec-construccion.md` es el registro histórico de la construcción:
+  explica decisiones ya tomadas, pero **no manda** sobre el trabajo actual.
+- `specs/design-pattern.md` es la norma de arquitectura del código.
+
 ## Comandos
 
 | Comando                                 | Qué hace                                                |
@@ -33,9 +42,9 @@ se escribe en **español**.
    `format:check`, `validate` y `test:coverage`. La cobertura **obligatoria**
    es del 90 % (umbral de Vitest y pre-push); el **objetivo** de calidad es
    el 95 %.
-5. Para crear o ampliar entradas, seguir las skills del proyecto
-   (`anadir-entrada`, `enlazar-entradas`, `validar-contenido`): el esquema
-   manda, no inventar frontmatter fuera de `esquemas.ts`.
+5. Para crear o ampliar entradas, seguir `specs/MANUAL.md` y las skills del
+   proyecto (`anadir-entrada`, `enlazar-entradas`, `validar-contenido`): el
+   esquema manda, no inventar frontmatter fuera de `esquemas.ts`.
 6. Los secretos nunca se escriben en el repo: van en GitHub Secrets o en
    un archivo temporal fuera del repo cargado con `cf deploy --secrets-file`.
 7. Si un script necesita el schema, las plantillas o los enums, se leen

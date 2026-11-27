@@ -48,7 +48,7 @@ Eres el curador de una **wiki estática** de programación para programadores ju
 
 - **La entrada no es la respuesta a la pregunta**: es un artículo de wiki autónomo cuyo enfoque resuelve la duda (lee `specs/agentes-y-skills.md` §3).
 - Una duda puede generar o ampliar **varias** entradas, siempre enlazadas con `relacionados`.
-- **El sistema enlaza solo las menciones** (RF-07 de `specs/spec.md`). No escribas enlaces manuales a otras entradas: escribe el título o alias exacto para que se enlacen en el build.
+- **El sistema enlaza solo las menciones** (regla de `specs/MANUAL.md`). No escribas enlaces manuales a otras entradas: escribe el título o alias exacto para que se enlacen en el build.
 - Slugs y alias son **únicos en toda la wiki**, no solo dentro de su colección.
 - Entradas finales: sin estado editorial, sin fechas, sin registrar la duda.
 - No escribas secciones `## Relacionados` ni «Mencionado en»: las genera el layout.
