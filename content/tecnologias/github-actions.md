@@ -11,12 +11,15 @@ fuentes:
   - "https://docs.github.com/en/actions/about-github-actions/understanding-github-actions"
   - "https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax"
   - "https://docs.github.com/en/actions/tutorials/build-and-test-code/nodejs"
+  - "https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows"
+  - "https://docs.github.com/en/actions/reference/runners/github-hosted-runners"
+  - "https://docs.github.com/en/actions/concepts/runners/self-hosted-runners"
 autoenlace: true
 ---
 
 ## Qué es
 
-GitHub Actions automatiza tareas de construcción, prueba y publicación dentro de GitHub. Un **workflow** es un archivo YAML en `.github/workflows/` que se dispara ante un evento del repositorio: un `push`, un `pull_request`, una programación o una ejecución manual.
+GitHub Actions automatiza tareas de construcción, prueba y publicación dentro de GitHub. Un **workflow** es un archivo YAML en `.github/workflows/` que se dispara ante un evento del repositorio: un `push`, un `pull_request`, la creación de una `release`, la apertura de `issues`, una programación (`schedule`) o una ejecución manual. La documentación oficial enumera el resto de eventos posibles; el archivo decide cuál inicia la ejecución.
 
 La plataforma es la herramienta; la política de integración, entrega o despliegue la decide el equipo.
 
@@ -30,7 +33,7 @@ Cuando el código ya vive en GitHub y se quiere automatizar la validación y el 
 
 ## Cuándo no
 
-Cuando la automatización depende de otro ecosistema —por ejemplo, un plan de Bamboo en Atlassian— o cuando el trabajo necesita un entorno que no encaja en los runners disponibles.
+Cuando la automatización depende de otro ecosistema —por ejemplo, un plan de Bamboo en Atlassian— o cuando el trabajo exige un entorno que no ofrece ningún runner, gestionado por GitHub o propio, y mantener uno propio no compensa.
 
 ## Alternativas
 
@@ -47,6 +50,11 @@ jobs:
     steps:
       - run: npm ci
       - run: npm run validate
+  publicar:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Aquí iría el despliegue"
 ```
 
 Los ejemplos oficiales añaden pasos con `actions/checkout` y `actions/setup-node`, cuyas versiones cambian con el tiempo; conviene consultar la documentación vigente antes de copiarlas.
@@ -60,7 +68,19 @@ Los ejemplos oficiales añaden pasos con `actions/checkout` y `actions/setup-nod
 | Step | Cada una de las órdenes del job: un `run` o un `uses` |
 | Action | Un paso reutilizable que se invoca con `uses` |
 
-Un *runner* es la máquina —Ubuntu, Windows, macOS o propia— donde se ejecuta el job. Una action no es un workflow: es una pieza que se usa dentro de él.
+Un *runner* es la máquina donde se ejecuta el job. Los runners gestionados por GitHub (GitHub-hosted) ofrecen entornos preparados; los propios (self-hosted) los instala y mantiene el equipo, con más control sobre hardware, sistema operativo y herramientas, y con el coste de esa gestión. Una action no es un workflow: es una pieza que se usa dentro de él.
+
+Los jobs corren en paralelo por defecto. `needs` declara dependencias: en el ejemplo, `publicar` espera a `build`. La condición es que el job previo termine con éxito; si falla o se omite, los jobs que dependen de él se omiten salvo que usen una expresión como `if: ${{ always() }}`. Los pasos de un job se ejecutan en orden; el paralelismo se decide entre jobs.
+
+## Programación con cron
+
+El evento `schedule` dispara un workflow a una hora determinada con sintaxis cron POSIX y se declara con `cron` en YAML. Por defecto las horas se interpretan en UTC, los workflows programados se ejecutan en la rama por defecto y pueden sufrir retrasos. No admite atajos como `@daily`.
+
+```yaml
+on:
+  schedule:
+    - cron: "15 4 * * *"
+```
 
 ## Integración, entrega y despliegue
 

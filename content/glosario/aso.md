@@ -5,7 +5,7 @@ resumen: "ASO (Architecture Service Oriented): estándar de desarrollo backend q
 categoria: concepto
 tags: [backend, bbva]
 alias: [Architecture Service Oriented, Arquitectura Orientada a Servicios]
-relacionados: [apx, api, microservicio]
+relacionados: [apx, api, microservicio, capa-front, host-layer, mud]
 fuentes: [https://docs.oasis-open.org/soa-rm/v1.0/soa-rm.html]
 autoenlace: true
 ---
@@ -14,7 +14,7 @@ autoenlace: true
 
 ASO (Architecture Service Oriented, «arquitectura orientada a servicios») es un estándar de desarrollo backend descrito como muy extendido en entornos bancarios y corporativos. El término público y estandarizado para esa idea es SOA (Service-Oriented Architecture), que OASIS define como un paradigma para organizar capacidades distribuidas. Su responsabilidad es hablar hacia fuera: publicar APIs REST/JSON para las apps y la web, acordar el contrato del servicio con quien lo consume y orquestar las llamadas necesarias para responder.
 
-En la arquitectura descrita para BBVA, ASO se sitúa por encima de APX. La petición del canal entra por esa capa y se delega en APX cuando hace falta ejecutar lógica transaccional contra los sistemas internos.
+En la arquitectura descrita para BBVA, ASO es la capa intermedia entre la capa front y APX: **capa front → ASO → APX → capa host**. La petición del canal entra por ASO y se delega en APX cuando hace falta ejecutar lógica transaccional contra los sistemas internos. La capa host es una denominación del vocabulario interno; no es el Host público de redes.
 
 ## Por qué importa
 
@@ -31,6 +31,7 @@ Una pantalla consulta el saldo de una cuenta mediante `GET /cuentas/{id}/saldo`.
 - **SOA (Service-Oriented Architecture)**: es el nombre estandarizado y público de la arquitectura orientada a servicios. ASO es la denominación interna descrita aquí.
 - **APX**: es la capa situada justo debajo, dedicada a transacciones, reglas de negocio y acceso a sistemas internos. ASO expone servicios; APX los ejecuta.
 - **Microservicio**: es una forma de organizar un servicio como proceso independiente. ASO describe la función de una capa, no obliga a un estilo de despliegue concreto.
+- **Host**: en este modelo designa la capa host del vocabulario interno. La entrada Host describe el sentido general del término.
 
 ## Fuente interna
 
