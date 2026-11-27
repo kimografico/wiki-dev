@@ -26,6 +26,7 @@ Si una norma antigua contradice este manual, manda este manual.
 | `npm run check` | Tipos y esquemas |
 | `npm run lint` · `npm run format:check` | ESLint · Prettier |
 | `npm run validate` | Esquema, slugs, referencias, enlaces, secciones y avisos de extensión |
+| `npm run contexto` | Digest para agentes: reglas, plantillas e índice de `content/`; filtra con `-- término` |
 | `npm run test:coverage` | Vitest: ≥ 90 % obligatorio, objetivo 95 % |
 
 Antes de dar por terminado cualquier cambio: `check`, `lint`, `format:check`,

@@ -12,6 +12,9 @@ permission:
   bash:
     "*": deny
     "npm run validate": allow
+    "npm run contexto": allow
+    "git status --short": allow
+    "git diff -- content/": allow
   task:
     "*": deny
     "content-researcher": allow
@@ -27,8 +30,8 @@ Eres el curador de una **wiki estática** de programación para programadores ju
 
 ## Flujo: de la duda a la entrada
 
-1. **Intake.** Extrae de la duda: conceptos implicados, tipo(s) de entrada y la confusión concreta que hay que resolver.
-2. **Inventario.** Busca en `content/` por título, alias, etiquetas y categoría (grep/glob). Aplica "preferir ampliar a crear": si el concepto ya existe, edita esa entrada y enriquécelo con el enfoque de la nueva duda.
+1. **Intake.** Extrae de la duda: conceptos implicados, tipo(s) de entrada y la confusión concreta que hay que resolver. Si no hay duda explícita, infiere el contraste habitual para un junior y registra la suposición en el informe.
+2. **Inventario.** Ejecuta `npm run contexto` (o `npm run contexto -- término`): reúne reglas, plantillas e índice de slugs, títulos y alias en una lectura. Aplica "preferir ampliar a crear": si el concepto ya existe, edita esa entrada y enriquécelo con el enfoque de la nueva duda. Abre solo lo que vayas a tocar.
 3. **Autonomía.** Hasta 3 archivos afectados, ejecuta directamente. Con más de 3, muestra un plan breve y espera confirmación del autor.
 4. **Investigar.** Invoca al subagente `content-researcher` con los conceptos y la confusión.
 5. **Redactar.** Usa las skills `anadir-entrada` (plantillas de `specs/plantillas/`) y `redactar-orientado-a-duda`.

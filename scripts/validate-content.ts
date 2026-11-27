@@ -25,7 +25,7 @@ import {
 } from "../src/lib/content/esquemas.ts";
 
 /** Objetivo mínimo de palabras del cuerpo por colección (MANUAL.md). */
-const MIN_PALABRAS: Partial<Record<Coleccion, number>> = {
+export const MIN_PALABRAS: Partial<Record<Coleccion, number>> = {
   glosario: 150,
   tecnologias: 250,
   paquetes: 250,
@@ -36,7 +36,7 @@ const MIN_PALABRAS: Partial<Record<Coleccion, number>> = {
 };
 
 /** Palabras del cuerpo Markdown: cuenta también el código, no el frontmatter. */
-function contarPalabras(texto: string): number {
+export function contarPalabras(texto: string): number {
   return (texto.match(/[\p{L}\p{N}]+(?:[-_][\p{L}\p{N}]+)*/gu) ?? []).length;
 }
 

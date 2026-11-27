@@ -224,8 +224,8 @@ specs/plantillas/               # editable por wiki-dev; leída por anadir-entra
 ### 5.1 `resolver-duda`
 - **Objetivo:** ejecutar el flujo de §2 de extremo a extremo.
 - **Pasos:**
-  1. Extraer de la duda: conceptos implicados, tipo(s) de entrada y la confusión concreta.
-  2. Inventariar: buscar en `content/` por título, alias, etiquetas y categoría; decidir crear/ampliar.
+  1. Extraer de la duda: conceptos implicados, tipo(s) de entrada y la confusión concreta. Sin duda explícita, inferir el contraste habitual y declarar la suposición en el informe.
+  2. Inventariar con `npm run contexto` (filtrable con `-- término`): reglas, plantillas e índice de slugs, títulos y alias en una lectura; decidir crear/ampliar y abrir solo lo que se vaya a tocar.
   3. Aplicar la regla de autonomía (≤ 3 archivos directo; > 3 plan y confirmación).
   4. Invocar `content-researcher` con conceptos y confusión.
   5. Redactar con `anadir-entrada` y `redactar-orientado-a-duda`.

@@ -9,8 +9,8 @@ Ejecuta el flujo de `specs/agentes-y-skills.md` §2 de extremo a extremo.
 
 ## Pasos
 
-1. Extrae de la duda: conceptos implicados, tipo(s) de entrada y la confusión concreta.
-2. Inventaría: busca en `content/` por título, alias, etiquetas y categoría (grep/glob); decide crear o ampliar (prefiere ampliar).
+1. Extrae de la duda: conceptos implicados, tipo(s) de entrada y la confusión concreta. Si la petición no trae una duda explícita, infiere el contraste habitual para un junior y declara esa suposición en el informe final.
+2. Inventaría con `npm run contexto`: el digest da reglas, plantillas e índice de slugs, títulos y alias en una sola lectura (filtra con `npm run contexto -- término`). Decide crear o ampliar (prefiere ampliar) y abre solo la plantilla o entrada que vayas a tocar; profundiza en `specs/MANUAL.md` y `specs/agentes-y-skills.md` §3/§7 si el caso lo pide.
 3. Aplica la regla de autonomía: ≤ 3 archivos, directo; > 3, muestra un plan y espera confirmación.
 4. Invoca `content-researcher` con los conceptos y la confusión.
 5. Redacta con `anadir-entrada` y `redactar-orientado-a-duda`.
